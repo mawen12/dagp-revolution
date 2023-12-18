@@ -2,11 +2,11 @@ package com.mawen.search.core;
 
 import java.util.List;
 
-import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.BulkOptions;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.Query;
+import com.mawen.search.core.query.UpdateQuery;
 import com.mawen.search.core.support.IndexedObjectInformation;
 import com.mawen.search.core.support.MultiGetItem;
 
@@ -69,6 +69,4 @@ public interface DocumentOperations {
 	String delete(Object entity);
 
 	String delete(Object entity, IndexCoordinates index);
-
-
 }
