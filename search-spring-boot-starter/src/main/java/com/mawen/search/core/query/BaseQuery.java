@@ -4,26 +4,20 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.mawen.search.core.domain.DocValueField;
 import com.mawen.search.core.domain.IdWithRouting;
 import com.mawen.search.core.domain.IndexBoost;
-import com.mawen.search.core.domain.IndicesOptions;
-import com.mawen.search.core.domain.PointInTime;
-import com.mawen.search.core.domain.RuntimeField;
-import com.mawen.search.core.domain.ScriptedField;
 import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.query.builder.BaseQueryBuilder;
+import lombok.Getter;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
-
 import static java.util.Collections.*;
 import static org.springframework.util.CollectionUtils.*;
 
@@ -31,6 +25,7 @@ import static org.springframework.util.CollectionUtils.*;
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
+@Getter
 public class BaseQuery implements Query {
 
 	private static final int DEFAULT_REACTIVE_BATCH_SIZE = 500;
@@ -40,8 +35,6 @@ public class BaseQuery implements Query {
 	protected Pageable pageable = DEFAULT_PAGE;
 	protected List<String> fields = new ArrayList<>();
 	@Nullable
-	protected List<String> storedFields;
-	@Nullable
 	protected SourceFilter sourceFilter;
 	protected float minScore;
 	@Nullable
@@ -50,8 +43,6 @@ public class BaseQuery implements Query {
 	protected String route;
 	@Nullable
 	protected SearchType searchType = SearchType.QUERY_THEN_FETCH;
-	@Nullable
-	protected IndicesOptions indicesOptions;
 	protected boolean trackScores;
 	@Nullable
 	protected String preference;
@@ -73,20 +64,13 @@ public class BaseQuery implements Query {
 	@Nullable
 	protected Boolean requestCache;
 	protected List<IdWithRouting> idsWithRouting = Collections.emptyList();
-	protected List<RuntimeField> runtimeFields = new ArrayList<>();
-	@Nullable
-	protected PointInTime pointInTime;
 	@Nullable
 	private Boolean trackTotalHits;
-	private boolean explain = false;
 	private boolean queryIsUpdatedByConverter = false;
 	@Nullable
 	private Integer reactiveBatchSize = null;
 	@Nullable
 	private Boolean allowNoIndices = null;
-	private EnumSet<IndicesOptions.WildcardStates> expandWildcards;
-	private List<DocValueField> docValueFields = new ArrayList<>();
-	private List<ScriptedField> scriptedFields = new ArrayList<>();
 
 	public BaseQuery() {
 	}
@@ -96,13 +80,11 @@ public class BaseQuery implements Query {
 		// do a setPageable after setting the sort, because the pageable may contain an additional sort
 		this.setPageable(builder.getPageable() != null ? builder.getPageable() : DEFAULT_PAGE);
 		this.fields = builder.getFields();
-		this.storedFields = builder.getStoredFields();
 		this.sourceFilter = builder.getSourceFilter();
 		this.minScore = builder.getMinScore();
 		this.ids = builder.getIds() == null ? null : builder.getIds();
 		this.route = builder.getRoute();
 		this.searchType = builder.getSearchType();
-		this.indicesOptions = builder.getIndicesOptions();
 		this.trackScores = builder.getTrackScores();
 		this.preference = builder.getPreference();
 		this.maxResults = builder.getMaxResults();
@@ -111,25 +93,13 @@ public class BaseQuery implements Query {
 		this.trackTotalHitsUpTo = builder.getTrackTotalHitsUpTo();
 		this.scrollTime = builder.getScrollTime();
 		this.timeout = builder.getTimeout();
-		this.explain = builder.getExplain();
 		this.searchAfter = builder.getSearchAfter();
 		this.indicesBoost = builder.getIndicesBoost();
 		this.rescorerQueries = builder.getRescorerQueries();
 		this.requestCache = builder.getRequestCache();
 		this.idsWithRouting = builder.getIdsWithRouting();
-		this.pointInTime = builder.getPointInTime();
 		this.reactiveBatchSize = builder.getReactiveBatchSize();
 		this.allowNoIndices = builder.getAllowNoIndices();
-		this.expandWildcards = builder.getExpandWildcards();
-		this.docValueFields = builder.getDocValueFields();
-		this.scriptedFields = builder.getScriptedFields();
-		this.runtimeFields = builder.getRuntimeFields();
-	}
-
-	@Override
-	@Nullable
-	public Sort getSort() {
-		return this.sort;
 	}
 
 	/**
@@ -139,10 +109,6 @@ public class BaseQuery implements Query {
 		this.sort = sort;
 	}
 
-	@Override
-	public Pageable getPageable() {
-		return this.pageable;
-	}
 
 	@Override
 	public final <T extends Query> T setPageable(Pageable pageable) {
@@ -159,11 +125,6 @@ public class BaseQuery implements Query {
 	}
 
 	@Override
-	public List<String> getFields() {
-		return fields;
-	}
-
-	@Override
 	public void setFields(List<String> fields) {
 
 		Assert.notNull(fields, "fields must not be null");
@@ -173,38 +134,8 @@ public class BaseQuery implements Query {
 	}
 
 	@Override
-	public void addStoredFields(String... storedFields) {
-
-		if (storedFields.length == 0) {
-			return;
-		}
-
-		if (this.storedFields == null) {
-			this.storedFields = new ArrayList<>(storedFields.length);
-		}
-		addAll(this.storedFields, storedFields);
-	}
-
-	@Nullable
-	@Override
-	public List<String> getStoredFields() {
-		return storedFields;
-	}
-
-	@Override
-	public void setStoredFields(@Nullable List<String> storedFields) {
-		this.storedFields = storedFields;
-	}
-
-	@Override
 	public void addSourceFilter(SourceFilter sourceFilter) {
 		this.sourceFilter = sourceFilter;
-	}
-
-	@Nullable
-	@Override
-	public SourceFilter getSourceFilter() {
-		return sourceFilter;
 	}
 
 	@Override
@@ -227,6 +158,11 @@ public class BaseQuery implements Query {
 	@Override
 	public float getMinScore() {
 		return minScore;
+	}
+
+	@Override
+	public boolean getTrackScores() {
+		return false;
 	}
 
 	public void setMinScore(float minScore) {
@@ -275,43 +211,12 @@ public class BaseQuery implements Query {
 		this.idsWithRouting = idsWithRouting;
 	}
 
-	@Nullable
-	@Override
-	public String getRoute() {
-		return route;
-	}
-
 	public void setRoute(String route) {
 		this.route = route;
 	}
 
-	@Nullable
-	@Override
-	public SearchType getSearchType() {
-		return searchType;
-	}
-
 	public void setSearchType(@Nullable SearchType searchType) {
 		this.searchType = searchType;
-	}
-
-	@Nullable
-	@Override
-	public IndicesOptions getIndicesOptions() {
-		return indicesOptions;
-	}
-
-	public void setIndicesOptions(IndicesOptions indicesOptions) {
-		this.indicesOptions = indicesOptions;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.elasticsearch.core.query.Query#getTrackScores()
-	 */
-	@Override
-	public boolean getTrackScores() {
-		return trackScores;
 	}
 
 	/**
@@ -323,12 +228,6 @@ public class BaseQuery implements Query {
 		this.trackScores = trackScores;
 	}
 
-	@Nullable
-	@Override
-	public String getPreference() {
-		return preference;
-	}
-
 	@Override
 	public void setPreference(String preference) {
 		this.preference = preference;
@@ -337,12 +236,6 @@ public class BaseQuery implements Query {
 	@Override
 	public boolean isLimiting() {
 		return maxResults != null;
-	}
-
-	@Nullable
-	@Override
-	public Integer getMaxResults() {
-		return maxResults;
 	}
 
 	public void setMaxResults(Integer maxResults) {
@@ -360,20 +253,8 @@ public class BaseQuery implements Query {
 	}
 
 	@Override
-	@Nullable
-	public Boolean getTrackTotalHits() {
-		return trackTotalHits;
-	}
-
-	@Override
 	public void setTrackTotalHits(@Nullable Boolean trackTotalHits) {
 		this.trackTotalHits = trackTotalHits;
-	}
-
-	@Override
-	@Nullable
-	public Integer getTrackTotalHitsUpTo() {
-		return trackTotalHitsUpTo;
 	}
 
 	@Override
@@ -381,21 +262,9 @@ public class BaseQuery implements Query {
 		this.trackTotalHitsUpTo = trackTotalHitsUpTo;
 	}
 
-	@Nullable
-	@Override
-	public Duration getScrollTime() {
-		return scrollTime;
-	}
-
 	@Override
 	public void setScrollTime(@Nullable Duration scrollTime) {
 		this.scrollTime = scrollTime;
-	}
-
-	@Nullable
-	@Override
-	public Duration getTimeout() {
-		return timeout;
 	}
 
 	/**
@@ -405,24 +274,6 @@ public class BaseQuery implements Query {
 	 */
 	public void setTimeout(@Nullable Duration timeout) {
 		this.timeout = timeout;
-	}
-
-	@Override
-	public boolean getExplain() {
-		return explain;
-	}
-
-	/**
-	 * @param explain the explain flag on the query.
-	 */
-	public void setExplain(boolean explain) {
-		this.explain = explain;
-	}
-
-	@Nullable
-	@Override
-	public List<Object> getSearchAfter() {
-		return searchAfter;
 	}
 
 	@Override
@@ -439,11 +290,6 @@ public class BaseQuery implements Query {
 	}
 
 	@Override
-	public List<RescorerQuery> getRescorerQueries() {
-		return rescorerQueries;
-	}
-
-	@Override
 	public void setRescorerQueries(List<RescorerQuery> rescorerQueryList) {
 
 		Assert.notNull(rescorerQueries, "rescorerQueries must not be null");
@@ -453,48 +299,8 @@ public class BaseQuery implements Query {
 	}
 
 	@Override
-	@Nullable
-	public Boolean getRequestCache() {
-		return this.requestCache;
-	}
-
-	@Override
 	public void setRequestCache(@Nullable Boolean value) {
 		this.requestCache = value;
-	}
-
-	@Override
-	public void addRuntimeField(RuntimeField runtimeField) {
-
-		Assert.notNull(runtimeField, "runtimeField must not be null");
-
-		this.runtimeFields.add(runtimeField);
-	}
-
-	@Override
-	public List<RuntimeField> getRuntimeFields() {
-		return runtimeFields;
-	}
-
-	@Override
-	@Nullable
-	public List<IndexBoost> getIndicesBoost() {
-		return indicesBoost;
-	}
-
-	/**
-	 * @since 5.0
-	 */
-	@Nullable
-	public PointInTime getPointInTime() {
-		return pointInTime;
-	}
-
-	/**
-	 * @since 5.0
-	 */
-	public void setPointInTime(@Nullable PointInTime pointInTime) {
-		this.pointInTime = pointInTime;
 	}
 
 	/**
@@ -520,53 +326,8 @@ public class BaseQuery implements Query {
 		return reactiveBatchSize != null ? reactiveBatchSize : DEFAULT_REACTIVE_BATCH_SIZE;
 	}
 
-	/**
-	 * @since 5.1
-	 */
 	public void setReactiveBatchSize(Integer reactiveBatchSize) {
 		this.reactiveBatchSize = reactiveBatchSize;
 	}
 
-	@Nullable
-	public Boolean getAllowNoIndices() {
-		return allowNoIndices;
-	}
-
-	@Override
-	public EnumSet<IndicesOptions.WildcardStates> getExpandWildcards() {
-		return expandWildcards;
-	}
-
-	/**
-	 * @since 5.1
-	 */
-	@Override
-	public List<DocValueField> getDocValueFields() {
-		return docValueFields;
-	}
-
-	/**
-	 * @since 5.1
-	 */
-	public void setDocValueFields(List<DocValueField> docValueFields) {
-
-		Assert.notNull(docValueFields, "getDocValueFields must not be null");
-
-		this.docValueFields = docValueFields;
-	}
-
-	/**
-	 * @since 5.2
-	 */
-	public void addScriptedField(ScriptedField scriptedField) {
-
-		Assert.notNull(scriptedField, "scriptedField must not be null");
-
-		this.scriptedFields.add(scriptedField);
-	}
-
-	@Override
-	public List<ScriptedField> getScriptedFields() {
-		return scriptedFields;
-	}
 }

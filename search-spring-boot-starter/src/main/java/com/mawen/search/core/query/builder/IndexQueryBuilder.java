@@ -1,8 +1,8 @@
 package com.mawen.search.core.query.builder;
 
-import com.mawen.search.core.refresh.RefreshPolicy;
-import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.domain.SeqNoPrimaryTerm;
+import com.mawen.search.core.query.IndexQuery;
+import com.mawen.search.core.refresh.RefreshPolicy;
 
 import org.springframework.lang.Nullable;
 

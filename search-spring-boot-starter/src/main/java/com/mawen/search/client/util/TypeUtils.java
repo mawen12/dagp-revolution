@@ -2,13 +2,9 @@ package com.mawen.search.client.util;
 
 import java.io.StringReader;
 import java.time.Duration;
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import co.elastic.clients.elasticsearch._types.ExpandWildcard;
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.OpType;
 import co.elastic.clients.elasticsearch._types.Refresh;
@@ -29,14 +25,13 @@ import co.elastic.clients.elasticsearch.core.search.HighlighterType;
 import co.elastic.clients.elasticsearch.core.search.ScoreMode;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.json.JsonData;
-import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.document.Document;
-import com.mawen.search.core.query.IndexQuery;
-import com.mawen.search.core.domain.IndicesOptions;
 import com.mawen.search.core.domain.Order;
+import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.core.query.RescorerQuery;
 import com.mawen.search.core.query.UpdateResponse;
+import com.mawen.search.core.refresh.RefreshPolicy;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
@@ -447,13 +442,6 @@ public class TypeUtils {
 	@Nullable
 	public static Document typeMapping(@Nullable TypeMapping typeMapping) {
 		return (typeMapping != null) ? Document.parse(removePrefixFromJson(typeMapping.toString())) : null;
-	}
-
-	@Nullable
-	public static List<ExpandWildcard> expandWildcards(@Nullable EnumSet<IndicesOptions.WildcardStates> wildcardStates) {
-		return (wildcardStates != null && !wildcardStates.isEmpty()) ? wildcardStates.stream()
-				.map(wildcardState -> ExpandWildcard.valueOf(wildcardState.name().toLowerCase())).collect(Collectors.toList())
-				: null;
 	}
 
 	public static String removePrefixFromJson(String jsonWithPrefix) {

@@ -5,6 +5,5 @@ package com.mawen.search.core.support;
  * @since 2023/12/18
  */
 public enum ScriptType {
-
 	INLINE;
 }

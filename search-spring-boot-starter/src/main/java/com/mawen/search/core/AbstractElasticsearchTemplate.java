@@ -13,6 +13,12 @@ import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.convert.MappingElasticsearchConverter;
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.document.SearchDocumentResponse;
+import com.mawen.search.core.domain.BulkOptions;
+import com.mawen.search.core.domain.SearchHitMapping;
+import com.mawen.search.core.domain.SearchHits;
+import com.mawen.search.core.domain.SearchHitsIterator;
+import com.mawen.search.core.domain.SearchScrollHits;
+import com.mawen.search.core.domain.SeqNoPrimaryTerm;
 import com.mawen.search.core.event.AfterConvertCallback;
 import com.mawen.search.core.event.AfterLoadCallback;
 import com.mawen.search.core.event.AfterSaveCallback;
@@ -21,16 +27,10 @@ import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.mapping.SimpleElasticsearchMappingContext;
-import com.mawen.search.core.domain.BulkOptions;
 import com.mawen.search.core.query.ByQueryResponse;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.MoreLikeThisQuery;
 import com.mawen.search.core.query.Query;
-import com.mawen.search.core.domain.SearchHitMapping;
-import com.mawen.search.core.domain.SearchHits;
-import com.mawen.search.core.domain.SearchHitsIterator;
-import com.mawen.search.core.domain.SearchScrollHits;
-import com.mawen.search.core.domain.SeqNoPrimaryTerm;
 import com.mawen.search.core.query.StreamQueries;
 import com.mawen.search.core.query.UpdateQuery;
 import com.mawen.search.core.query.UpdateResponse;
@@ -556,26 +556,6 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 	protected <T> SearchDocumentResponse.EntityCreator<T> getEntityCreator(ReadDocumentCallback<T> documentCallback) {
 		return searchDocument -> CompletableFuture.completedFuture(documentCallback.doWith(searchDocument));
 	}
-
-	/**
-	 * tries to extract the version of the Elasticsearch cluster
-	 *
-	 * @return the version as string if it can be retrieved
-	 */
-	@Nullable
-	public abstract String getClusterVersion();
-
-	/**
-	 * @return the vendor name of the used cluster and client library
-	 * @since 4.3
-	 */
-	public abstract String getVendor();
-
-	/**
-	 * @return the version of the used client runtime library.
-	 * @since 4.3
-	 */
-	public abstract String getRuntimeLibraryVersion();
 
 	// endregion
 

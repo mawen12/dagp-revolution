@@ -2,14 +2,12 @@ package com.mawen.search.client.request;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import co.elastic.clients.elasticsearch._types.Conflicts;
-import co.elastic.clients.elasticsearch._types.ExpandWildcard;
 import co.elastic.clients.elasticsearch._types.NestedSortValue;
 import co.elastic.clients.elasticsearch._types.OpType;
 import co.elastic.clients.elasticsearch._types.SearchType;
@@ -17,8 +15,6 @@ import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.WaitForActiveShardOptions;
 import co.elastic.clients.elasticsearch._types.mapping.FieldType;
-import co.elastic.clients.elasticsearch._types.mapping.RuntimeField;
-import co.elastic.clients.elasticsearch._types.mapping.RuntimeFieldType;
 import co.elastic.clients.elasticsearch._types.query_dsl.FieldAndFormat;
 import co.elastic.clients.elasticsearch._types.query_dsl.Like;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
@@ -41,7 +37,6 @@ import co.elastic.clients.elasticsearch.core.search.Highlight;
 import co.elastic.clients.elasticsearch.core.search.Rescore;
 import co.elastic.clients.elasticsearch.core.search.SourceConfig;
 import co.elastic.clients.json.JsonData;
-import co.elastic.clients.json.JsonpMapper;
 import com.mawen.search.InvalidApiUsageException;
 import com.mawen.search.client.MultiSearchQueryParameter;
 import com.mawen.search.client.query.CriteriaFilterProcessor;
@@ -50,26 +45,24 @@ import com.mawen.search.client.query.NativeQuery;
 import com.mawen.search.client.query.Queries;
 import com.mawen.search.client.query.builder.HighlightQueryBuilder;
 import com.mawen.search.client.util.TypeUtils;
-import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.document.Document;
+import com.mawen.search.core.domain.BulkOptions;
+import com.mawen.search.core.domain.Order;
+import com.mawen.search.core.domain.ScriptData;
+import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.BaseQuery;
-import com.mawen.search.core.domain.BulkOptions;
 import com.mawen.search.core.query.CriteriaQuery;
 import com.mawen.search.core.query.IndexQuery;
-import com.mawen.search.core.domain.IndicesOptions;
 import com.mawen.search.core.query.MoreLikeThisQuery;
-import com.mawen.search.core.domain.Order;
-import com.mawen.search.core.domain.PointInTime;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.core.query.RescorerQuery;
-import com.mawen.search.core.domain.ScriptData;
-import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.query.StringQuery;
 import com.mawen.search.core.query.UpdateQuery;
+import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.support.ScriptType;
 import com.mawen.search.support.DefaultStringObjectMap;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +71,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-
 import static com.mawen.search.client.util.TypeUtils.*;
 import static org.springframework.util.CollectionUtils.*;
 
@@ -91,15 +83,10 @@ public class RequestConverter {
 
 	public static final Integer INDEX_MAX_RESULT_WINDOW = 10_000;
 
-	protected final JsonpMapper jsonpMapper;
 	protected final ElasticsearchConverter elasticsearchConverter;
 
-	public RequestConverter(ElasticsearchConverter elasticsearchConverter, JsonpMapper jsonpMapper) {
+	public RequestConverter(ElasticsearchConverter elasticsearchConverter) {
 		this.elasticsearchConverter = elasticsearchConverter;
-
-		Assert.notNull(jsonpMapper, "jsonpMapper must not be null");
-
-		this.jsonpMapper = jsonpMapper;
 	}
 
 	// region documents
@@ -122,14 +109,9 @@ public class RequestConverter {
 
 		return null;
 	}
-	/*
-	 * the methods documentIndexRequest, bulkIndexOperation and bulkCreateOperation have nearly
-	 * identical code, but the client builders do not have a common accessible base or some reusable parts
-	 * so the code needs to be duplicated.
-	 */
 
 	public IndexRequest<?> documentIndexRequest(IndexQuery query, IndexCoordinates indexCoordinates,
-			@Nullable RefreshPolicy refreshPolicy) {
+	                                            @Nullable RefreshPolicy refreshPolicy) {
 
 		Assert.notNull(query, "query must not be null");
 		Assert.notNull(indexCoordinates, "indexCoordinates must not be null");
@@ -174,15 +156,9 @@ public class RequestConverter {
 
 		return builder.build();
 	}
-	/*
-	 * the methods documentIndexRequest, bulkIndexOperation and bulkCreateOperation have nearly
-	 * identical code, but the client builders do not have a common accessible base or some reusable parts
-	 * so the code needs to be duplicated.
-	 */
 
-	@SuppressWarnings("DuplicatedCode")
 	private IndexOperation<?> bulkIndexOperation(IndexQuery query, IndexCoordinates indexCoordinates,
-			@Nullable RefreshPolicy refreshPolicy) {
+	                                             @Nullable RefreshPolicy refreshPolicy) {
 
 		IndexOperation.Builder<Object> builder = new IndexOperation.Builder<>();
 
@@ -212,9 +188,8 @@ public class RequestConverter {
 		return builder.build();
 	}
 
-	@SuppressWarnings("DuplicatedCode")
 	private CreateOperation<?> bulkCreateOperation(IndexQuery query, IndexCoordinates indexCoordinates,
-			@Nullable RefreshPolicy refreshPolicy) {
+	                                               @Nullable RefreshPolicy refreshPolicy) {
 
 		CreateOperation.Builder<Object> builder = new CreateOperation.Builder<>();
 
@@ -245,7 +220,7 @@ public class RequestConverter {
 	}
 
 	private UpdateOperation<?, ?> bulkUpdateOperation(UpdateQuery query, IndexCoordinates index,
-			@Nullable RefreshPolicy refreshPolicy) {
+	                                                  @Nullable RefreshPolicy refreshPolicy) {
 
 		UpdateOperation.Builder<Object, Object> uob = new UpdateOperation.Builder<>();
 		String indexName = query.getIndexName() != null ? query.getIndexName() : index.getIndexName();
@@ -297,7 +272,7 @@ public class RequestConverter {
 		Map<String, JsonData> params = new HashMap<>();
 
 		if (scriptData.getParams() != null) {
-			scriptData.getParams().forEach((key, value) -> params.put(key, JsonData.of(value, jsonpMapper)));
+			scriptData.getParams().forEach((key, value) -> params.put(key, JsonData.of(value)));
 		}
 		return co.elastic.clients.elasticsearch._types.Script.of(sb -> {
 			if (scriptData.getType() == ScriptType.INLINE) {
@@ -311,7 +286,7 @@ public class RequestConverter {
 	}
 
 	public BulkRequest documentBulkRequest(List<?> queries, BulkOptions bulkOptions, IndexCoordinates indexCoordinates,
-			@Nullable RefreshPolicy refreshPolicy) {
+	                                       @Nullable RefreshPolicy refreshPolicy) {
 
 		BulkRequest.Builder builder = new BulkRequest.Builder();
 
@@ -371,7 +346,7 @@ public class RequestConverter {
 	}
 
 	public co.elastic.clients.elasticsearch.core.ExistsRequest documentExistsRequest(String id, @Nullable String routing,
-			IndexCoordinates indexCoordinates) {
+	                                                                                 IndexCoordinates indexCoordinates) {
 
 		Assert.notNull(id, "id must not be null");
 		Assert.notNull(indexCoordinates, "indexCoordinates must not be null");
@@ -409,7 +384,7 @@ public class RequestConverter {
 	}
 
 	public DeleteRequest documentDeleteRequest(String id, @Nullable String routing, IndexCoordinates index,
-			@Nullable RefreshPolicy refreshPolicy) {
+	                                           @Nullable RefreshPolicy refreshPolicy) {
 
 		Assert.notNull(id, "id must not be null");
 		Assert.notNull(index, "index must not be null");
@@ -426,7 +401,7 @@ public class RequestConverter {
 	}
 
 	public DeleteByQueryRequest documentDeleteByQueryRequest(Query query, @Nullable String routing, Class<?> clazz,
-			IndexCoordinates index, @Nullable RefreshPolicy refreshPolicy) {
+	                                                         IndexCoordinates index, @Nullable RefreshPolicy refreshPolicy) {
 
 		Assert.notNull(query, "query must not be null");
 		Assert.notNull(index, "index must not be null");
@@ -437,7 +412,6 @@ public class RequestConverter {
 					.refresh(deleteByQueryRefresh(refreshPolicy));
 
 			if (query.isLimiting()) {
-				// noinspection ConstantConditions
 				b.maxDocs(Long.valueOf(query.getMaxResults()));
 			}
 
@@ -455,7 +429,7 @@ public class RequestConverter {
 	}
 
 	public UpdateRequest<Document, ?> documentUpdateRequest(UpdateQuery query, IndexCoordinates index,
-			@Nullable RefreshPolicy refreshPolicy, @Nullable String routing) {
+	                                                        @Nullable RefreshPolicy refreshPolicy, @Nullable String routing) {
 
 		String indexName = query.getIndexName() != null ? query.getIndexName() : index.getIndexName();
 		return UpdateRequest.of(uqb -> {
@@ -465,7 +439,7 @@ public class RequestConverter {
 						Map<String, JsonData> params = new HashMap<>();
 
 						if (query.getScriptData().getParams() != null) {
-							query.getScriptData().getParams().forEach((key, value) -> params.put(key, JsonData.of(value, jsonpMapper)));
+							query.getScriptData().getParams().forEach((key, value) -> params.put(key, JsonData.of(value)));
 						}
 
 						uqb.script(sb -> {
@@ -536,7 +510,7 @@ public class RequestConverter {
 	// region search
 
 	public UpdateByQueryRequest documentUpdateByQueryRequest(UpdateQuery updateQuery, IndexCoordinates index,
-			@Nullable RefreshPolicy refreshPolicy) {
+	                                                         @Nullable RefreshPolicy refreshPolicy) {
 
 		return UpdateByQueryRequest.of(ub -> {
 			ub //
@@ -587,23 +561,23 @@ public class RequestConverter {
 	}
 
 	public <T> SearchRequest searchRequest(Query query, @Nullable String routing, @Nullable Class<T> clazz,
-			IndexCoordinates indexCoordinates, boolean forCount) {
+	                                       IndexCoordinates indexCoordinates, boolean forCount) {
 		return searchRequest(query, routing, clazz, indexCoordinates, forCount, false, null);
 	}
 
 	public <T> SearchRequest searchRequest(Query query, @Nullable String routing, @Nullable Class<T> clazz,
-			IndexCoordinates indexCoordinates, boolean forCount, long scrollTimeInMillis) {
+	                                       IndexCoordinates indexCoordinates, boolean forCount, long scrollTimeInMillis) {
 		return searchRequest(query, routing, clazz, indexCoordinates, forCount, true, scrollTimeInMillis);
 	}
 
 	public <T> SearchRequest searchRequest(Query query, @Nullable String routing, @Nullable Class<T> clazz,
-			IndexCoordinates indexCoordinates, boolean forCount, boolean forBatchedSearch) {
+	                                       IndexCoordinates indexCoordinates, boolean forCount, boolean forBatchedSearch) {
 		return searchRequest(query, routing, clazz, indexCoordinates, forCount, forBatchedSearch, null);
 	}
 
 	public <T> SearchRequest searchRequest(Query query, @Nullable String routing, @Nullable Class<T> clazz,
-			IndexCoordinates indexCoordinates, boolean forCount, boolean forBatchedSearch,
-			@Nullable Long scrollTimeInMillis) {
+	                                       IndexCoordinates indexCoordinates, boolean forCount, boolean forBatchedSearch,
+	                                       @Nullable Long scrollTimeInMillis) {
 
 		Assert.notNull(query, "query must not be null");
 		Assert.notNull(indexCoordinates, "indexCoordinates must not be null");
@@ -687,10 +661,6 @@ public class RequestConverter {
 										});
 									}
 
-									if (!isEmpty(query.getStoredFields())) {
-										bb.storedFields(query.getStoredFields());
-									}
-
 									if (query.isLimiting()) {
 										bb.size(query.getMaxResults());
 									}
@@ -709,43 +679,12 @@ public class RequestConverter {
 
 									addHighlight(query, bb);
 
-									if (query.getExplain()) {
-										bb.explain(true);
-									}
-
 									if (!isEmpty(query.getSearchAfter())) {
 										bb.searchAfter(query.getSearchAfter().stream().map(TypeUtils::toFieldValue).collect(Collectors.toList()))
 										;
 									}
 
 									query.getRescorerQueries().forEach(rescorerQuery -> bb.rescore(getRescore(rescorerQuery)));
-
-									if (!query.getRuntimeFields().isEmpty()) {
-										Map<String, RuntimeField> runtimeMappings = new HashMap<>();
-										query.getRuntimeFields().forEach(runtimeField -> {
-											RuntimeField esRuntimeField = RuntimeField.of(rt -> {
-												RuntimeField.Builder rfb = rt
-														.type(RuntimeFieldType._DESERIALIZER.parse(runtimeField.getType()));
-												String script = runtimeField.getScript();
-
-												if (script != null) {
-													rfb
-															.script(s -> s
-																	.inline(is -> {
-																		is.source(script);
-
-																		if (runtimeField.getParams() != null) {
-																			is.params(TypeUtils.paramsMap(runtimeField.getParams()));
-																		}
-																		return is;
-																	}));
-												}
-												return rfb;
-											});
-											runtimeMappings.put(runtimeField.getName(), esRuntimeField);
-										});
-										bb.runtimeMappings(runtimeMappings);
-									}
 
 									if (!isEmpty(query.getIndicesBoost())) {
 										bb.indicesBoost(query.getIndicesBoost().stream()
@@ -756,9 +695,6 @@ public class RequestConverter {
 												})
 												.collect(Collectors.toList()));
 									}
-
-									query.getScriptedFields().forEach(scriptedField -> bb.scriptFields(scriptedField.getFieldName(),
-											sf -> sf.script(getScript(scriptedField.getScriptData()))));
 
 									if (query instanceof NativeQuery) {
 										NativeQuery nativeQuery = (NativeQuery) query;
@@ -776,7 +712,7 @@ public class RequestConverter {
 	}
 
 	private <T> void prepareSearchRequest(Query query, @Nullable String routing, @Nullable Class<T> clazz,
-			IndexCoordinates indexCoordinates, SearchRequest.Builder builder, boolean forCount, boolean forBatchedSearch) {
+	                                      IndexCoordinates indexCoordinates, SearchRequest.Builder builder, boolean forCount, boolean forBatchedSearch) {
 
 		String[] indexNames = indexCoordinates.getIndexNames();
 
@@ -797,31 +733,20 @@ public class RequestConverter {
 				.requestCache(query.getRequestCache()) //
 		;
 
-		PointInTime pointInTime = query.getPointInTime();
-		if (pointInTime != null) {
-			builder.pit(pb -> pb.id(pointInTime.getId()).keepAlive(time(pointInTime.getKeepAlive())));
+
+		builder.index(Arrays.asList(indexNames));
+
+		if (query.getRoute() != null) {
+			builder.routing(query.getRoute());
 		}
-		else {
-			builder //
-					.index(Arrays.asList(indexNames)) //
-			;
-
-			EnumSet<IndicesOptions.WildcardStates> expandWildcards = query.getExpandWildcards();
-			if (expandWildcards != null && !expandWildcards.isEmpty()) {
-				builder.expandWildcards(expandWildcards(expandWildcards));
-			}
-
-			if (query.getRoute() != null) {
-				builder.routing(query.getRoute());
-			}
-			else if (StringUtils.hasText(routing)) {
-				builder.routing(routing);
-			}
-
-			if (query.getPreference() != null) {
-				builder.preference(query.getPreference());
-			}
+		else if (StringUtils.hasText(routing)) {
+			builder.routing(routing);
 		}
+
+		if (query.getPreference() != null) {
+			builder.preference(query.getPreference());
+		}
+
 
 		if (persistentEntity != null && persistentEntity.hasSeqNoPrimaryTermProperty()) {
 			builder.seqNoPrimaryTerm(true);
@@ -839,14 +764,6 @@ public class RequestConverter {
 		if (!isEmpty(query.getFields())) {
 			List<FieldAndFormat> fieldAndFormats = query.getFields().stream().map(field -> FieldAndFormat.of(b -> b.field(field))).collect(Collectors.toList());
 			builder.fields(fieldAndFormats);
-		}
-
-		if (!isEmpty(query.getStoredFields())) {
-			builder.storedFields(query.getStoredFields());
-		}
-
-		if (query.getIndicesOptions() != null) {
-			addIndicesOptions(builder, query.getIndicesOptions());
 		}
 
 		if (query.isLimiting()) {
@@ -867,9 +784,6 @@ public class RequestConverter {
 
 		addHighlight(query, builder);
 
-		query.getScriptedFields().forEach(scriptedField -> builder.scriptFields(scriptedField.getFieldName(),
-				sf -> sf.script(getScript(scriptedField.getScriptData()))));
-
 		if (query instanceof NativeQuery) {
 			NativeQuery nativeQuery = (NativeQuery) query;
 			prepareNativeSearch(nativeQuery, builder);
@@ -884,40 +798,11 @@ public class RequestConverter {
 			builder.trackTotalHits(th -> th.count(query.getTrackTotalHitsUpTo()));
 		}
 
-		if (query.getExplain()) {
-			builder.explain(true);
-		}
-
 		if (!isEmpty(query.getSearchAfter())) {
 			builder.searchAfter(query.getSearchAfter().stream().map(TypeUtils::toFieldValue).collect(Collectors.toList()));
 		}
 
 		query.getRescorerQueries().forEach(rescorerQuery -> builder.rescore(getRescore(rescorerQuery)));
-
-		if (!query.getRuntimeFields().isEmpty()) {
-
-			Map<String, RuntimeField> runtimeMappings = new HashMap<>();
-			query.getRuntimeFields()
-					.forEach(runtimeField -> runtimeMappings.put(runtimeField.getName(), RuntimeField.of(rfb -> {
-						rfb.type(RuntimeFieldType._DESERIALIZER.parse(runtimeField.getType()));
-						String script = runtimeField.getScript();
-						if (script != null) {
-							rfb
-									.script(s -> s
-											.inline(is -> {
-												is.source(script);
-
-												if (runtimeField.getParams() != null) {
-													is.params(TypeUtils.paramsMap(runtimeField.getParams()));
-												}
-												return is;
-											}));
-						}
-
-						return rfb;
-					})));
-			builder.runtimeMappings(runtimeMappings);
-		}
 
 		if (forCount) {
 			builder.size(0) //
@@ -942,50 +827,6 @@ public class RequestConverter {
 					})
 					.collect(Collectors.toList()));
 		}
-
-		if (!isEmpty(query.getDocValueFields())) {
-			builder.docvalueFields(query.getDocValueFields().stream() //
-					.map(docValueField -> FieldAndFormat.of(b -> b.field(docValueField.getField()).format(docValueField.getField())))
-					.collect(Collectors.toList()));
-		}
-	}
-
-	private void addIndicesOptions(SearchRequest.Builder builder, IndicesOptions indicesOptions) {
-
-		indicesOptions.getOptions().forEach(option -> {
-			switch (option) {
-				case ALLOW_NO_INDICES:
-					builder.allowNoIndices(true);
-				case IGNORE_UNAVAILABLE:
-					builder.ignoreUnavailable(true);
-				case IGNORE_THROTTLED:
-					builder.ignoreThrottled(true);
-				case FORBID_ALIASES_TO_MULTIPLE_INDICES:
-				case FORBID_CLOSED_INDICES:
-				case IGNORE_ALIASES: {
-					if (log.isWarnEnabled()) {
-						log.warn(String.format("indices option %s is not supported by the Elasticsearch client.", option.name()));
-					}
-				}
-			}
-		});
-
-		builder.expandWildcards(indicesOptions.getExpandWildcards().stream()
-				.map(wildcardStates -> {
-					switch (wildcardStates) {
-						case OPEN:
-							return ExpandWildcard.Open;
-						case CLOSED:
-							return ExpandWildcard.Closed;
-						case HIDDEN:
-							return ExpandWildcard.Hidden;
-						case ALL:
-							return ExpandWildcard.All;
-						case NONE:
-							return ExpandWildcard.None;
-					}
-					return null;
-				}).collect(Collectors.toList()));
 	}
 
 	private Rescore getRescore(RescorerQuery rescorerQuery) {
@@ -1090,7 +931,7 @@ public class RequestConverter {
 
 	@Nullable
 	private NestedSortValue getNestedSort(@Nullable Order.Nested nested,
-			@Nullable ElasticsearchPersistentEntity<?> persistentEntity) {
+	                                      @Nullable ElasticsearchPersistentEntity<?> persistentEntity) {
 		return (nested == null || persistentEntity == null) ? null
 				: NestedSortValue.of(b -> b //
 				.path(elasticsearchConverter.updateFieldNames(nested.getPath(), persistentEntity)) //
@@ -1144,7 +985,7 @@ public class RequestConverter {
 
 	@Nullable
 	private co.elastic.clients.elasticsearch._types.query_dsl.Query getQuery(@Nullable Query query,
-			@Nullable Class<?> clazz) {
+	                                                                         @Nullable Class<?> clazz) {
 
 		if (query == null) {
 			return null;
@@ -1198,7 +1039,7 @@ public class RequestConverter {
 	// region helper functions
 
 	public co.elastic.clients.elasticsearch._types.query_dsl.MoreLikeThisQuery moreLikeThisQuery(MoreLikeThisQuery query,
-			IndexCoordinates index) {
+	                                                                                             IndexCoordinates index) {
 
 		Assert.notNull(query, "query must not be null");
 		Assert.notNull(index, "index must not be null");

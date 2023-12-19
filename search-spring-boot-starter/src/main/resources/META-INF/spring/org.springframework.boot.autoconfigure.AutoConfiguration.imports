@@ -1,0 +1,4 @@
+com.mawen.search.autoconfigure.ElasticsearchDataAutoConfiguration
+com.mawen.search.autoconfigure.ElasticsearchRepositoriesAutoConfiguration
+com.mawen.search.autoconfigure.ElasticsearchClientAutoConfiguration
+com.mawen.search.autoconfigure.ElasticsearchRestClientAutoConfiguration

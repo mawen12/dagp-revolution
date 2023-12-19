@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.mawen.search.core.ElasticsearchOperations;
-import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.domain.SearchHit;
 import com.mawen.search.core.domain.SearchHitSupport;
 import com.mawen.search.core.domain.SearchHits;
@@ -15,6 +14,7 @@ import com.mawen.search.core.domain.SearchPage;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.Query;
+import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.repository.ElasticsearchRepository;
 
 import org.springframework.data.domain.Page;
@@ -36,12 +36,11 @@ import org.springframework.util.Assert;
 public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchRepository<T, ID> {
 
 	protected ElasticsearchOperations operations;
-
 	protected Class<T> entityClass;
 	protected ElasticsearchEntityInformation<T, ID> entityInformation;
 
-	public SimpleElasticsearchRepository(ElasticsearchEntityInformation<T, ID> metadata,
-			ElasticsearchOperations operations) {
+	public SimpleElasticsearchRepository(ElasticsearchEntityInformation<T, ID> metadata, ElasticsearchOperations operations) {
+
 		this.operations = operations;
 
 		Assert.notNull(metadata, "ElasticsearchEntityInformation must not be null!");
@@ -50,11 +49,9 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 		this.entityClass = this.entityInformation.getJavaType();
 	}
 
-
 	@Override
 	public Optional<T> findById(ID id) {
-		return Optional.ofNullable(
-				execute(operations -> operations.get(stringIdRepresentation(id), entityClass, getIndexCoordinates())));
+		return Optional.ofNullable(execute(operations -> operations.get(stringIdRepresentation(id), entityClass, getIndexCoordinates())));
 	}
 
 	@Override
@@ -77,11 +74,9 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 		query.setPageable(pageable);
 		SearchHits<T> searchHits = execute(operations -> operations.search(query, entityClass, getIndexCoordinates()));
 		SearchPage<T> page = SearchHitSupport.searchPageFor(searchHits, query.getPageable());
-		// noinspection ConstantConditions
 		return (Page<T>) SearchHitSupport.unwrapSearchHits(page);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Iterable<T> findAll(Sort sort) {
 
@@ -162,7 +157,6 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 
 		return entities;
 	}
-
 
 	@Override
 	public <S extends T> Iterable<S> saveAll(Iterable<S> entities, @Nullable RefreshPolicy refreshPolicy) {

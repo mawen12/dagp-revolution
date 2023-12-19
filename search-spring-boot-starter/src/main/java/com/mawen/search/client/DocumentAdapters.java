@@ -15,7 +15,6 @@ import co.elastic.clients.elasticsearch.core.search.CompletionSuggestOption;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.NestedIdentity;
 import co.elastic.clients.json.JsonData;
-import co.elastic.clients.json.JsonpMapper;
 import com.mawen.search.client.query.builder.SearchDocumentResponseBuilder;
 import com.mawen.search.client.response.ResponseConverter;
 import com.mawen.search.client.util.TypeUtils;
@@ -43,7 +42,7 @@ public class DocumentAdapters {
 	}
 
 
-	public static SearchDocument from(Hit<?> hit, JsonpMapper jsonpMapper) {
+	public static SearchDocument from(Hit<?> hit) {
 
 		Assert.notNull(hit, "hit must not be null");
 
@@ -52,8 +51,8 @@ public class DocumentAdapters {
 		Map<String, SearchDocumentResponse> innerHits = new LinkedHashMap<>();
 		hit.innerHits().forEach((name, innerHitsResult) -> {
 			// noinspection ReturnOfNull
-			innerHits.put(name, SearchDocumentResponseBuilder.from(innerHitsResult.hits(), null, null, null, null,
-					searchDocument -> null, jsonpMapper));
+			innerHits.put(name, SearchDocumentResponseBuilder.from(innerHitsResult.hits(), null, null, null,
+					searchDocument -> null));
 		});
 
 		NestedMetaData nestedMetaData = from(hit.nested());
@@ -70,7 +69,7 @@ public class DocumentAdapters {
 					sb.append(',');
 				}
 				sb.append('"').append(key).append("\":") //
-						.append(jsonData.toJson(jsonpMapper).toString());
+						.append(jsonData.toJson().toString());
 				firstField[0] = false;
 			});
 			sb.append('}');

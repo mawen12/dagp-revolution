@@ -5,21 +5,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
-import com.mawen.search.core.query.BaseQuery;
-import com.mawen.search.core.domain.DocValueField;
-import com.mawen.search.core.query.HighlightQuery;
 import com.mawen.search.core.domain.IdWithRouting;
 import com.mawen.search.core.domain.IndexBoost;
-import com.mawen.search.core.domain.IndicesOptions;
-import com.mawen.search.core.domain.PointInTime;
+import com.mawen.search.core.domain.SourceFilter;
+import com.mawen.search.core.query.BaseQuery;
+import com.mawen.search.core.query.HighlightQuery;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.core.query.RescorerQuery;
-import com.mawen.search.core.domain.RuntimeField;
-import com.mawen.search.core.domain.ScriptedField;
-import com.mawen.search.core.domain.SourceFilter;
+import lombok.Getter;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,16 +25,13 @@ import org.springframework.util.Assert;
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
+@Getter
 public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQueryBuilder<Q, SELF>> {
 
 	protected final List<RescorerQuery> rescorerQueries = new ArrayList<>();
 	private final List<String> fields = new ArrayList<>();
 	private final Collection<String> ids = new ArrayList<>();
 	private final List<IdWithRouting> idsWithRouting = new ArrayList<>();
-	private final List<RuntimeField> runtimeFields = new ArrayList<>();
-	private final List<DocValueField> docValueFields = new ArrayList<>();
-	private final List<ScriptedField> scriptedFields = new ArrayList<>();
-	boolean explain = false;
 	@Nullable
 	Integer reactiveBatchSize;
 	@Nullable
@@ -47,16 +39,12 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 	@Nullable
 	private Pageable pageable;
 	@Nullable
-	private List<String> storedFields;
-	@Nullable
 	private SourceFilter sourceFilter;
 	private float minScore;
 	@Nullable
 	private String route;
 	@Nullable
 	private Query.SearchType searchType = Query.SearchType.QUERY_THEN_FETCH;
-	@Nullable
-	private IndicesOptions indicesOptions;
 	private boolean trackScores;
 	@Nullable
 	private String preference;
@@ -79,168 +67,10 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 	@Nullable
 	private Boolean requestCache;
 	@Nullable
-	private PointInTime pointInTime;
-	@Nullable
 	private Boolean allowNoIndices;
-	private EnumSet<IndicesOptions.WildcardStates> expandWildcards = EnumSet.noneOf(IndicesOptions.WildcardStates.class);
-
-	@Nullable
-	public Sort getSort() {
-		return sort;
-	}
-
-	@Nullable
-	public Pageable getPageable() {
-		return pageable;
-	}
-
-	public List<String> getFields() {
-		return fields;
-	}
-
-	@Nullable
-	public List<String> getStoredFields() {
-		return storedFields;
-	}
-
-	@Nullable
-	public Integer getMaxResults() {
-		return maxResults;
-	}
-
-	@Nullable
-	public Collection<String> getIds() {
-		return ids;
-	}
 
 	public boolean getTrackScores() {
 		return trackScores;
-	}
-
-	@Nullable
-	public IndicesOptions getIndicesOptions() {
-		return indicesOptions;
-	}
-
-	public float getMinScore() {
-		return minScore;
-	}
-
-	@Nullable
-	public String getPreference() {
-		return preference;
-	}
-
-	@Nullable
-	public SourceFilter getSourceFilter() {
-		return sourceFilter;
-	}
-
-	@Nullable
-	public HighlightQuery getHighlightQuery() {
-		return highlightQuery;
-	}
-
-	@Nullable
-	public String getRoute() {
-		return route;
-	}
-
-	@Nullable
-	public List<IndexBoost> getIndicesBoost() {
-		return indicesBoost;
-	}
-
-	@Nullable
-	public Query.SearchType getSearchType() {
-		return searchType;
-	}
-
-	@Nullable
-	public Boolean getTrackTotalHits() {
-		return trackTotalHits;
-	}
-
-	@Nullable
-	public Integer getTrackTotalHitsUpTo() {
-		return trackTotalHitsUpTo;
-	}
-
-	@Nullable
-	public Duration getScrollTime() {
-		return scrollTime;
-	}
-
-	@Nullable
-	public Duration getTimeout() {
-		return timeout;
-	}
-
-	public boolean getExplain() {
-		return explain;
-	}
-
-	@Nullable
-	public List<Object> getSearchAfter() {
-		return searchAfter;
-	}
-
-	@Nullable
-	public Boolean getRequestCache() {
-		return requestCache;
-	}
-
-	public List<IdWithRouting> getIdsWithRouting() {
-		return idsWithRouting;
-	}
-
-	public List<RuntimeField> getRuntimeFields() {
-		return runtimeFields;
-	}
-
-	public List<RescorerQuery> getRescorerQueries() {
-		return rescorerQueries;
-	}
-
-	/**
-	 * @since 5.0
-	 */
-	@Nullable
-	public PointInTime getPointInTime() {
-		return pointInTime;
-	}
-
-	/**
-	 * @since 5.1
-	 */
-	public Integer getReactiveBatchSize() {
-		return reactiveBatchSize;
-	}
-
-	/**
-	 * @since 5.1
-	 */
-	@Nullable
-	public Boolean getAllowNoIndices() {
-		return allowNoIndices;
-	}
-
-	/**
-	 * @since 5.1
-	 */
-	public EnumSet<IndicesOptions.WildcardStates> getExpandWildcards() {
-		return expandWildcards;
-	}
-
-	/**
-	 * @since 5.1
-	 */
-	public List<DocValueField> getDocValueFields() {
-		return docValueFields;
-	}
-
-	public List<ScriptedField> getScriptedFields() {
-		return scriptedFields;
 	}
 
 	public SELF withPageable(Pageable pageable) {
@@ -294,11 +124,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 		return self();
 	}
 
-	public SELF withIndicesOptions(IndicesOptions indicesOptions) {
-		this.indicesOptions = indicesOptions;
-		return self();
-	}
-
 	public SELF withMinScore(float minScore) {
 		this.minScore = minScore;
 		return self();
@@ -345,11 +170,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 		return self();
 	}
 
-	public SELF withStoredFields(@Nullable List<String> storedFields) {
-		this.storedFields = storedFields;
-		return self();
-	}
-
 	public SELF withIndicesBoost(IndexBoost... indicesBoost) {
 		this.indicesBoost = Arrays.asList(indicesBoost);
 		return self();
@@ -380,11 +200,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 		return self();
 	}
 
-	public SELF withExplain(boolean explain) {
-		this.explain = explain;
-		return self();
-	}
-
 	public SELF withSearchAfter(@Nullable List<Object> searchAfter) {
 		this.searchAfter = searchAfter;
 		return self();
@@ -410,15 +225,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 		return self();
 	}
 
-	public SELF withRuntimeFields(List<RuntimeField> runtimeFields) {
-
-		Assert.notNull(runtimeFields, "runtimeFields must not be null");
-
-		this.runtimeFields.clear();
-		this.runtimeFields.addAll(runtimeFields);
-		return self();
-	}
-
 	public SELF withRescorerQueries(List<RescorerQuery> rescorerQueries) {
 
 		Assert.notNull(rescorerQueries, "rescorerQueries must not be null");
@@ -437,14 +243,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 	}
 
 	/**
-	 * @since 5.0
-	 */
-	public SELF withPointInTime(@Nullable PointInTime pointInTime) {
-		this.pointInTime = pointInTime;
-		return self();
-	}
-
-	/**
 	 * @since 5.1
 	 */
 	public SELF withReactiveBatchSize(@Nullable Integer reactiveBatchSize) {
@@ -454,34 +252,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 
 	public SELF withAllowNoIndices(@Nullable Boolean allowNoIndices) {
 		this.allowNoIndices = allowNoIndices;
-		return self();
-	}
-
-	public SELF withExpandWildcards(EnumSet<IndicesOptions.WildcardStates> expandWildcards) {
-
-		Assert.notNull(expandWildcards, "expandWildcards must not be null");
-
-		this.expandWildcards = expandWildcards;
-		return self();
-	}
-
-	/**
-	 * @since 5.1
-	 */
-	public SELF withDocValueFields(List<DocValueField> docValueFields) {
-
-		Assert.notNull(docValueFields, "docValueFields must not be null");
-
-		this.docValueFields.clear();
-		this.docValueFields.addAll(docValueFields);
-		return self();
-	}
-
-	public SELF withScriptedField(ScriptedField scriptedField) {
-
-		Assert.notNull(scriptedField, "scriptedField must not be null");
-
-		this.scriptedFields.add(scriptedField);
 		return self();
 	}
 

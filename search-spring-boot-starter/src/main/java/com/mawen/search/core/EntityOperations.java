@@ -2,10 +2,10 @@ package com.mawen.search.core;
 
 import java.util.Map;
 
+import com.mawen.search.core.domain.SeqNoPrimaryTerm;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.mapping.IndexCoordinates;
-import com.mawen.search.core.domain.SeqNoPrimaryTerm;
 import com.mawen.search.core.routing.RoutingResolver;
 
 import org.springframework.core.convert.ConversionService;

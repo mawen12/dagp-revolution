@@ -3,17 +3,11 @@ package com.mawen.search.core.query;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
-import com.mawen.search.core.domain.DocValueField;
 import com.mawen.search.core.domain.IdWithRouting;
 import com.mawen.search.core.domain.IndexBoost;
-import com.mawen.search.core.domain.IndicesOptions;
-import com.mawen.search.core.domain.PointInTime;
-import com.mawen.search.core.domain.RuntimeField;
-import com.mawen.search.core.domain.ScriptedField;
 import com.mawen.search.core.domain.SourceFilter;
 
 import org.springframework.data.domain.PageRequest;
@@ -123,31 +117,6 @@ public interface Query {
 	void setFields(List<String> fields);
 
 	/**
-	 * Add stored fields to be added as part of search request
-	 *
-	 * @param storedFields
-	 * @since 4.4
-	 */
-	void addStoredFields(String... storedFields);
-
-	/**
-	 * Get stored fields to be returned as part of search request
-	 *
-	 * @return null if not set
-	 * @since 4.4
-	 */
-	@Nullable
-	List<String> getStoredFields();
-
-	/**
-	 * Set stored fields to be returned as part of search request
-	 *
-	 * @param storedFields
-	 * @since 4.4
-	 */
-	void setStoredFields(@Nullable List<String> storedFields);
-
-	/**
 	 * Add source filter to be added as part of search request
 	 *
 	 * @param sourceFilter
@@ -205,14 +174,6 @@ public interface Query {
 	 */
 	@Nullable
 	SearchType getSearchType();
-
-	/**
-	 * Get indices options
-	 *
-	 * @return null if not set
-	 */
-	@Nullable
-	IndicesOptions getIndicesOptions();
 
 	/**
 	 * Get preference
@@ -340,14 +301,6 @@ public interface Query {
 	Duration getTimeout();
 
 	/**
-	 * @return {@literal true} when the query has the explain parameter set, defaults to {@literal false}
-	 * @since 4.2
-	 */
-	default boolean getExplain() {
-		return false;
-	}
-
-	/**
 	 * @return the search_after objects.
 	 * @since 4.2
 	 */
@@ -397,35 +350,10 @@ public interface Query {
 	void setRequestCache(@Nullable Boolean value);
 
 	/**
-	 * Adds a runtime field to the query.
-	 *
-	 * @param runtimeField the runtime field definition, must not be {@literal null}
-	 * @since 4.3
-	 */
-	void addRuntimeField(RuntimeField runtimeField);
-
-	/**
-	 * @return the runtime fields for this query. May be empty but not null
-	 * @since 4.3
-	 */
-	List<RuntimeField> getRuntimeFields();
-
-	/**
 	 * @since 4.4
 	 */
 	@Nullable
 	List<IndexBoost> getIndicesBoost();
-
-	/**
-	 * @return the point in time id to use in the query
-	 * @since 5.0
-	 */
-	@Nullable
-	default PointInTime getPointInTime() {
-		return null;
-	}
-
-	;
 
 	/**
 	 * returns the number of documents that are requested when the reactive code does a batched search operation. This is
@@ -443,24 +371,6 @@ public interface Query {
 	 */
 	@Nullable
 	Boolean getAllowNoIndices();
-
-	/**
-	 * @since 5.1
-	 */
-	@Nullable
-	EnumSet<IndicesOptions.WildcardStates> getExpandWildcards();
-
-	/**
-	 * @return a possible empty list of docvalue_field values to be set on the query.
-	 * @since 5.1
-	 */
-	List<DocValueField> getDocValueFields();
-
-	/**
-	 * @return the list of scripted fields for the query
-	 * @since 5.1
-	 */
-	List<ScriptedField> getScriptedFields();
 
 	/**
 	 * @since 4.3

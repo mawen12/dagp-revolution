@@ -13,7 +13,6 @@ import com.mawen.search.core.query.highlight.HighlightParameters;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
-
 import static com.mawen.search.client.util.TypeUtils.*;
 
 /**

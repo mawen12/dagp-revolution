@@ -1,5 +1,6 @@
 package com.mawen.search.core.mapping;
 
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mapping.PersistentProperty;
 
 /**
@@ -28,6 +29,16 @@ public interface ElasticsearchPersistentProperty extends PersistentProperty<Elas
 		}
 		catch (Exception e) {
 			return null;
+		}
+	}
+
+	enum QueryPropertyToFieldNameConverter implements Converter<ElasticsearchPersistentProperty, String> {
+
+		INSTANCE;
+
+		@Override
+		public String convert(ElasticsearchPersistentProperty source) {
+			return source.getName();
 		}
 	}
 

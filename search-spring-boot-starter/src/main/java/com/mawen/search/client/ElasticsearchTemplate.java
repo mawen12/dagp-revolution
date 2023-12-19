@@ -33,21 +33,19 @@ import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
 import co.elastic.clients.elasticsearch.core.msearch.MultiSearchResponseItem;
 import co.elastic.clients.elasticsearch.core.search.ResponseBody;
-import co.elastic.clients.json.JsonpMapper;
-import co.elastic.clients.transport.Version;
 import com.mawen.search.BulkFailureException;
 import com.mawen.search.client.query.NativeQuery;
 import com.mawen.search.client.query.builder.SearchDocumentResponseBuilder;
 import com.mawen.search.client.request.RequestConverter;
 import com.mawen.search.client.response.ResponseConverter;
 import com.mawen.search.core.AbstractElasticsearchTemplate;
-import com.mawen.search.core.domain.SearchHits;
-import com.mawen.search.core.domain.SearchScrollHits;
 import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.document.SearchDocumentResponse;
-import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.domain.BulkOptions;
+import com.mawen.search.core.domain.SearchHits;
+import com.mawen.search.core.domain.SearchScrollHits;
+import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.ByQueryResponse;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.MoreLikeThisQuery;
@@ -61,7 +59,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
-
 import static com.mawen.search.client.util.TypeUtils.*;
 
 /**
@@ -71,11 +68,9 @@ import static com.mawen.search.client.util.TypeUtils.*;
 @Slf4j
 public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 
-
 	private final ElasticsearchClient client;
 	private final RequestConverter requestConverter;
 	private final ResponseConverter responseConverter;
-	private final JsonpMapper jsonpMapper;
 	private final ElasticsearchExceptionTranslator exceptionTranslator;
 
 	// region _initialization
@@ -84,10 +79,9 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 		Assert.notNull(client, "client must not be null");
 
 		this.client = client;
-		this.jsonpMapper = client._transport().jsonpMapper();
-		requestConverter = new RequestConverter(elasticsearchConverter, jsonpMapper);
-		responseConverter = new ResponseConverter(jsonpMapper);
-		exceptionTranslator = new ElasticsearchExceptionTranslator(jsonpMapper);
+		requestConverter = new RequestConverter(elasticsearchConverter);
+		responseConverter = new ResponseConverter();
+		exceptionTranslator = new ElasticsearchExceptionTranslator();
 	}
 
 	public ElasticsearchTemplate(ElasticsearchClient client, ElasticsearchConverter elasticsearchConverter) {
@@ -96,10 +90,9 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 		Assert.notNull(client, "client must not be null");
 
 		this.client = client;
-		this.jsonpMapper = client._transport().jsonpMapper();
-		requestConverter = new RequestConverter(elasticsearchConverter, jsonpMapper);
-		responseConverter = new ResponseConverter(jsonpMapper);
-		exceptionTranslator = new ElasticsearchExceptionTranslator(jsonpMapper);
+		requestConverter = new RequestConverter(elasticsearchConverter);
+		responseConverter = new ResponseConverter();
+		exceptionTranslator = new ElasticsearchExceptionTranslator();
 	}
 
 	@Override
@@ -231,21 +224,6 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 
 	// endregion
 
-	@Override
-	public String getClusterVersion() {
-		return execute(client -> client.info().version().number());
-	}
-
-	@Override
-	public String getVendor() {
-		return "Elasticsearch";
-	}
-
-	@Override
-	public String getRuntimeLibraryVersion() {
-		return Version.VERSION != null ? Version.VERSION.toString() : "0.0.0.?";
-	}
-
 	// region search operations
 	@Override
 	public long count(Query query, @Nullable Class<?> clazz, IndexCoordinates index) {
@@ -272,8 +250,7 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 	}
 
 	protected <T> SearchHits<T> doSearch(Query query, Class<T> clazz, IndexCoordinates index) {
-		SearchRequest searchRequest = requestConverter.searchRequest(query, routingResolver.getRouting(), clazz, index,
-				false);
+		SearchRequest searchRequest = requestConverter.searchRequest(query, routingResolver.getRouting(), clazz, index, false);
 		SearchResponse<EntityAsMap> searchResponse = execute(client -> client.search(searchRequest, EntityAsMap.class));
 
 		// noinspection DuplicatedCode
@@ -281,7 +258,7 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 		SearchDocumentResponse.EntityCreator<T> entityCreator = getEntityCreator(readDocumentCallback);
 		SearchDocumentResponseCallback<SearchHits<T>> callback = new ReadSearchDocumentResponseCallback<>(clazz, index);
 
-		return callback.doWith(SearchDocumentResponseBuilder.from(searchResponse, entityCreator, jsonpMapper));
+		return callback.doWith(SearchDocumentResponseBuilder.from(searchResponse, entityCreator));
 	}
 
 	@Override
@@ -331,7 +308,7 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 				index);
 
 		return callback
-				.doWith(SearchDocumentResponseBuilder.from(response, getEntityCreator(documentCallback), jsonpMapper));
+				.doWith(SearchDocumentResponseBuilder.from(response, getEntityCreator(documentCallback)));
 	}
 
 	@Override
@@ -450,13 +427,13 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 						queryParameter.getIndex());
 
 				SearchHits<?> searchHits = callback.doWith(
-						SearchDocumentResponseBuilder.from(responseItem.result(), getEntityCreator(documentCallback), jsonpMapper));
+						SearchDocumentResponseBuilder.from(responseItem.result(), getEntityCreator(documentCallback)));
 
 				searchHitsList.add(searchHits);
 			}
 			else {
 				if (log.isWarnEnabled()) {
-					log.warn(String.format("multisearch responsecontains failure: {}", responseItem.failure().error().reason()));
+					log.warn("multisearch responsecontains failure: {}", responseItem.failure().error().reason());
 				}
 			}
 		}

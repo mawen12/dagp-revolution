@@ -25,17 +25,12 @@ public class SearchDocumentResponse {
 	@Nullable
 	private final AggregationsContainer<?> aggregations;
 
-	@Nullable
-	String pointInTimeId;
-
 	public SearchDocumentResponse(long totalHits, String totalHitsRelation, float maxScore, @Nullable String scrollId,
-			@Nullable String pointInTimeId, List<SearchDocument> searchDocuments,
-			@Nullable AggregationsContainer<?> aggregationsContainer) {
+			List<SearchDocument> searchDocuments, @Nullable AggregationsContainer<?> aggregationsContainer) {
 		this.totalHits = totalHits;
 		this.totalHitsRelation = totalHitsRelation;
 		this.maxScore = maxScore;
 		this.scrollId = scrollId;
-		this.pointInTimeId = pointInTimeId;
 		this.searchDocuments = searchDocuments;
 		this.aggregations = aggregationsContainer;
 	}

@@ -62,7 +62,6 @@ public class SearchHitMapping<T> {
 		long totalHits = searchDocumentResponse.getTotalHits();
 		float maxScore = searchDocumentResponse.getMaxScore();
 		String scrollId = searchDocumentResponse.getScrollId();
-		String pointInTimeId = searchDocumentResponse.getPointInTimeId();
 
 		List<SearchHit<T>> searchHits = new ArrayList<>();
 		List<SearchDocument> searchDocuments = searchDocumentResponse.getSearchDocuments();
@@ -75,7 +74,7 @@ public class SearchHitMapping<T> {
 		AggregationsContainer<?> aggregations = searchDocumentResponse.getAggregations();
 		TotalHitsRelation totalHitsRelation = TotalHitsRelation.valueOf(searchDocumentResponse.getTotalHitsRelation());
 
-		return new SearchHitsImpl<>(totalHits, totalHitsRelation, maxScore, scrollId, pointInTimeId, searchHits,
+		return new SearchHitsImpl<>(totalHits, totalHitsRelation, maxScore, scrollId, searchHits,
 				aggregations);
 	}
 
@@ -188,7 +187,6 @@ public class SearchHitMapping<T> {
 						searchHits.getTotalHitsRelation(), //
 						searchHits.getMaxScore(), //
 						scrollId, //
-						searchHits.getPointInTimeId(), //
 						convertedSearchHits, //
 						searchHits.getAggregations());
 			}

@@ -1,6 +1,5 @@
 package com.mawen.search.client.aggregation;
 
-import com.mawen.search.client.aggregation.Aggregation;
 import com.mawen.search.core.aggregation.AggregationContainer;
 
 /**

@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import co.elastic.clients.elasticsearch._types.ErrorResponse;
-import co.elastic.clients.json.JsonpMapper;
 import com.mawen.search.InvalidApiUsageException;
 import com.mawen.search.NoSuchIndexException;
 import com.mawen.search.ResourceNotFoundException;
@@ -21,10 +20,7 @@ import org.elasticsearch.client.ResponseException;
  */
 public class ElasticsearchExceptionTranslator {
 
-	private final JsonpMapper jsonpMapper;
-
-	public ElasticsearchExceptionTranslator(JsonpMapper jsonpMapper) {
-		this.jsonpMapper = jsonpMapper;
+	public ElasticsearchExceptionTranslator() {
 	}
 
 	/**

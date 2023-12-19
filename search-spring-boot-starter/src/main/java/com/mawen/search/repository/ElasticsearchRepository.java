@@ -1,7 +1,7 @@
 package com.mawen.search.repository;
 
-import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.mapping.IndexCoordinates;
+import com.mawen.search.core.refresh.RefreshPolicy;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;

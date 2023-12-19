@@ -2,8 +2,8 @@ package com.mawen.search.core;
 
 import java.util.List;
 
-import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.domain.BulkOptions;
+import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.ByQueryResponse;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.Query;
