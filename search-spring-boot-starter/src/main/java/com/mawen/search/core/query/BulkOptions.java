@@ -2,7 +2,7 @@ package com.mawen.search.core.query;
 
 import java.time.Duration;
 
-import com.mawen.search.core.RefreshPolicy;
+import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.support.ActiveShardCount;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,11 +21,16 @@ public class BulkOptions {
 
 	private static final BulkOptions defaultOptions = builder().build();
 
-	@Nullable private final Duration timeout;
-	@Nullable private final RefreshPolicy refreshPolicy;
-	@Nullable private final ActiveShardCount waitForActiveShards;
-	@Nullable private final String pipeline;
-	@Nullable private final String routingId;
+	@Nullable
+	private final Duration timeout;
+	@Nullable
+	private final RefreshPolicy refreshPolicy;
+	@Nullable
+	private final ActiveShardCount waitForActiveShards;
+	@Nullable
+	private final String pipeline;
+	@Nullable
+	private final String routingId;
 
 	public static BulkOptionsBuilder builder() {
 		return new BulkOptionsBuilder();
@@ -39,11 +44,16 @@ public class BulkOptions {
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class BulkOptionsBuilder {
 
-		@Nullable private Duration timeout;
-		@Nullable private RefreshPolicy refreshPolicy;
-		@Nullable private ActiveShardCount waitForActiveShards;
-		@Nullable private String pipeline;
-		@Nullable private String routingId;
+		@Nullable
+		private Duration timeout;
+		@Nullable
+		private RefreshPolicy refreshPolicy;
+		@Nullable
+		private ActiveShardCount waitForActiveShards;
+		@Nullable
+		private String pipeline;
+		@Nullable
+		private String routingId;
 
 		public BulkOptionsBuilder withTimeout(Duration timeout) {
 			this.timeout = timeout;

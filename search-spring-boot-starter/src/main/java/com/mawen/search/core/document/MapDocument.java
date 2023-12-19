@@ -23,11 +23,16 @@ public class MapDocument implements Document {
 
 	private final DefaultStringObjectMap<?> delegate;
 
-	@Nullable private String index;
-	@Nullable private String id;
-	@Nullable private Long version;
-	@Nullable private Long seqNo;
-	@Nullable private Long primaryTerm;
+	@Nullable
+	private String index;
+	@Nullable
+	private String id;
+	@Nullable
+	private Long version;
+	@Nullable
+	private Long seqNo;
+	@Nullable
+	private Long primaryTerm;
 
 	MapDocument() {
 		this(new LinkedHashMap<>());
@@ -43,16 +48,16 @@ public class MapDocument implements Document {
 	}
 
 	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	@Override
 	public String getId() {
 
 		Assert.isTrue(hasId(), "No Id associated with this Document");
 
 		return this.id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Override

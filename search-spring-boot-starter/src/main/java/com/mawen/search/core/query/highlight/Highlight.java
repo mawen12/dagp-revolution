@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.springframework.util.Assert;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
@@ -33,14 +32,6 @@ public class Highlight {
 
 		this.parameters = parameters;
 		this.fields = fields;
-	}
-
-	public HighlightParameters getParameters() {
-		return parameters;
-	}
-
-	public List<HighlightField> getFields() {
-		return fields;
 	}
 
 	/**
@@ -79,5 +70,13 @@ public class Highlight {
 				.collect(Collectors.toList());
 
 		return new Highlight(highlightParameters, highlightFields);
+	}
+
+	public HighlightParameters getParameters() {
+		return parameters;
+	}
+
+	public List<HighlightField> getFields() {
+		return fields;
 	}
 }

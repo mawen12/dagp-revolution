@@ -1,13 +1,11 @@
 package com.mawen.search.core.query;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
@@ -15,7 +13,8 @@ import org.springframework.util.Assert;
 public class IdWithRouting {
 
 	private final String id;
-	@Nullable private final String routing;
+	@Nullable
+	private final String routing;
 
 	public IdWithRouting(String id, @Nullable String routing) {
 

@@ -1,14 +1,15 @@
 package com.mawen.search.core.query;
 
+import com.mawen.search.core.query.builder.StringQueryBuilder;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
-public class StringQuery extends BaseQuery{
+public class StringQuery extends BaseQuery {
 
 	public static String MATCH_ALL = "{ \"match_all\": {} }";
 

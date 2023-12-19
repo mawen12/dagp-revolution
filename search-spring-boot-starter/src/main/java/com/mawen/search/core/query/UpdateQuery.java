@@ -3,7 +3,7 @@ package com.mawen.search.core.query;
 import java.util.List;
 import java.util.Map;
 
-import com.mawen.search.core.RefreshPolicy;
+import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.support.ScriptType;
 import lombok.AccessLevel;
@@ -21,50 +21,67 @@ import org.springframework.lang.Nullable;
 public class UpdateQuery {
 
 	private final String id;
-	@Nullable private final Document document;
-	@Nullable private final Document upsert;
-	@Nullable private final String routing;
-	@Nullable private final Boolean scriptedUpsert;
-	@Nullable private final Boolean docAsUpsert;
-	@Nullable private final Boolean fetchSource;
-	@Nullable private final List<String> fetchSourceIncludes;
-	@Nullable private final List<String> fetchSourceExcludes;
-	@Nullable private final Integer ifSeqNo;
-	@Nullable private final Integer ifPrimaryTerm;
-	@Nullable private final RefreshPolicy refreshPolicy;
-	@Nullable private final Integer retryOnConflict;
-	@Nullable private final String timeout;
-	@Nullable private final String waitForActiveShards;
-	@Nullable private final Query query;
-	@Nullable private final Boolean abortOnVersionConflict;
-	@Nullable private final Integer batchSize;
-	@Nullable private final Integer maxDocs;
-	@Nullable private final Integer maxRetries;
-	@Nullable private final String pipeline;
-	@Nullable private final Float requestsPerSecond;
-	@Nullable private final Boolean shouldStoreResult;
-	@Nullable private final Integer slices;
-	@Nullable private final String indexName;
-	@Nullable private final ScriptData scriptData;
-
-	public static Builder builder(String id) {
-		return new Builder(id);
-	}
-
-	public static Builder builder(Query query) {
-		return new Builder(query);
-	}
+	@Nullable
+	private final Document document;
+	@Nullable
+	private final Document upsert;
+	@Nullable
+	private final String routing;
+	@Nullable
+	private final Boolean scriptedUpsert;
+	@Nullable
+	private final Boolean docAsUpsert;
+	@Nullable
+	private final Boolean fetchSource;
+	@Nullable
+	private final List<String> fetchSourceIncludes;
+	@Nullable
+	private final List<String> fetchSourceExcludes;
+	@Nullable
+	private final Integer ifSeqNo;
+	@Nullable
+	private final Integer ifPrimaryTerm;
+	@Nullable
+	private final RefreshPolicy refreshPolicy;
+	@Nullable
+	private final Integer retryOnConflict;
+	@Nullable
+	private final String timeout;
+	@Nullable
+	private final String waitForActiveShards;
+	@Nullable
+	private final Query query;
+	@Nullable
+	private final Boolean abortOnVersionConflict;
+	@Nullable
+	private final Integer batchSize;
+	@Nullable
+	private final Integer maxDocs;
+	@Nullable
+	private final Integer maxRetries;
+	@Nullable
+	private final String pipeline;
+	@Nullable
+	private final Float requestsPerSecond;
+	@Nullable
+	private final Boolean shouldStoreResult;
+	@Nullable
+	private final Integer slices;
+	@Nullable
+	private final String indexName;
+	@Nullable
+	private final ScriptData scriptData;
 
 	private UpdateQuery(String id, @Nullable String script, @Nullable Map<String, Object> params,
-	                    @Nullable Document document, @Nullable Document upsert, @Nullable String lang, @Nullable String routing,
-	                    @Nullable Boolean scriptedUpsert, @Nullable Boolean docAsUpsert, @Nullable Boolean fetchSource,
-	                    @Nullable List<String> fetchSourceIncludes, @Nullable List<String> fetchSourceExcludes, @Nullable Integer ifSeqNo,
-	                    @Nullable Integer ifPrimaryTerm, @Nullable RefreshPolicy refreshPolicy, @Nullable Integer retryOnConflict,
-	                    @Nullable String timeout, @Nullable String waitForActiveShards, @Nullable Query query,
-	                    @Nullable Boolean abortOnVersionConflict, @Nullable Integer batchSize, @Nullable Integer maxDocs,
-	                    @Nullable Integer maxRetries, @Nullable String pipeline, @Nullable Float requestsPerSecond,
-	                    @Nullable Boolean shouldStoreResult, @Nullable Integer slices, @Nullable ScriptType scriptType,
-	                    @Nullable String scriptName, @Nullable String indexName) {
+			@Nullable Document document, @Nullable Document upsert, @Nullable String lang, @Nullable String routing,
+			@Nullable Boolean scriptedUpsert, @Nullable Boolean docAsUpsert, @Nullable Boolean fetchSource,
+			@Nullable List<String> fetchSourceIncludes, @Nullable List<String> fetchSourceExcludes, @Nullable Integer ifSeqNo,
+			@Nullable Integer ifPrimaryTerm, @Nullable RefreshPolicy refreshPolicy, @Nullable Integer retryOnConflict,
+			@Nullable String timeout, @Nullable String waitForActiveShards, @Nullable Query query,
+			@Nullable Boolean abortOnVersionConflict, @Nullable Integer batchSize, @Nullable Integer maxDocs,
+			@Nullable Integer maxRetries, @Nullable String pipeline, @Nullable Float requestsPerSecond,
+			@Nullable Boolean shouldStoreResult, @Nullable Integer slices, @Nullable ScriptType scriptType,
+			@Nullable String scriptName, @Nullable String indexName) {
 
 		this.id = id;
 		this.document = document;
@@ -94,43 +111,81 @@ public class UpdateQuery {
 
 		if (scriptType != null || lang != null || script != null || scriptName != null || params != null) {
 			this.scriptData = new ScriptData(scriptType, lang, script, scriptName, params);
-		} else {
+		}
+		else {
 			this.scriptData = null;
 		}
 	}
 
+	public static Builder builder(String id) {
+		return new Builder(id);
+	}
+
+	public static Builder builder(Query query) {
+		return new Builder(query);
+	}
+
 	public static final class Builder {
 
+		@Nullable
+		String waitForActiveShards;
 		private String id;
-		@Nullable private String script = null;
-		@Nullable private Map<String, Object> params;
-		@Nullable private Document document = null;
-		@Nullable private Document upsert = null;
-		@Nullable private String lang = null;
-		@Nullable private String routing = null;
-		@Nullable private Boolean scriptedUpsert;
-		@Nullable private Boolean docAsUpsert;
-		@Nullable private Boolean fetchSource;
-		@Nullable private Integer ifSeqNo;
-		@Nullable private Integer ifPrimaryTerm;
-		@Nullable private RefreshPolicy refreshPolicy;
-		@Nullable private Integer retryOnConflict;
-		@Nullable private String timeout;
-		@Nullable String waitForActiveShards;
-		@Nullable private List<String> fetchSourceIncludes;
-		@Nullable private List<String> fetchSourceExcludes;
-		@Nullable private Query query;
-		@Nullable private Boolean abortOnVersionConflict;
-		@Nullable private Integer batchSize;
-		@Nullable private Integer maxDocs;
-		@Nullable private Integer maxRetries;
-		@Nullable private String pipeline;
-		@Nullable private Float requestsPerSecond;
-		@Nullable private Boolean shouldStoreResult;
-		@Nullable private Integer slices;
-		@Nullable private ScriptType scriptType;
-		@Nullable private String scriptName;
-		@Nullable private String indexName;
+		@Nullable
+		private String script = null;
+		@Nullable
+		private Map<String, Object> params;
+		@Nullable
+		private Document document = null;
+		@Nullable
+		private Document upsert = null;
+		@Nullable
+		private String lang = null;
+		@Nullable
+		private String routing = null;
+		@Nullable
+		private Boolean scriptedUpsert;
+		@Nullable
+		private Boolean docAsUpsert;
+		@Nullable
+		private Boolean fetchSource;
+		@Nullable
+		private Integer ifSeqNo;
+		@Nullable
+		private Integer ifPrimaryTerm;
+		@Nullable
+		private RefreshPolicy refreshPolicy;
+		@Nullable
+		private Integer retryOnConflict;
+		@Nullable
+		private String timeout;
+		@Nullable
+		private List<String> fetchSourceIncludes;
+		@Nullable
+		private List<String> fetchSourceExcludes;
+		@Nullable
+		private Query query;
+		@Nullable
+		private Boolean abortOnVersionConflict;
+		@Nullable
+		private Integer batchSize;
+		@Nullable
+		private Integer maxDocs;
+		@Nullable
+		private Integer maxRetries;
+		@Nullable
+		private String pipeline;
+		@Nullable
+		private Float requestsPerSecond;
+		@Nullable
+		private Boolean shouldStoreResult;
+		@Nullable
+		private Integer slices;
+		@Nullable
+		private ScriptType scriptType;
+		@Nullable
+		private String scriptName;
+		@Nullable
+		private String indexName;
 
 		private Builder(String id) {
 			this.id = id;

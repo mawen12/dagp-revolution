@@ -7,7 +7,6 @@ import lombok.Getter;
 import org.springframework.lang.Nullable;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
@@ -17,7 +16,8 @@ public class NestedMetaData {
 
 	private final String field;
 	private final int offset;
-	@Nullable private final NestedMetaData child;
+	@Nullable
+	private final NestedMetaData child;
 
 	public static NestedMetaData of(String field, int offset, @Nullable NestedMetaData nested) {
 		return new NestedMetaData(field, offset, nested);

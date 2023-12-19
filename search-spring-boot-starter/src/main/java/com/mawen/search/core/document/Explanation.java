@@ -9,16 +9,17 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
 @Getter
 public class Explanation {
 
-	@Nullable private final Boolean match;
+	@Nullable
+	private final Boolean match;
 	private final Double value;
-	@Nullable private final String description;
+	@Nullable
+	private final String description;
 	private final List<Explanation> details;
 
 	public Explanation(@Nullable Boolean match, Double value, @Nullable String description, List<Explanation> details) {

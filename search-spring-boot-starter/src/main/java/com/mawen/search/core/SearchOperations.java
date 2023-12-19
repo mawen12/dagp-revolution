@@ -1,17 +1,18 @@
 package com.mawen.search.core;
 
-import java.time.Duration;
 import java.util.List;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.MoreLikeThisQuery;
 import com.mawen.search.core.mapping.IndexCoordinates;
-import com.mawen.search.core.query.BaseQueryBuilder;
+import com.mawen.search.core.query.MoreLikeThisQuery;
 import com.mawen.search.core.query.Query;
+import com.mawen.search.core.query.SearchHit;
+import com.mawen.search.core.query.SearchHits;
+import com.mawen.search.core.query.SearchHitsIterator;
+import com.mawen.search.core.query.builder.BaseQueryBuilder;
 
 import org.springframework.lang.Nullable;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
@@ -62,13 +63,5 @@ public interface SearchOperations {
 	Query idsQuery(List<String> ids);
 
 	BaseQueryBuilder queryBuilderWithIds(List<String> ids);
-
-	default String openPointInTime(IndexCoordinates index, Duration keepAlive) {
-		return openPointInTime(index,keepAlive,false);
-	}
-
-	String openPointInTime(IndexCoordinates index, Duration keepAlive, Boolean ignoreUnavailable);
-
-	Boolean closePointInTime(String pit);
 
 }

@@ -9,15 +9,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.mawen.search.core.query.builder.BaseQueryBuilder;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
 import static java.util.Collections.*;
 import static org.springframework.util.CollectionUtils.*;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
@@ -29,37 +31,57 @@ public class BaseQuery implements Query {
 	protected Sort sort;
 	protected Pageable pageable = DEFAULT_PAGE;
 	protected List<String> fields = new ArrayList<>();
-	@Nullable protected List<String> storedFields;
-	@Nullable protected SourceFilter sourceFilter;
+	@Nullable
+	protected List<String> storedFields;
+	@Nullable
+	protected SourceFilter sourceFilter;
 	protected float minScore;
-	@Nullable protected Collection<String> ids;
-	@Nullable protected String route;
-	@Nullable protected SearchType searchType = SearchType.QUERY_THEN_FETCH;
-	@Nullable protected IndicesOptions indicesOptions;
+	@Nullable
+	protected Collection<String> ids;
+	@Nullable
+	protected String route;
+	@Nullable
+	protected SearchType searchType = SearchType.QUERY_THEN_FETCH;
+	@Nullable
+	protected IndicesOptions indicesOptions;
 	protected boolean trackScores;
-	@Nullable protected String preference;
-	@Nullable protected Integer maxResults;
-	@Nullable protected HighlightQuery highlightQuery;
-	@Nullable private Boolean trackTotalHits;
-	@Nullable protected Integer trackTotalHitsUpTo;
-	@Nullable protected Duration scrollTime;
-	@Nullable protected Duration timeout;
-	private boolean explain = false;
-	@Nullable protected List<Object> searchAfter;
-	@Nullable protected List<IndexBoost> indicesBoost;
+	@Nullable
+	protected String preference;
+	@Nullable
+	protected Integer maxResults;
+	@Nullable
+	protected HighlightQuery highlightQuery;
+	@Nullable
+	protected Integer trackTotalHitsUpTo;
+	@Nullable
+	protected Duration scrollTime;
+	@Nullable
+	protected Duration timeout;
+	@Nullable
+	protected List<Object> searchAfter;
+	@Nullable
+	protected List<IndexBoost> indicesBoost;
 	protected List<RescorerQuery> rescorerQueries = new ArrayList<>();
-	@Nullable protected Boolean requestCache;
+	@Nullable
+	protected Boolean requestCache;
 	protected List<IdWithRouting> idsWithRouting = Collections.emptyList();
 	protected List<RuntimeField> runtimeFields = new ArrayList<>();
-	@Nullable protected PointInTime pointInTime;
+	@Nullable
+	protected PointInTime pointInTime;
+	@Nullable
+	private Boolean trackTotalHits;
+	private boolean explain = false;
 	private boolean queryIsUpdatedByConverter = false;
-	@Nullable private Integer reactiveBatchSize = null;
-	@Nullable private Boolean allowNoIndices = null;
+	@Nullable
+	private Integer reactiveBatchSize = null;
+	@Nullable
+	private Boolean allowNoIndices = null;
 	private EnumSet<IndicesOptions.WildcardStates> expandWildcards;
 	private List<DocValueField> docValueFields = new ArrayList<>();
 	private List<ScriptedField> scriptedFields = new ArrayList<>();
 
-	public BaseQuery() {}
+	public BaseQuery() {
+	}
 
 	public <Q extends BaseQuery, B extends BaseQueryBuilder<Q, B>> BaseQuery(BaseQueryBuilder<Q, B> builder) {
 		this.sort = builder.getSort();
@@ -96,17 +118,17 @@ public class BaseQuery implements Query {
 		this.runtimeFields = builder.getRuntimeFields();
 	}
 
+	@Override
+	@Nullable
+	public Sort getSort() {
+		return this.sort;
+	}
+
 	/**
 	 * @since 5.1
 	 */
 	public void setSort(@Nullable Sort sort) {
 		this.sort = sort;
-	}
-
-	@Override
-	@Nullable
-	public Sort getSort() {
-		return this.sort;
 	}
 
 	@Override
@@ -186,7 +208,8 @@ public class BaseQuery implements Query {
 
 		if (this.sort == null) {
 			this.sort = sort;
-		} else {
+		}
+		else {
 			this.sort = this.sort.and(sort);
 		}
 
@@ -202,6 +225,12 @@ public class BaseQuery implements Query {
 		this.minScore = minScore;
 	}
 
+	@Override
+	@Nullable
+	public Collection<String> getIds() {
+		return ids;
+	}
+
 	/**
 	 * Set Ids for a multi-get request run with this query. Not used in any other searches.
 	 *
@@ -209,12 +238,6 @@ public class BaseQuery implements Query {
 	 */
 	public void setIds(@Nullable Collection<String> ids) {
 		this.ids = ids;
-	}
-
-	@Override
-	@Nullable
-	public Collection<String> getIds() {
-		return ids;
 	}
 
 	@Override
@@ -254,14 +277,14 @@ public class BaseQuery implements Query {
 		this.route = route;
 	}
 
-	public void setSearchType(@Nullable SearchType searchType) {
-		this.searchType = searchType;
-	}
-
 	@Nullable
 	@Override
 	public SearchType getSearchType() {
 		return searchType;
+	}
+
+	public void setSearchType(@Nullable SearchType searchType) {
+		this.searchType = searchType;
 	}
 
 	@Nullable
@@ -319,18 +342,13 @@ public class BaseQuery implements Query {
 	}
 
 	@Override
-	public void setHighlightQuery(HighlightQuery highlightQuery) {
-		this.highlightQuery = highlightQuery;
-	}
-
-	@Override
 	public Optional<HighlightQuery> getHighlightQuery() {
 		return Optional.ofNullable(highlightQuery);
 	}
 
 	@Override
-	public void setTrackTotalHits(@Nullable Boolean trackTotalHits) {
-		this.trackTotalHits = trackTotalHits;
+	public void setHighlightQuery(HighlightQuery highlightQuery) {
+		this.highlightQuery = highlightQuery;
 	}
 
 	@Override
@@ -340,14 +358,19 @@ public class BaseQuery implements Query {
 	}
 
 	@Override
-	public void setTrackTotalHitsUpTo(@Nullable Integer trackTotalHitsUpTo) {
-		this.trackTotalHitsUpTo = trackTotalHitsUpTo;
+	public void setTrackTotalHits(@Nullable Boolean trackTotalHits) {
+		this.trackTotalHits = trackTotalHits;
 	}
 
 	@Override
 	@Nullable
 	public Integer getTrackTotalHitsUpTo() {
 		return trackTotalHitsUpTo;
+	}
+
+	@Override
+	public void setTrackTotalHitsUpTo(@Nullable Integer trackTotalHitsUpTo) {
+		this.trackTotalHitsUpTo = trackTotalHitsUpTo;
 	}
 
 	@Nullable
@@ -388,15 +411,15 @@ public class BaseQuery implements Query {
 		this.explain = explain;
 	}
 
-	@Override
-	public void setSearchAfter(@Nullable List<Object> searchAfter) {
-		this.searchAfter = searchAfter;
-	}
-
 	@Nullable
 	@Override
 	public List<Object> getSearchAfter() {
 		return searchAfter;
+	}
+
+	@Override
+	public void setSearchAfter(@Nullable List<Object> searchAfter) {
+		this.searchAfter = searchAfter;
 	}
 
 	@Override
@@ -405,6 +428,11 @@ public class BaseQuery implements Query {
 		Assert.notNull(rescorerQuery, "rescorerQuery must not be null");
 
 		this.rescorerQueries.add(rescorerQuery);
+	}
+
+	@Override
+	public List<RescorerQuery> getRescorerQueries() {
+		return rescorerQueries;
 	}
 
 	@Override
@@ -417,19 +445,14 @@ public class BaseQuery implements Query {
 	}
 
 	@Override
-	public List<RescorerQuery> getRescorerQueries() {
-		return rescorerQueries;
+	@Nullable
+	public Boolean getRequestCache() {
+		return this.requestCache;
 	}
 
 	@Override
 	public void setRequestCache(@Nullable Boolean value) {
 		this.requestCache = value;
-	}
-
-	@Override
-	@Nullable
-	public Boolean getRequestCache() {
-		return this.requestCache;
 	}
 
 	@Override

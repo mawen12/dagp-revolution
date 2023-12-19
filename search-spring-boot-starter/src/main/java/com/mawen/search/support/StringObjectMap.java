@@ -15,7 +15,7 @@ public interface StringObjectMap<M extends StringObjectMap<M>> extends Map<Strin
 		Assert.notNull(key, "Key must not be null");
 
 		put(key, value);
-		return (M)this;
+		return (M) this;
 	}
 
 	default <T> T get(Object key, Class<T> type) {

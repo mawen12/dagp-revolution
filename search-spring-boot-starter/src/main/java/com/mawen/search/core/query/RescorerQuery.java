@@ -4,7 +4,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
@@ -14,8 +13,10 @@ public class RescorerQuery {
 	private ScoreMode scoreMode = ScoreMode.Default;
 	@Nullable
 	private Integer windowSize;
-	@Nullable private Float queryWeight;
-	@Nullable private Float rescoreQueryWeight;
+	@Nullable
+	private Float queryWeight;
+	@Nullable
+	private Float rescoreQueryWeight;
 
 	public RescorerQuery(Query query) {
 

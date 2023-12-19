@@ -33,12 +33,34 @@ public interface Query {
 	}
 
 	/**
-	 * restrict result to entries on given page. Corresponds to the 'start' and 'rows' parameter in elasticsearch
+	 * Utility method to get a query for a multiget request
 	 *
-	 * @param pageable
-	 * @return
+	 * @param idsWithRouting Ids with routing values used in a multi-get request.
+	 * @return Query instance
 	 */
-	<T extends Query> T setPageable(Pageable pageable);
+	static Query multiGetQueryWithRouting(List<IdWithRouting> idsWithRouting) {
+
+		Assert.notNull(idsWithRouting, "idsWithRouting must not be null");
+
+		BaseQuery query = new BaseQuery();
+		query.setIdsWithRouting(idsWithRouting);
+		return query;
+	}
+
+	/**
+	 * Utility method to get a query for a multiget request
+	 *
+	 * @param ids Ids used in a multi-get request.
+	 * @return Query instance
+	 */
+	static Query multiGetQuery(Collection<String> ids) {
+
+		Assert.notNull(ids, "ids must not be null");
+
+		BaseQuery query = new BaseQuery();
+		query.setIds(ids);
+		return query;
+	}
 
 	/**
 	 * Get page settings if defined
@@ -46,6 +68,14 @@ public interface Query {
 	 * @return
 	 */
 	Pageable getPageable();
+
+	/**
+	 * restrict result to entries on given page. Corresponds to the 'start' and 'rows' parameter in elasticsearch
+	 *
+	 * @param pageable
+	 * @return
+	 */
+	<T extends Query> T setPageable(Pageable pageable);
 
 	/**
 	 * Add {@link org.springframework.data.domain.Sort} to query
@@ -152,36 +182,6 @@ public interface Query {
 	List<IdWithRouting> getIdsWithRouting();
 
 	/**
-	 * Utility method to get a query for a multiget request
-	 *
-	 * @param idsWithRouting Ids with routing values used in a multi-get request.
-	 * @return Query instance
-	 */
-	static Query multiGetQueryWithRouting(List<IdWithRouting> idsWithRouting) {
-
-		Assert.notNull(idsWithRouting, "idsWithRouting must not be null");
-
-		BaseQuery query = new BaseQuery();
-		query.setIdsWithRouting(idsWithRouting);
-		return query;
-	}
-
-	/**
-	 * Utility method to get a query for a multiget request
-	 *
-	 * @param ids Ids used in a multi-get request.
-	 * @return Query instance
-	 */
-	static Query multiGetQuery(Collection<String> ids) {
-
-		Assert.notNull(ids, "ids must not be null");
-
-		BaseQuery query = new BaseQuery();
-		query.setIds(ids);
-		return query;
-	}
-
-	/**
 	 * Get route
 	 *
 	 * @return
@@ -241,14 +241,6 @@ public interface Query {
 	}
 
 	/**
-	 * Sets the {@link HighlightQuery}.
-	 *
-	 * @param highlightQuery the query to set
-	 * @since 4.0
-	 */
-	void setHighlightQuery(HighlightQuery highlightQuery);
-
-	/**
 	 * @return the optional set {@link HighlightQuery}.
 	 * @since 4.0
 	 */
@@ -257,14 +249,12 @@ public interface Query {
 	}
 
 	/**
-	 * Sets the flag whether to set the Track_total_hits parameter on queries {@see <a href=
-	 * "https://www.elastic.co/guide/en/elasticsearch/reference/7.0/search-request-track-total-hits.html">Elasticseacrh
-	 * documentation</>}
+	 * Sets the {@link HighlightQuery}.
 	 *
-	 * @param trackTotalHits the value to set.
+	 * @param highlightQuery the query to set
 	 * @since 4.0
 	 */
-	void setTrackTotalHits(@Nullable Boolean trackTotalHits);
+	void setHighlightQuery(HighlightQuery highlightQuery);
 
 	/**
 	 * Sets the flag whether to set the Track_total_hits parameter on queries {@see <a href=
@@ -278,12 +268,14 @@ public interface Query {
 	Boolean getTrackTotalHits();
 
 	/**
-	 * Sets the maximum value up to which total hits are tracked. Only relevant if #getTrackTotalHits is {@literal null}
+	 * Sets the flag whether to set the Track_total_hits parameter on queries {@see <a href=
+	 * "https://www.elastic.co/guide/en/elasticsearch/reference/7.0/search-request-track-total-hits.html">Elasticseacrh
+	 * documentation</>}
 	 *
-	 * @param trackTotalHitsUpTo max limit for trackTotalHits
-	 * @since 4.1
+	 * @param trackTotalHits the value to set.
+	 * @since 4.0
 	 */
-	void setTrackTotalHitsUpTo(@Nullable Integer trackTotalHitsUpTo);
+	void setTrackTotalHits(@Nullable Boolean trackTotalHits);
 
 	/**
 	 * Gets the maximum value up to which total hits are tracked. Only relevant if #getTrackTotalHits is {@literal null}
@@ -293,6 +285,14 @@ public interface Query {
 	 */
 	@Nullable
 	Integer getTrackTotalHitsUpTo();
+
+	/**
+	 * Sets the maximum value up to which total hits are tracked. Only relevant if #getTrackTotalHits is {@literal null}
+	 *
+	 * @param trackTotalHitsUpTo max limit for trackTotalHits
+	 * @since 4.1
+	 */
+	void setTrackTotalHitsUpTo(@Nullable Integer trackTotalHitsUpTo);
 
 	/**
 	 * For queries that are used in delete request, these are internally handled by Elasticsearch as scroll/bulk delete
@@ -338,15 +338,14 @@ public interface Query {
 		return false;
 	}
 
-
-	void setSearchAfter(@Nullable List<Object> searchAfter);
-
 	/**
 	 * @return the search_after objects.
 	 * @since 4.2
 	 */
 	@Nullable
 	List<Object> getSearchAfter();
+
+	void setSearchAfter(@Nullable List<Object> searchAfter);
 
 	/**
 	 * Adds a {@link RescorerQuery}.
@@ -355,14 +354,6 @@ public interface Query {
 	 * @since 4.2
 	 */
 	void addRescorerQuery(RescorerQuery rescorerQuery);
-
-	/**
-	 * Sets the {@link RescorerQuery}.
-	 *
-	 * @param rescorerQueryList list of rescorer queries set, must not be {@literal null}.
-	 * @since 4.2
-	 */
-	void setRescorerQueries(List<RescorerQuery> rescorerQueryList);
 
 	/**
 	 * get the list of {@link RescorerQuery}s
@@ -374,12 +365,12 @@ public interface Query {
 	}
 
 	/**
-	 * sets the request_cache value for the query.
+	 * Sets the {@link RescorerQuery}.
 	 *
-	 * @param value new value
-	 * @since 4.3
+	 * @param rescorerQueryList list of rescorer queries set, must not be {@literal null}.
+	 * @since 4.2
 	 */
-	void setRequestCache(@Nullable Boolean value);
+	void setRescorerQueries(List<RescorerQuery> rescorerQueryList);
 
 	/**
 	 * @return the request_cache value for this query.
@@ -387,6 +378,14 @@ public interface Query {
 	 */
 	@Nullable
 	Boolean getRequestCache();
+
+	/**
+	 * sets the request_cache value for the query.
+	 *
+	 * @param value new value
+	 * @since 4.3
+	 */
+	void setRequestCache(@Nullable Boolean value);
 
 	/**
 	 * Adds a runtime field to the query.
@@ -415,7 +414,9 @@ public interface Query {
 	@Nullable
 	default PointInTime getPointInTime() {
 		return null;
-	};
+	}
+
+	;
 
 	/**
 	 * returns the number of documents that are requested when the reactive code does a batched search operation. This is

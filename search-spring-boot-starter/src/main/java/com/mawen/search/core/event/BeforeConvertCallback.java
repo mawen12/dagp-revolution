@@ -1,5 +1,7 @@
 package com.mawen.search.core.event;
 
+import org.springframework.data.mapping.callback.EntityCallback;
+
 /**
  * Calling being invoked before a domain object is converted to be persisted.
  *

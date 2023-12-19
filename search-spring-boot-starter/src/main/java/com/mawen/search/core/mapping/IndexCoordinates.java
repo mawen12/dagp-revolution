@@ -2,6 +2,8 @@ package com.mawen.search.core.mapping;
 
 import java.util.Arrays;
 
+import lombok.Getter;
+
 import org.springframework.util.Assert;
 
 /**
@@ -10,6 +12,7 @@ import org.springframework.util.Assert;
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 0.0.1
  */
+@Getter
 public class IndexCoordinates {
 
 	private final String[] indexNames;
@@ -22,6 +25,10 @@ public class IndexCoordinates {
 	public static IndexCoordinates of(String... indexNames) {
 		Assert.notEmpty(indexNames, "indexNames must not be null");
 		return new IndexCoordinates(indexNames);
+	}
+
+	public String getIndexName() {
+		return indexNames[0];
 	}
 
 	@Override

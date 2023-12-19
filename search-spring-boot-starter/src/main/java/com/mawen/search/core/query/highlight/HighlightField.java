@@ -3,7 +3,6 @@ package com.mawen.search.core.query.highlight;
 import org.springframework.util.Assert;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
@@ -31,14 +30,6 @@ public class HighlightField {
 		this.parameters = parameters;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public HighlightFieldParameters getParameters() {
-		return parameters;
-	}
-
 	public static HighlightField of(com.mawen.search.core.annotation.HighlightField field) {
 
 		com.mawen.search.core.annotation.HighlightParameters parameters = field.parameters();
@@ -63,5 +54,13 @@ public class HighlightField {
 				.build();
 
 		return new HighlightField(field.name(), highlightParameters);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public HighlightFieldParameters getParameters() {
+		return parameters;
 	}
 }

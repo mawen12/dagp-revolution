@@ -7,7 +7,6 @@ import java.util.function.Function;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mawen.search.support.StringObjectMap;
 
-import org.springframework.core.convert.ConversionException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.util.Assert;
 

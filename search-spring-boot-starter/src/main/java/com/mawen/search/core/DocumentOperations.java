@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.BulkOptions;
+import com.mawen.search.core.query.ByQueryResponse;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.core.query.UpdateQuery;
+import com.mawen.search.core.query.UpdateResponse;
 import com.mawen.search.core.support.IndexedObjectInformation;
 import com.mawen.search.core.support.MultiGetItem;
 
@@ -30,11 +32,15 @@ public interface DocumentOperations {
 
 	<T> Iterable<T> save(T... entities);
 
+	String index(IndexQuery query, IndexCoordinates index);
+
 	@Nullable
 	<T> T get(String id, Class<T> clazz);
 
 	@Nullable
 	<T> T get(String id, Class<T> clazz, IndexCoordinates index);
+
+	<T> List<MultiGetItem<T>> multiGet(Query query, Class<T> clazz);
 
 	<T> List<MultiGetItem<T>> multiGet(Query query, Class<T> clazz, IndexCoordinates index);
 
@@ -55,7 +61,7 @@ public interface DocumentOperations {
 	List<IndexedObjectInformation> bulkIndex(List<IndexQuery> queries, BulkOptions bulkOperation, IndexCoordinates index);
 
 	default void bulkUpdate(List<UpdateQuery> queries, IndexCoordinates index) {
-		bulkUpdate();
+		bulkUpdate(queries, BulkOptions.defaultOptions(), index);
 	}
 
 	void bulkUpdate(List<UpdateQuery> queries, Class<?> clazz);
@@ -69,4 +75,14 @@ public interface DocumentOperations {
 	String delete(Object entity);
 
 	String delete(Object entity, IndexCoordinates index);
+
+	ByQueryResponse delete(Query query, Class<?> clazz);
+
+	ByQueryResponse delete(Query query, Class<?> clazz, IndexCoordinates index);
+
+	<T> UpdateResponse update(T entity);
+
+	<T> UpdateResponse update(T entity, IndexCoordinates index);
+
+	<T> UpdateResponse update(UpdateQuery updateQuery, IndexCoordinates index);
 }

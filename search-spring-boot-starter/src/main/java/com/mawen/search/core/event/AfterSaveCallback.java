@@ -2,6 +2,8 @@ package com.mawen.search.core.event;
 
 import com.mawen.search.core.mapping.IndexCoordinates;
 
+import org.springframework.data.mapping.callback.EntityCallback;
+
 /**
  * Entity callback triggered after save of an entity
  *
@@ -16,7 +18,7 @@ public interface AfterSaveCallback<T> extends EntityCallback<T> {
 	 * Can return either the same or a modified instance of the domain object.
 	 *
 	 * @param entity the domain object that was saved
-	 * @param index must not be {@literal null}
+	 * @param index  must not be {@literal null}
 	 * @return the domain object that was persisted
 	 */
 	T onAfterSave(T entity, IndexCoordinates index);

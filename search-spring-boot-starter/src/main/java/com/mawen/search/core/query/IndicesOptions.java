@@ -3,14 +3,10 @@ package com.mawen.search.core.query;
 import java.util.EnumSet;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
 public class IndicesOptions {
-	private EnumSet<Option> options;
-	private EnumSet<WildcardStates> expandWildcards;
-
 	public static final IndicesOptions STRICT_EXPAND_OPEN = new IndicesOptions(
 			EnumSet.of(IndicesOptions.Option.ALLOW_NO_INDICES), EnumSet.of(IndicesOptions.WildcardStates.OPEN));
 	public static final IndicesOptions STRICT_EXPAND_OPEN_HIDDEN = new IndicesOptions(
@@ -48,6 +44,8 @@ public class IndicesOptions {
 	public static final IndicesOptions STRICT_SINGLE_INDEX_NO_EXPAND_FORBID_CLOSED = new IndicesOptions(
 			EnumSet.of(IndicesOptions.Option.FORBID_ALIASES_TO_MULTIPLE_INDICES, IndicesOptions.Option.FORBID_CLOSED_INDICES),
 			EnumSet.noneOf(IndicesOptions.WildcardStates.class));
+	private EnumSet<Option> options;
+	private EnumSet<WildcardStates> expandWildcards;
 
 	public IndicesOptions(EnumSet<Option> options, EnumSet<WildcardStates> expandWildcards) {
 		this.options = options;
@@ -79,6 +77,11 @@ public class IndicesOptions {
 	}
 
 	public enum Option {
-		IGNORE_UNAVAILABLE, IGNORE_ALIASES, ALLOW_NO_INDICES, FORBID_ALIASES_TO_MULTIPLE_INDICES, FORBID_CLOSED_INDICES, IGNORE_THROTTLED;
+		IGNORE_UNAVAILABLE,
+		IGNORE_ALIASES,
+		ALLOW_NO_INDICES,
+		FORBID_ALIASES_TO_MULTIPLE_INDICES,
+		FORBID_CLOSED_INDICES,
+		IGNORE_THROTTLED;
 	}
 }

@@ -27,6 +27,10 @@ public class MultiGetItem<T> {
 		return new MultiGetItem<>(item, failure);
 	}
 
+	public boolean isFailed() {
+		return failure != null;
+	}
+
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class Failure {

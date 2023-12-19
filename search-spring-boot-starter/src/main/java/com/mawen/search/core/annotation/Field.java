@@ -15,4 +15,8 @@ public @interface Field {
 	String value() default "";
 
 	FieldType type() default FieldType.Auto;
+
+	DateFormat[] format() default {DateFormat.date_optional_time, DateFormat.epoch_millis};
+
+	String[] pattern() default {};
 }

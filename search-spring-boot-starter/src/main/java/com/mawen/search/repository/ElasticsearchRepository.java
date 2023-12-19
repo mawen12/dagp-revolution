@@ -1,6 +1,6 @@
 package com.mawen.search.repository;
 
-import com.mawen.search.core.RefreshPolicy;
+import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.mapping.IndexCoordinates;
 
 import org.springframework.data.repository.CrudRepository;
@@ -19,9 +19,11 @@ public interface ElasticsearchRepository<T, ID> extends
 
 	<S extends T> S save(S entity, @Nullable RefreshPolicy refreshPolicy);
 
-	<S extends T> Iterable<S> saveAll(Iterable<T> entities, @Nullable RefreshPolicy refreshPolicy);
+	<S extends T> Iterable<S> saveAll(Iterable<S> entities, @Nullable RefreshPolicy refreshPolicy);
 
-	void deleteById(ID id, IndexCoordinates indexCoordinates, @Nullable RefreshPolicy refreshPolicy);
+	void deleteById(ID id, @Nullable RefreshPolicy refreshPolicy);
+
+	void deleteById(ID id, IndexCoordinates index, @Nullable RefreshPolicy refreshPolicy);
 
 	void delete(T entity, @Nullable RefreshPolicy refreshPolicy);
 

@@ -17,9 +17,14 @@ import org.springframework.lang.Nullable;
 @EqualsAndHashCode
 public class IndexedObjectInformation {
 
-	@Nullable private String id;
-	@Nullable private String index;
-	@Nullable private Long seqNo;
-	@Nullable private Long primaryTerm;
-	@Nullable private Long version;
+	@Nullable
+	private String id;
+	@Nullable
+	private String index;
+	@Nullable
+	private Long seqNo;
+	@Nullable
+	private Long primaryTerm;
+	@Nullable
+	private Long version;
 }

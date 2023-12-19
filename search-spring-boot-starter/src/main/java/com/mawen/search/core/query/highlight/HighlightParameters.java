@@ -1,7 +1,6 @@
 package com.mawen.search.core.query.highlight;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
@@ -15,16 +14,16 @@ public class HighlightParameters extends HighlightCommonParameters {
 		tagsSchema = builder.tagsSchema;
 	}
 
+	public static HighlightParametersBuilder builder() {
+		return new HighlightParametersBuilder();
+	}
+
 	public String getEncoder() {
 		return encoder;
 	}
 
 	public String getTagsSchema() {
 		return tagsSchema;
-	}
-
-	public static HighlightParametersBuilder builder() {
-		return new HighlightParametersBuilder();
 	}
 
 	public static final class HighlightParametersBuilder

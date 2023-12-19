@@ -19,15 +19,22 @@ import org.springframework.lang.Nullable;
 @AllArgsConstructor
 public class IndexQuery {
 
-	@Nullable private String id;
-	@Nullable private Object object;
-	@Nullable private Long version;
-	@Nullable private String source;
-	@Nullable private Long seqNo;
-	@Nullable private Long primaryTerm;
-	@Nullable private String routing;
-	@Nullable private OpType opType;
-	@Nullable private String indexName;
+	@Nullable
+	private String id;
+	@Nullable
+	private Object object;
+	@Nullable
+	private String source;
+	@Nullable
+	private Long seqNo;
+	@Nullable
+	private Long primaryTerm;
+	@Nullable
+	private String routing;
+	@Nullable
+	private OpType opType;
+	@Nullable
+	private String indexName;
 
 	@Getter
 	public enum OpType {

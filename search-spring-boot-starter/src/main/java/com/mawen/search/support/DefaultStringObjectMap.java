@@ -49,7 +49,7 @@ public class DefaultStringObjectMap<T extends StringObjectMap<T>> implements Str
 		catch (JsonProcessingException e) {
 			throw new IllegalArgumentException("Cannot parse JSON", e);
 		}
-		return (T)this;
+		return (T) this;
 	}
 
 	@Override

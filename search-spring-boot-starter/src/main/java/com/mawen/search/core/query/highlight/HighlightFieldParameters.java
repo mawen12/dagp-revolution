@@ -1,7 +1,6 @@
 package com.mawen.search.core.query.highlight;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
@@ -15,16 +14,16 @@ public class HighlightFieldParameters extends HighlightCommonParameters {
 		matchedFields = builder.matchedFields;
 	}
 
+	public static HighlightFieldParametersBuilder builder() {
+		return new HighlightFieldParametersBuilder();
+	}
+
 	public int getFragmentOffset() {
 		return fragmentOffset;
 	}
 
 	public String[] getMatchedFields() {
 		return matchedFields;
-	}
-
-	public static HighlightFieldParametersBuilder builder() {
-		return new HighlightFieldParametersBuilder();
 	}
 
 	public static final class HighlightFieldParametersBuilder

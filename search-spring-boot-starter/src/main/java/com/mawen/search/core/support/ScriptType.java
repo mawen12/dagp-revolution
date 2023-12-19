@@ -6,7 +6,5 @@ package com.mawen.search.core.support;
  */
 public enum ScriptType {
 
-	INLINE,
-
-	STORED;
+	INLINE;
 }
