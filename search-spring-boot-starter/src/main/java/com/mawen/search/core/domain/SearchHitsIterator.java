@@ -1,6 +1,7 @@
-package com.mawen.search.core.query;
+package com.mawen.search.core.domain;
 
 import com.mawen.search.core.aggregation.AggregationsContainer;
+import com.mawen.search.core.query.TotalHitsRelation;
 
 import org.springframework.data.util.CloseableIterator;
 

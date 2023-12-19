@@ -11,8 +11,8 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.json.JsonData;
 import com.mawen.search.InvalidApiUsageException;
 import com.mawen.search.core.annotation.FieldType;
-import com.mawen.search.core.query.Criteria;
-import com.mawen.search.core.query.Field;
+import com.mawen.search.core.domain.Criteria;
+import com.mawen.search.core.domain.Field;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;

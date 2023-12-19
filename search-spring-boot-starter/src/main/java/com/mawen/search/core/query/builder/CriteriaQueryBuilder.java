@@ -1,6 +1,6 @@
 package com.mawen.search.core.query.builder;
 
-import com.mawen.search.core.query.Criteria;
+import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.query.CriteriaQuery;
 
 import org.springframework.util.Assert;

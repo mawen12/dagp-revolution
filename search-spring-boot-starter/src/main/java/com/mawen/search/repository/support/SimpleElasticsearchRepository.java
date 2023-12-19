@@ -6,13 +6,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.mawen.search.core.AbstractElasticsearchTemplate;
 import com.mawen.search.core.ElasticsearchOperations;
 import com.mawen.search.core.refresh.RefreshPolicy;
-import com.mawen.search.core.query.SearchHit;
-import com.mawen.search.core.query.SearchHitSupport;
-import com.mawen.search.core.query.SearchHits;
-import com.mawen.search.core.query.SearchPage;
+import com.mawen.search.core.domain.SearchHit;
+import com.mawen.search.core.domain.SearchHitSupport;
+import com.mawen.search.core.domain.SearchHits;
+import com.mawen.search.core.domain.SearchPage;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.Query;

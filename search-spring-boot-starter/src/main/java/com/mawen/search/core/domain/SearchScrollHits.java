@@ -1,6 +1,4 @@
-package com.mawen.search.core.query;
-
-import com.mawen.search.core.query.SearchHits;
+package com.mawen.search.core.domain;
 
 import org.springframework.lang.Nullable;
 

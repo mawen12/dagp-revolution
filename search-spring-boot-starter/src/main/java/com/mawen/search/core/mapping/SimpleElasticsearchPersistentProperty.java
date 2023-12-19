@@ -19,7 +19,7 @@ import com.mawen.search.core.convert.NumberRangePropertyValueConverter;
 import com.mawen.search.core.convert.TemporalPropertyValueConverter;
 import com.mawen.search.core.convert.TemporalRangePropertyValueConverter;
 import com.mawen.search.core.domain.Range;
-import com.mawen.search.core.query.SeqNoPrimaryTerm;
+import com.mawen.search.core.domain.SeqNoPrimaryTerm;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.BeanUtils;

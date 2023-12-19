@@ -9,6 +9,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.mawen.search.core.domain.DocValueField;
+import com.mawen.search.core.domain.IdWithRouting;
+import com.mawen.search.core.domain.IndexBoost;
+import com.mawen.search.core.domain.IndicesOptions;
+import com.mawen.search.core.domain.PointInTime;
+import com.mawen.search.core.domain.RuntimeField;
+import com.mawen.search.core.domain.ScriptedField;
+import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.query.builder.BaseQueryBuilder;
 
 import org.springframework.data.domain.Pageable;

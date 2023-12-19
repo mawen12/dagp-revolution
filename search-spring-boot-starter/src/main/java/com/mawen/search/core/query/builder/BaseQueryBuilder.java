@@ -9,17 +9,17 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.mawen.search.core.query.BaseQuery;
-import com.mawen.search.core.query.DocValueField;
+import com.mawen.search.core.domain.DocValueField;
 import com.mawen.search.core.query.HighlightQuery;
-import com.mawen.search.core.query.IdWithRouting;
-import com.mawen.search.core.query.IndexBoost;
-import com.mawen.search.core.query.IndicesOptions;
-import com.mawen.search.core.query.PointInTime;
+import com.mawen.search.core.domain.IdWithRouting;
+import com.mawen.search.core.domain.IndexBoost;
+import com.mawen.search.core.domain.IndicesOptions;
+import com.mawen.search.core.domain.PointInTime;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.core.query.RescorerQuery;
-import com.mawen.search.core.query.RuntimeField;
-import com.mawen.search.core.query.ScriptedField;
-import com.mawen.search.core.query.SourceFilter;
+import com.mawen.search.core.domain.RuntimeField;
+import com.mawen.search.core.domain.ScriptedField;
+import com.mawen.search.core.domain.SourceFilter;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

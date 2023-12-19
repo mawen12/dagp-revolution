@@ -1,6 +1,10 @@
-package com.mawen.search.core.query;
+package com.mawen.search.core.domain;
 
 import java.util.function.Function;
+
+import com.mawen.search.core.query.CriteriaQuery;
+import com.mawen.search.core.query.Query;
+import com.mawen.search.core.query.StringQuery;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;

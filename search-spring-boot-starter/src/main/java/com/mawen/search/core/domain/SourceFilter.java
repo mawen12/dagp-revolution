@@ -1,4 +1,4 @@
-package com.mawen.search.core.query;
+package com.mawen.search.core.domain;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

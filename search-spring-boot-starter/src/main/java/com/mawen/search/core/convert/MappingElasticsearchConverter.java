@@ -10,9 +10,9 @@ import com.mawen.search.core.document.Document;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.query.BaseQuery;
-import com.mawen.search.core.query.FetchSourceFilter;
+import com.mawen.search.core.domain.FetchSourceFilter;
 import com.mawen.search.core.query.Query;
-import com.mawen.search.core.query.SourceFilter;
+import com.mawen.search.core.domain.SourceFilter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.BeansException;

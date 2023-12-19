@@ -1,4 +1,4 @@
-package com.mawen.search.core.query;
+package com.mawen.search.core.domain;
 
 import java.util.List;
 import java.util.stream.Collectors;

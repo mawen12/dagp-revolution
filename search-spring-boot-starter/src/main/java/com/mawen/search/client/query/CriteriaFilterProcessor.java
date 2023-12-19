@@ -14,7 +14,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryVariant;
 import co.elastic.clients.util.ObjectBuilder;
-import com.mawen.search.core.query.Criteria;
+import com.mawen.search.core.domain.Criteria;
 
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;

@@ -5,9 +5,9 @@ import java.util.List;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.MoreLikeThisQuery;
 import com.mawen.search.core.query.Query;
-import com.mawen.search.core.query.SearchHit;
-import com.mawen.search.core.query.SearchHits;
-import com.mawen.search.core.query.SearchHitsIterator;
+import com.mawen.search.core.domain.SearchHit;
+import com.mawen.search.core.domain.SearchHits;
+import com.mawen.search.core.domain.SearchHitsIterator;
 import com.mawen.search.core.query.builder.BaseQueryBuilder;
 
 import org.springframework.lang.Nullable;

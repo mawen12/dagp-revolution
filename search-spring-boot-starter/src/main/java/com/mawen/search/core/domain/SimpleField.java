@@ -1,6 +1,7 @@
-package com.mawen.search.core.query;
+package com.mawen.search.core.domain;
 
 import com.mawen.search.core.annotation.FieldType;
+import com.mawen.search.core.domain.Field;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;

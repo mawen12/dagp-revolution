@@ -1,4 +1,4 @@
-package com.mawen.search.core.query;
+package com.mawen.search.core.domain;
 
 import org.springframework.util.Assert;
 

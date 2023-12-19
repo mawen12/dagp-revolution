@@ -9,6 +9,9 @@ import java.util.function.Function;
 
 import com.mawen.search.client.util.ScrollState;
 import com.mawen.search.core.aggregation.AggregationsContainer;
+import com.mawen.search.core.domain.SearchHit;
+import com.mawen.search.core.domain.SearchHitsIterator;
+import com.mawen.search.core.domain.SearchScrollHits;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;

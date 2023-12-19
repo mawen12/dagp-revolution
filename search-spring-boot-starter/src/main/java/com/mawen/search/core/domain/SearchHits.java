@@ -1,9 +1,10 @@
-package com.mawen.search.core.query;
+package com.mawen.search.core.domain;
 
 import java.util.Iterator;
 import java.util.List;
 
 import com.mawen.search.core.aggregation.AggregationsContainer;
+import com.mawen.search.core.query.TotalHitsRelation;
 
 import org.springframework.data.util.Streamable;
 

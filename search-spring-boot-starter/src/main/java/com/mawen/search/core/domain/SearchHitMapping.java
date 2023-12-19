@@ -1,4 +1,4 @@
-package com.mawen.search.core.query;
+package com.mawen.search.core.domain;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,6 +14,7 @@ import com.mawen.search.core.document.SearchDocument;
 import com.mawen.search.core.document.SearchDocumentResponse;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
+import com.mawen.search.core.query.TotalHitsRelation;
 
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.context.MappingContext;
