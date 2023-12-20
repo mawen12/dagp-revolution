@@ -1,9 +1,12 @@
 package com.mawen.search.core.query.highlight;
 
+import lombok.Getter;
+
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
+@Getter
 public class HighlightFieldParameters extends HighlightCommonParameters {
 	private final int fragmentOffset;
 	private final String[] matchedFields;
@@ -16,14 +19,6 @@ public class HighlightFieldParameters extends HighlightCommonParameters {
 
 	public static HighlightFieldParametersBuilder builder() {
 		return new HighlightFieldParametersBuilder();
-	}
-
-	public int getFragmentOffset() {
-		return fragmentOffset;
-	}
-
-	public String[] getMatchedFields() {
-		return matchedFields;
 	}
 
 	public static final class HighlightFieldParametersBuilder

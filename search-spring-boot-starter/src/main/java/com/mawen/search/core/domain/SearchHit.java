@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.mawen.search.core.document.Explanation;
 import com.mawen.search.core.document.NestedMetaData;
 import lombok.Getter;
 
@@ -35,14 +34,12 @@ public class SearchHit<T> {
 	private final NestedMetaData nestedMetaData;
 	@Nullable
 	private final String routing;
-	@Nullable
-	private final Explanation explanation;
 	private final List<String> matchedQueries = new ArrayList<>();
 
 	public SearchHit(@Nullable String index, @Nullable String id, @Nullable String routing, float score,
 			@Nullable Object[] sortValues, @Nullable Map<String, List<String>> highlightFields,
 			@Nullable Map<String, SearchHits<?>> innerHits, @Nullable NestedMetaData nestedMetaData,
-			@Nullable Explanation explanation, @Nullable List<String> matchedQueries, T content) {
+			@Nullable List<String> matchedQueries, T content) {
 		this.index = index;
 		this.id = id;
 		this.routing = routing;
@@ -58,7 +55,6 @@ public class SearchHit<T> {
 		}
 
 		this.nestedMetaData = nestedMetaData;
-		this.explanation = explanation;
 		this.content = content;
 
 		if (matchedQueries != null) {

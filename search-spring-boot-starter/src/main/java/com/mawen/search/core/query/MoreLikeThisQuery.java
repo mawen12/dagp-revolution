@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
@@ -17,6 +18,7 @@ import static java.util.Collections.*;
  * @since 2023/12/19
  */
 @Getter
+@Setter
 public class MoreLikeThisQuery {
 
 	private final List<String> searchIndices = new ArrayList<>();
@@ -45,11 +47,6 @@ public class MoreLikeThisQuery {
 	private Float boostTerms;
 	private Pageable pageable = DEFAULT_PAGE;
 
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	public void addSearchIndices(String... searchIndices) {
 		addAll(this.searchIndices, searchIndices);
 	}
@@ -62,44 +59,8 @@ public class MoreLikeThisQuery {
 		addAll(this.fields, fields);
 	}
 
-	public void setRouting(String routing) {
-		this.routing = routing;
-	}
-
-	public void setPercentTermsToMatch(Float percentTermsToMatch) {
-		this.percentTermsToMatch = percentTermsToMatch;
-	}
-
-	public void setMinTermFreq(Integer minTermFreq) {
-		this.minTermFreq = minTermFreq;
-	}
-
-	public void setMaxQueryTerms(Integer maxQueryTerms) {
-		this.maxQueryTerms = maxQueryTerms;
-	}
-
 	public void addStopWords(String... stopWords) {
 		addAll(this.stopWords, stopWords);
-	}
-
-	public void setMinDocFreq(Integer minDocFreq) {
-		this.minDocFreq = minDocFreq;
-	}
-
-	public void setMaxDocFreq(Integer maxDocFreq) {
-		this.maxDocFreq = maxDocFreq;
-	}
-
-	public void setMinWordLen(Integer minWordLen) {
-		this.minWordLen = minWordLen;
-	}
-
-	public void setMaxWordLen(Integer maxWordLen) {
-		this.maxWordLen = maxWordLen;
-	}
-
-	public void setBoostTerms(Float boostTerms) {
-		this.boostTerms = boostTerms;
 	}
 
 	public void setPageable(Pageable pageable) {

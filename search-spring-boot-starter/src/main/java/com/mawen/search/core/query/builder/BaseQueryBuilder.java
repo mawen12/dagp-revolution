@@ -8,12 +8,10 @@ import java.util.Collections;
 import java.util.List;
 
 import com.mawen.search.core.domain.IdWithRouting;
-import com.mawen.search.core.domain.IndexBoost;
 import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.HighlightQuery;
 import com.mawen.search.core.query.Query;
-import com.mawen.search.core.query.RescorerQuery;
 import lombok.Getter;
 
 import org.springframework.data.domain.Pageable;
@@ -28,7 +26,6 @@ import org.springframework.util.Assert;
 @Getter
 public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQueryBuilder<Q, SELF>> {
 
-	protected final List<RescorerQuery> rescorerQueries = new ArrayList<>();
 	private final List<String> fields = new ArrayList<>();
 	private final Collection<String> ids = new ArrayList<>();
 	private final List<IdWithRouting> idsWithRouting = new ArrayList<>();
@@ -47,8 +44,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 	private Query.SearchType searchType = Query.SearchType.QUERY_THEN_FETCH;
 	private boolean trackScores;
 	@Nullable
-	private String preference;
-	@Nullable
 	private Integer maxResults;
 	@Nullable
 	private HighlightQuery highlightQuery;
@@ -62,10 +57,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 	private Duration timeout;
 	@Nullable
 	private List<Object> searchAfter;
-	@Nullable
-	private List<IndexBoost> indicesBoost;
-	@Nullable
-	private Boolean requestCache;
 	@Nullable
 	private Boolean allowNoIndices;
 
@@ -93,11 +84,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 		return self();
 	}
 
-	/**
-	 * Set Ids for a multi-get request run with this query. Not used in any other searches.
-	 *
-	 * @param ids list of id values
-	 */
 	public SELF withIds(String... ids) {
 
 		this.ids.clear();
@@ -105,11 +91,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 		return self();
 	}
 
-	/**
-	 * Set Ids for a multi-get request run with this query. Not used in any other searches.
-	 *
-	 * @param ids list of id values
-	 */
 	public SELF withIds(Collection<String> ids) {
 
 		Assert.notNull(ids, "ids must not be null");
@@ -126,11 +107,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 
 	public SELF withMinScore(float minScore) {
 		this.minScore = minScore;
-		return self();
-	}
-
-	public SELF withPreference(String preference) {
-		this.preference = preference;
 		return self();
 	}
 
@@ -165,16 +141,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 		return self();
 	}
 
-	public SELF withIndicesBoost(@Nullable List<IndexBoost> indicesBoost) {
-		this.indicesBoost = indicesBoost;
-		return self();
-	}
-
-	public SELF withIndicesBoost(IndexBoost... indicesBoost) {
-		this.indicesBoost = Arrays.asList(indicesBoost);
-		return self();
-	}
-
 	public SELF withSearchType(@Nullable Query.SearchType searchType) {
 		this.searchType = searchType;
 		return self();
@@ -205,17 +171,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 		return self();
 	}
 
-	public SELF withRequestCache(@Nullable Boolean requestCache) {
-		this.requestCache = requestCache;
-		return self();
-	}
-
-	/**
-	 * Set Ids with routing values for a multi-get request run with this query. Not used in any other searches.
-	 *
-	 * @param idsWithRouting list of id values, must not be {@literal null}
-	 * @since 4.3
-	 */
 	public SELF withIdsWithRouting(List<IdWithRouting> idsWithRouting) {
 
 		Assert.notNull(idsWithRouting, "idsWithRouting must not be null");
@@ -225,26 +180,6 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 		return self();
 	}
 
-	public SELF withRescorerQueries(List<RescorerQuery> rescorerQueries) {
-
-		Assert.notNull(rescorerQueries, "rescorerQueries must not be null");
-
-		this.rescorerQueries.clear();
-		this.rescorerQueries.addAll(rescorerQueries);
-		return self();
-	}
-
-	public SELF withRescorerQuery(RescorerQuery rescorerQuery) {
-
-		Assert.notNull(rescorerQuery, "rescorerQuery must not be null");
-
-		this.rescorerQueries.add(rescorerQuery);
-		return self();
-	}
-
-	/**
-	 * @since 5.1
-	 */
 	public SELF withReactiveBatchSize(@Nullable Integer reactiveBatchSize) {
 		this.reactiveBatchSize = reactiveBatchSize;
 		return self();

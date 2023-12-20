@@ -11,7 +11,6 @@ import org.springframework.lang.Nullable;
  */
 public class FetchSourceFilterBuilder {
 
-
 	@Nullable
 	private String[] includes;
 	@Nullable

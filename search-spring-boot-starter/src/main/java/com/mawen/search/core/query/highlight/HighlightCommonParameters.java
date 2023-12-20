@@ -1,11 +1,14 @@
 package com.mawen.search.core.query.highlight;
 
+import lombok.Getter;
+
 import org.springframework.util.Assert;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
+@Getter
 public class HighlightCommonParameters {
 	private final String boundaryChars;
 	private final int boundaryMaxScan;
@@ -42,66 +45,6 @@ public class HighlightCommonParameters {
 		postTags = builder.postTags;
 		requireFieldMatch = builder.requireFieldMatch;
 		type = builder.type;
-	}
-
-	public String getBoundaryChars() {
-		return boundaryChars;
-	}
-
-	public int getBoundaryMaxScan() {
-		return boundaryMaxScan;
-	}
-
-	public String getBoundaryScanner() {
-		return boundaryScanner;
-	}
-
-	public String getBoundaryScannerLocale() {
-		return boundaryScannerLocale;
-	}
-
-	public boolean getForceSource() {
-		return forceSource;
-	}
-
-	public String getFragmenter() {
-		return fragmenter;
-	}
-
-	public int getFragmentSize() {
-		return fragmentSize;
-	}
-
-	public int getNoMatchSize() {
-		return noMatchSize;
-	}
-
-	public int getNumberOfFragments() {
-		return numberOfFragments;
-	}
-
-	public String getOrder() {
-		return order;
-	}
-
-	public int getPhraseLimit() {
-		return phraseLimit;
-	}
-
-	public String[] getPreTags() {
-		return preTags;
-	}
-
-	public String[] getPostTags() {
-		return postTags;
-	}
-
-	public boolean getRequireFieldMatch() {
-		return requireFieldMatch;
-	}
-
-	public String getType() {
-		return type;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -16,7 +16,6 @@ import org.springframework.data.annotation.Id;
 public class Person {
 
 	@Id
-	@Field(value = "id")
 	private String id;
 
 	@Field(type = FieldType.Text, value = "name")

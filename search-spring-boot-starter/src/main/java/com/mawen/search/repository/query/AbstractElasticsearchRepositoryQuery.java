@@ -33,7 +33,7 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 	protected final ElasticsearchConverter elasticsearchConverter;
 	protected ElasticsearchQueryMethod queryMethod;
 
-	public AbstractElasticsearchRepositoryQuery(ElasticsearchQueryMethod queryMethod,
+	protected AbstractElasticsearchRepositoryQuery(ElasticsearchQueryMethod queryMethod,
 			ElasticsearchOperations elasticsearchOperations) {
 		this.queryMethod = queryMethod;
 		this.elasticsearchOperations = elasticsearchOperations;
@@ -45,10 +45,6 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 		return queryMethod;
 	}
 
-	/**
-	 * @return {@literal true} if this is a count query
-	 * @since 4.2
-	 */
 	public abstract boolean isCountQuery();
 
 	protected abstract boolean isDeleteQuery();

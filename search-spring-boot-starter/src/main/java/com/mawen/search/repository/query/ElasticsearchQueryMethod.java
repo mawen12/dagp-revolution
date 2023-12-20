@@ -47,7 +47,6 @@ import org.springframework.util.StringUtils;
  */
 public class ElasticsearchQueryMethod extends QueryMethod {
 
-
 	protected final Method method;
 	protected final Class<?> unwrappedReturnType;
 	private final MappingContext<? extends ElasticsearchPersistentEntity<?>, ElasticsearchPersistentProperty> mappingContext;
@@ -100,27 +99,15 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		return this.queryAnnotation != null;
 	}
 
-	/**
-	 * @return the query String. Must not be {@literal null} when {@link #hasAnnotatedQuery()} returns true
-	 */
 	@Nullable
 	public String getAnnotatedQuery() {
 		return queryAnnotation != null ? queryAnnotation.value() : null;
 	}
 
-	/**
-	 * @return true if there is a {@link Highlight} annotation present.
-	 * @since 4.0
-	 */
 	public boolean hasAnnotatedHighlight() {
 		return highlightAnnotation != null;
 	}
 
-	/**
-	 * @return a {@link HighlightQuery} built from the {@link Highlight} annotation.
-	 * @throws IllegalArgumentException if no {@link Highlight} annotation is present on the method
-	 * @see #hasAnnotatedHighlight()
-	 */
 	public HighlightQuery getAnnotatedHighlightQuery() {
 
 		Assert.isTrue(hasAnnotatedHighlight(), "no Highlight annotation present on " + getName());
@@ -137,10 +124,6 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 				getDomainClass());
 	}
 
-	/**
-	 * @return the {@link ElasticsearchEntityMetadata} for the query methods {@link #getReturnedObjectType() return type}.
-	 * @since 3.2
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public ElasticsearchEntityMetadata<?> getEntityInformation() {
@@ -206,17 +189,10 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		return false;
 	}
 
-
 	public boolean isSearchPageMethod() {
 		return SearchPage.class.isAssignableFrom(methodReturnType());
 	}
 
-	/**
-	 * returns the declared return type for this method.
-	 *
-	 * @return the return type
-	 * @since 4.0
-	 */
 	public Class<?> methodReturnType() {
 		return method.getReturnType();
 	}
@@ -230,11 +206,9 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		return !isSearchHitMethod();
 	}
 
-
 	public boolean isNotSearchPageMethod() {
 		return !isSearchPageMethod();
 	}
-
 
 	public boolean hasCountQueryAnnotation() {
 		return queryAnnotation != null && queryAnnotation.count();

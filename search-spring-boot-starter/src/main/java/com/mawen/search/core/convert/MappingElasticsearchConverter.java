@@ -146,23 +146,11 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 
 		Assert.notNull(query, "query must not be null");
 
-		if (query instanceof BaseQuery) {
-			BaseQuery baseQuery = (BaseQuery) query;
-			if (baseQuery.queryIsUpdatedByConverter()) {
-				return;
-			}
-		}
-
 		if (domainClass == null) {
 			return;
 		}
 
 		updatePropertiesInFieldsAndSourceFilter(query, domainClass);
-
-		if (query instanceof BaseQuery) {
-			BaseQuery baseQuery = (BaseQuery) query;
-			baseQuery.setQueryIsUpdatedByConverter(true);
-		}
 	}
 
 	private void updatePropertiesInFieldsAndSourceFilter(Query query, Class<?> domainClass) {

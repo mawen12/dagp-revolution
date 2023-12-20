@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
  */
 @Getter
 public class HighlightQuery {
+
 	private final Highlight highlight;
 	@Nullable
 	private final Class<?> type;

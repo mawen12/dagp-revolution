@@ -14,9 +14,7 @@ import org.springframework.data.repository.query.Parameters;
 public class ElasticsearchParameters extends Parameters<ElasticsearchParameters, ElasticsearchParameter> {
 
 	public ElasticsearchParameters(Method method) {
-
 		super(method);
-
 	}
 
 	private ElasticsearchParameters(List<ElasticsearchParameter> parameters) {

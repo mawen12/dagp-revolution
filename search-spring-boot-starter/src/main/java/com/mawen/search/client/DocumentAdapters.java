@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import co.elastic.clients.elasticsearch.core.GetResponse;
 import co.elastic.clients.elasticsearch.core.MgetResponse;
-import co.elastic.clients.elasticsearch.core.explain.ExplanationDetail;
 import co.elastic.clients.elasticsearch.core.get.GetResult;
 import co.elastic.clients.elasticsearch.core.search.CompletionSuggestOption;
 import co.elastic.clients.elasticsearch.core.search.Hit;
@@ -19,7 +18,6 @@ import com.mawen.search.client.query.builder.SearchDocumentResponseBuilder;
 import com.mawen.search.client.response.ResponseConverter;
 import com.mawen.search.client.util.TypeUtils;
 import com.mawen.search.core.document.Document;
-import com.mawen.search.core.document.Explanation;
 import com.mawen.search.core.document.NestedMetaData;
 import com.mawen.search.core.document.SearchDocument;
 import com.mawen.search.core.document.SearchDocumentAdapter;
@@ -56,8 +54,6 @@ public class DocumentAdapters {
 		});
 
 		NestedMetaData nestedMetaData = from(hit.nested());
-
-		Explanation explanation = from(hit.explanation());
 
 		List<String> matchedQueries = hit.matchedQueries();
 
@@ -123,7 +119,7 @@ public class DocumentAdapters {
 
 		float score = hit.score() != null ? hit.score().floatValue() : Float.NaN;
 		return new SearchDocumentAdapter(document, score, hit.sort().stream().map(TypeUtils::toString).toArray(),
-				documentFields, highlightFields, innerHits, nestedMetaData, explanation, matchedQueries, hit.routing());
+				documentFields, highlightFields, innerHits, nestedMetaData, matchedQueries, hit.routing());
 	}
 
 	public static SearchDocument from(CompletionSuggestOption<EntityAsMap> completionSuggestOption) {
@@ -138,24 +134,7 @@ public class DocumentAdapters {
 
 		float score = completionSuggestOption.score() != null ? completionSuggestOption.score().floatValue() : Float.NaN;
 		return new SearchDocumentAdapter(document, score, new Object[]{}, Collections.emptyMap(), Collections.emptyMap(),
-				Collections.emptyMap(), null, null, null, completionSuggestOption.routing());
-	}
-
-	@Nullable
-	private static Explanation from(@Nullable co.elastic.clients.elasticsearch.core.explain.Explanation explanation) {
-
-		if (explanation == null) {
-			return null;
-		}
-		List<Explanation> details = explanation.details().stream().map(DocumentAdapters::from).collect(Collectors.toList());
-		return new Explanation(true, (double) explanation.value(), explanation.description(), details);
-	}
-
-	private static Explanation from(ExplanationDetail explanationDetail) {
-
-		List<Explanation> details = explanationDetail.details().stream().map(DocumentAdapters::from)
-				.collect(Collectors.toList());
-		return new Explanation(null, (double) explanationDetail.value(), explanationDetail.description(), details);
+				Collections.emptyMap(), null, null, completionSuggestOption.routing());
 	}
 
 	@Nullable

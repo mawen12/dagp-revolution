@@ -2,21 +2,22 @@ package com.mawen.search.core.query;
 
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.query.builder.CriteriaQueryBuilder;
+import lombok.Getter;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 
 /**
+ * 标准查询，使用指定字段构建的查询
+ *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
+@Getter
 public class CriteriaQuery extends BaseQuery {
 
 	private final Criteria criteria;
 
-	/**
-	 * @since 4.4
-	 */
 	public CriteriaQuery(CriteriaQueryBuilder builder) {
 		super(builder);
 		this.criteria = builder.getCriteria();
@@ -58,7 +59,6 @@ public class CriteriaQuery extends BaseQuery {
 		return destination;
 	}
 
-	@SuppressWarnings("unchecked")
 	public final <T extends CriteriaQuery> T addCriteria(Criteria criteria) {
 
 		Assert.notNull(criteria, "Cannot add null criteria.");
@@ -67,7 +67,4 @@ public class CriteriaQuery extends BaseQuery {
 		return (T) this;
 	}
 
-	public Criteria getCriteria() {
-		return this.criteria;
-	}
 }

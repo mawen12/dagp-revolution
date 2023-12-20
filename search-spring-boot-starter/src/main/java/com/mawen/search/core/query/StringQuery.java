@@ -1,14 +1,18 @@
 package com.mawen.search.core.query;
 
 import com.mawen.search.core.query.builder.StringQueryBuilder;
+import lombok.Getter;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 /**
+ * 以字符串类型构建的查询
+ *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
+@Getter
 public class StringQuery extends BaseQuery {
 
 	public static String MATCH_ALL = "{ \"match_all\": {} }";
@@ -30,22 +34,12 @@ public class StringQuery extends BaseQuery {
 		this.source = source;
 	}
 
-	/**
-	 * @since 4.4
-	 */
 	public StringQuery(StringQueryBuilder builder) {
 		super(builder);
 		this.source = builder.getSource();
 	}
 
-	/**
-	 * @since 4.4
-	 */
 	public static StringQueryBuilder builder(String source) {
 		return new StringQueryBuilder(source);
-	}
-
-	public String getSource() {
-		return source;
 	}
 }

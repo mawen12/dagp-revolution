@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.mawen.search.core.domain.IdWithRouting;
-import com.mawen.search.core.domain.IndexBoost;
 import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.query.builder.BaseQueryBuilder;
 import lombok.Getter;
@@ -46,8 +45,6 @@ public class BaseQuery implements Query {
 	protected SearchType searchType = SearchType.QUERY_THEN_FETCH;
 	protected boolean trackScores;
 	@Nullable
-	protected String preference;
-	@Nullable
 	protected Integer maxResults;
 	@Nullable
 	protected HighlightQuery highlightQuery;
@@ -59,15 +56,9 @@ public class BaseQuery implements Query {
 	protected Duration timeout;
 	@Nullable
 	protected List<Object> searchAfter;
-	@Nullable
-	protected List<IndexBoost> indicesBoost;
-	protected List<RescorerQuery> rescorerQueries = new ArrayList<>();
-	@Nullable
-	protected Boolean requestCache;
 	protected List<IdWithRouting> idsWithRouting = Collections.emptyList();
 	@Nullable
 	private Boolean trackTotalHits;
-	private boolean queryIsUpdatedByConverter = false;
 	@Nullable
 	private Integer reactiveBatchSize = null;
 	@Nullable
@@ -87,7 +78,6 @@ public class BaseQuery implements Query {
 		this.route = builder.getRoute();
 		this.searchType = builder.getSearchType();
 		this.trackScores = builder.getTrackScores();
-		this.preference = builder.getPreference();
 		this.maxResults = builder.getMaxResults();
 		this.highlightQuery = builder.getHighlightQuery();
 		this.trackTotalHits = builder.getTrackTotalHits();
@@ -95,17 +85,11 @@ public class BaseQuery implements Query {
 		this.scrollTime = builder.getScrollTime();
 		this.timeout = builder.getTimeout();
 		this.searchAfter = builder.getSearchAfter();
-		this.indicesBoost = builder.getIndicesBoost();
-		this.rescorerQueries = builder.getRescorerQueries();
-		this.requestCache = builder.getRequestCache();
 		this.idsWithRouting = builder.getIdsWithRouting();
 		this.reactiveBatchSize = builder.getReactiveBatchSize();
 		this.allowNoIndices = builder.getAllowNoIndices();
 	}
 
-	/**
-	 * @since 5.1
-	 */
 	public void setSort(@Nullable Sort sort) {
 		this.sort = sort;
 	}
@@ -170,11 +154,6 @@ public class BaseQuery implements Query {
 		return false;
 	}
 
-	/**
-	 * Configures whether to track scores.
-	 *
-	 * @since 3.1
-	 */
 	public void setTrackScores(boolean trackScores) {
 		this.trackScores = trackScores;
 	}
@@ -208,12 +187,6 @@ public class BaseQuery implements Query {
 		return Collections.emptyList();
 	}
 
-	/**
-	 * Set Ids with routing values for a multi-get request run with this query. Not used in any other searches.
-	 *
-	 * @param idsWithRouting list of id values, must not be {@literal null}
-	 * @since 4.3
-	 */
 	public void setIdsWithRouting(List<IdWithRouting> idsWithRouting) {
 
 		Assert.notNull(idsWithRouting, "idsWithRouting must not be null");
@@ -227,11 +200,6 @@ public class BaseQuery implements Query {
 
 	public void setSearchType(@Nullable SearchType searchType) {
 		this.searchType = searchType;
-	}
-
-	@Override
-	public void setPreference(String preference) {
-		this.preference = preference;
 	}
 
 	@Override
@@ -268,11 +236,6 @@ public class BaseQuery implements Query {
 		this.scrollTime = scrollTime;
 	}
 
-	/**
-	 * set the query timeout
-	 *
-	 * @since 4.2
-	 */
 	public void setTimeout(@Nullable Duration timeout) {
 		this.timeout = timeout;
 	}
@@ -280,46 +243,6 @@ public class BaseQuery implements Query {
 	@Override
 	public void setSearchAfter(@Nullable List<Object> searchAfter) {
 		this.searchAfter = searchAfter;
-	}
-
-	@Override
-	public void addRescorerQuery(RescorerQuery rescorerQuery) {
-
-		Assert.notNull(rescorerQuery, "rescorerQuery must not be null");
-
-		this.rescorerQueries.add(rescorerQuery);
-	}
-
-	@Override
-	public void setRescorerQueries(List<RescorerQuery> rescorerQueryList) {
-
-		Assert.notNull(rescorerQueries, "rescorerQueries must not be null");
-
-		this.rescorerQueries.clear();
-		this.rescorerQueries.addAll(rescorerQueryList);
-	}
-
-	@Override
-	public void setRequestCache(@Nullable Boolean value) {
-		this.requestCache = value;
-	}
-
-	/**
-	 * used internally. Not considered part of the API.
-	 *
-	 * @since 5.0
-	 */
-	public boolean queryIsUpdatedByConverter() {
-		return queryIsUpdatedByConverter;
-	}
-
-	/**
-	 * used internally. Not considered part of the API.
-	 *
-	 * @since 5.0
-	 */
-	public void setQueryIsUpdatedByConverter(boolean queryIsUpdatedByConverter) {
-		this.queryIsUpdatedByConverter = queryIsUpdatedByConverter;
 	}
 
 	@Override

@@ -22,14 +22,12 @@ import co.elastic.clients.elasticsearch.core.search.HighlighterFragmenter;
 import co.elastic.clients.elasticsearch.core.search.HighlighterOrder;
 import co.elastic.clients.elasticsearch.core.search.HighlighterTagsSchema;
 import co.elastic.clients.elasticsearch.core.search.HighlighterType;
-import co.elastic.clients.elasticsearch.core.search.ScoreMode;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.json.JsonData;
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.domain.Order;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.Query;
-import com.mawen.search.core.query.RescorerQuery;
 import com.mawen.search.core.query.UpdateResponse;
 import com.mawen.search.core.refresh.RefreshPolicy;
 
@@ -314,31 +312,6 @@ public class TypeUtils {
 				return UpdateResponse.Result.NOT_FOUND;
 			case NoOp:
 				return UpdateResponse.Result.NOOP;
-		}
-
-		return null;
-	}
-
-	@Nullable
-	public static ScoreMode scoreMode(@Nullable RescorerQuery.ScoreMode scoreMode) {
-
-		if (scoreMode == null) {
-			return null;
-		}
-
-		switch (scoreMode) {
-			case Default:
-				return null;
-			case Avg:
-				return ScoreMode.Avg;
-			case Max:
-				return ScoreMode.Max;
-			case Min:
-				return ScoreMode.Min;
-			case Total:
-				return ScoreMode.Total;
-			case Multiply:
-				return ScoreMode.Multiply;
 		}
 
 		return null;

@@ -59,7 +59,6 @@ import com.mawen.search.core.query.CriteriaQuery;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.MoreLikeThisQuery;
 import com.mawen.search.core.query.Query;
-import com.mawen.search.core.query.RescorerQuery;
 import com.mawen.search.core.query.StringQuery;
 import com.mawen.search.core.query.UpdateQuery;
 import com.mawen.search.core.refresh.RefreshPolicy;
@@ -621,7 +620,6 @@ public class RequestConverter {
 							h //
 									.index(Arrays.asList(param.getIndex().getIndexNames())) //
 									.searchType(searchType) //
-									.requestCache(query.getRequestCache()) //
 							;
 
 							if (StringUtils.hasText(query.getRoute())) {
@@ -629,10 +627,6 @@ public class RequestConverter {
 							}
 							else if (StringUtils.hasText(routing)) {
 								h.routing(routing);
-							}
-
-							if (query.getPreference() != null) {
-								h.preference(query.getPreference());
 							}
 
 							return h;
@@ -683,18 +677,6 @@ public class RequestConverter {
 										;
 									}
 
-									query.getRescorerQueries().forEach(rescorerQuery -> bb.rescore(getRescore(rescorerQuery)));
-
-									if (!isEmpty(query.getIndicesBoost())) {
-										bb.indicesBoost(query.getIndicesBoost().stream()
-												.map(indexBoost -> {
-													Map<String, Double> map = new HashMap<>();
-													map.put(indexBoost.getIndexName(), (double) indexBoost.getBoost());
-													return map;
-												})
-												.collect(Collectors.toList()));
-									}
-
 									if (query instanceof NativeQuery) {
 										NativeQuery nativeQuery = (NativeQuery) query;
 										prepareNativeSearch(nativeQuery, bb);
@@ -729,7 +711,6 @@ public class RequestConverter {
 				.source(getSourceConfig(query)) //
 				.searchType(searchType) //
 				.timeout(timeStringMs(query.getTimeout())) //
-				.requestCache(query.getRequestCache()) //
 		;
 
 
@@ -741,11 +722,6 @@ public class RequestConverter {
 		else if (StringUtils.hasText(routing)) {
 			builder.routing(routing);
 		}
-
-		if (query.getPreference() != null) {
-			builder.preference(query.getPreference());
-		}
-
 
 		if (persistentEntity != null && persistentEntity.hasSeqNoPrimaryTermProperty()) {
 			builder.seqNoPrimaryTerm(true);
@@ -801,8 +777,6 @@ public class RequestConverter {
 			builder.searchAfter(query.getSearchAfter().stream().map(TypeUtils::toFieldValue).collect(Collectors.toList()));
 		}
 
-		query.getRescorerQueries().forEach(rescorerQuery -> builder.rescore(getRescore(rescorerQuery)));
-
 		if (forCount) {
 			builder.size(0) //
 					.trackTotalHits(th -> th.count(Integer.MAX_VALUE)) //
@@ -817,30 +791,6 @@ public class RequestConverter {
 			}
 		}
 
-		if (!isEmpty(query.getIndicesBoost())) {
-			builder.indicesBoost(query.getIndicesBoost().stream()
-					.map(indexBoost -> {
-						Map<String, Double> map = new HashMap<>();
-						map.put(indexBoost.getIndexName(), (double) indexBoost.getBoost());
-						return map;
-					})
-					.collect(Collectors.toList()));
-		}
-	}
-
-	private Rescore getRescore(RescorerQuery rescorerQuery) {
-
-		return Rescore.of(r -> r //
-				.query(rq -> rq //
-						.query(getQuery(rescorerQuery.getQuery(), null)) //
-						.scoreMode(scoreMode(rescorerQuery.getScoreMode())) //
-						.queryWeight(rescorerQuery.getQueryWeight() != null ? Double.valueOf(rescorerQuery.getQueryWeight()) : 1.0) //
-						.rescoreQueryWeight(
-								rescorerQuery.getRescoreQueryWeight() != null ? Double.valueOf(rescorerQuery.getRescoreQueryWeight())
-										: 1.0) //
-
-				) //
-				.windowSize(rescorerQuery.getWindowSize()));
 	}
 
 	private void addHighlight(Query query, SearchRequest.Builder builder) {

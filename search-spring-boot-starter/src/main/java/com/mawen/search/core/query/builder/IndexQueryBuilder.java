@@ -67,9 +67,6 @@ public class IndexQueryBuilder {
 		return this;
 	}
 
-	/**
-	 * @since 4.2
-	 */
 	public IndexQueryBuilder withOpType(IndexQuery.OpType opType) {
 		this.opType = opType;
 		return this;
@@ -79,9 +76,6 @@ public class IndexQueryBuilder {
 		return new IndexQuery(id, object, source, seqNo, primaryTerm, routing, opType, indexName);
 	}
 
-	/**
-	 * @since 4.4
-	 */
 	public IndexQueryBuilder withIndex(@Nullable String indexName) {
 		this.indexName = indexName;
 		return this;

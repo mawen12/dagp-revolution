@@ -197,15 +197,6 @@ public class Order extends Sort.Order {
 				this.path = path;
 			}
 
-			/**
-			 * Sets the filter query for a nested sort.<br/>
-			 * Note: This cannot be a {@link CriteriaQuery}, as that would be sent as a nested query within the filter,
-			 * use a {@link org.springframework.data.elasticsearch.client.elc.NativeQuery} or {@link StringQuery} instead.
-			 *
-			 * @param filter the filter to set
-			 * @return this builder
-			 * @throws IllegalArgumentException when a {@link CriteriaQuery} is passed.
-			 */
 			public Builder withFilter(@Nullable Query filter) {
 
 				if (filter instanceof CriteriaQuery) {

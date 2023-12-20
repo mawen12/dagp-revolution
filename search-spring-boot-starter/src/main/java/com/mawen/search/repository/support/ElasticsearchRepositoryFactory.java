@@ -84,8 +84,7 @@ public class ElasticsearchRepositoryFactory extends RepositoryFactorySupport {
 	private class ElasticsearchQueryLookupStrategy implements QueryLookupStrategy {
 
 		@Override
-		public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory,
-				NamedQueries namedQueries) {
+		public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
 
 			ElasticsearchQueryMethod queryMethod = new ElasticsearchQueryMethod(method, metadata, factory,
 					elasticsearchOperations.getElasticsearchConverter().getMappingContext());

@@ -18,4 +18,6 @@ public class ElasticsearchParameter extends Parameter {
 		return super.isSpecialParameter();
 	}
 
+
+
 }

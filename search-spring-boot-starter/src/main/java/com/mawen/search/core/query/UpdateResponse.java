@@ -1,13 +1,15 @@
 package com.mawen.search.core.query;
 
+import lombok.Getter;
+
 import org.springframework.util.Assert;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
+@Getter
 public class UpdateResponse {
-
 
 	private Result result;
 
@@ -18,15 +20,8 @@ public class UpdateResponse {
 		this.result = result;
 	}
 
-	/**
-	 * @since 4.4
-	 */
 	public static UpdateResponse of(Result result) {
 		return new UpdateResponse(result);
-	}
-
-	public Result getResult() {
-		return result;
 	}
 
 	public enum Result {

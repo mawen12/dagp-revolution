@@ -20,6 +20,7 @@ import com.mawen.search.core.convert.TemporalPropertyValueConverter;
 import com.mawen.search.core.convert.TemporalRangePropertyValueConverter;
 import com.mawen.search.core.domain.Range;
 import com.mawen.search.core.domain.SeqNoPrimaryTerm;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.BeanUtils;
@@ -40,6 +41,7 @@ import org.springframework.util.StringUtils;
  * @since 2023/12/19
  */
 @Slf4j
+@Getter
 public class SimpleElasticsearchPersistentProperty
 		extends AnnotationBasedPersistentProperty<ElasticsearchPersistentProperty>
 		implements ElasticsearchPersistentProperty {
@@ -63,8 +65,7 @@ public class SimpleElasticsearchPersistentProperty
 		super(property, owner, simpleTypeHolder);
 
 		this.annotatedFieldName = getAnnotatedFieldName();
-		this.isId = super.isIdProperty()
-				|| (SUPPORTED_ID_PROPERTY_TYPES.contains(getFieldName()) && !hasExplicitFieldName());
+		this.isId = super.isIdProperty() || (SUPPORTED_ID_PROPERTY_TYPES.contains(getFieldName()) && !hasExplicitFieldName());
 		this.isSeqNoPrimaryTerm = SeqNoPrimaryTerm.class.isAssignableFrom(getRawType());
 		this.indexName = getAnnotatedIndexNameValue();
 
@@ -73,7 +74,7 @@ public class SimpleElasticsearchPersistentProperty
 
 	@Override
 	protected Association<ElasticsearchPersistentProperty> createAssociation() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -114,18 +115,8 @@ public class SimpleElasticsearchPersistentProperty
 	}
 
 	@Override
-	public PropertyValueConverter getPropertyValueConverter() {
-		return propertyValueConverter;
-	}
-
-	@Override
 	public boolean isIndexNameProperty() {
 		return indexName != null;
-	}
-
-	@Override
-	public String getIndexName() {
-		return indexName;
 	}
 
 	@Nullable

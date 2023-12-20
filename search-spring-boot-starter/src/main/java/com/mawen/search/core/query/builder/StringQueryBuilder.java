@@ -1,6 +1,7 @@
 package com.mawen.search.core.query.builder;
 
 import com.mawen.search.core.query.StringQuery;
+import lombok.Getter;
 
 import org.springframework.util.Assert;
 
@@ -8,6 +9,7 @@ import org.springframework.util.Assert;
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
+@Getter
 public class StringQueryBuilder extends BaseQueryBuilder<StringQuery, StringQueryBuilder> {
 
 	private final String source;
@@ -17,10 +19,6 @@ public class StringQueryBuilder extends BaseQueryBuilder<StringQuery, StringQuer
 		Assert.notNull(source, "source must not be null");
 
 		this.source = source;
-	}
-
-	public String getSource() {
-		return source;
 	}
 
 	@Override

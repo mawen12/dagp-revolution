@@ -1,9 +1,12 @@
 package com.mawen.search.core.query.highlight;
 
+import lombok.Getter;
+
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/18
  */
+@Getter
 public class HighlightParameters extends HighlightCommonParameters {
 	private final String encoder;
 	private final String tagsSchema;
@@ -16,14 +19,6 @@ public class HighlightParameters extends HighlightCommonParameters {
 
 	public static HighlightParametersBuilder builder() {
 		return new HighlightParametersBuilder();
-	}
-
-	public String getEncoder() {
-		return encoder;
-	}
-
-	public String getTagsSchema() {
-		return tagsSchema;
 	}
 
 	public static final class HighlightParametersBuilder
