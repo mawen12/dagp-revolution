@@ -26,8 +26,10 @@ public interface RestClientBuilderCustomizer {
 
 	void customize(RestClientBuilder builder);
 
-	default void customize(HttpAsyncClientBuilder builder) {}
+	default void customize(HttpAsyncClientBuilder builder) {
+	}
 
-	default void customize(Builder builder) {}
+	default void customize(Builder builder) {
+	}
 
 }

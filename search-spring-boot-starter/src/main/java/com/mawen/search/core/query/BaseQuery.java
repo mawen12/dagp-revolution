@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
 import static java.util.Collections.*;
 import static org.springframework.util.CollectionUtils.*;
 
@@ -160,13 +161,22 @@ public class BaseQuery implements Query {
 		return minScore;
 	}
 
+	public void setMinScore(float minScore) {
+		this.minScore = minScore;
+	}
+
 	@Override
 	public boolean getTrackScores() {
 		return false;
 	}
 
-	public void setMinScore(float minScore) {
-		this.minScore = minScore;
+	/**
+	 * Configures whether to track scores.
+	 *
+	 * @since 3.1
+	 */
+	public void setTrackScores(boolean trackScores) {
+		this.trackScores = trackScores;
 	}
 
 	@Override
@@ -217,15 +227,6 @@ public class BaseQuery implements Query {
 
 	public void setSearchType(@Nullable SearchType searchType) {
 		this.searchType = searchType;
-	}
-
-	/**
-	 * Configures whether to track scores.
-	 *
-	 * @since 3.1
-	 */
-	public void setTrackScores(boolean trackScores) {
-		this.trackScores = trackScores;
 	}
 
 	@Override

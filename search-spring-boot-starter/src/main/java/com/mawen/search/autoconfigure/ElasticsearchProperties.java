@@ -18,43 +18,35 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @ConfigurationProperties("spring.elasticsearch")
 public class ElasticsearchProperties {
+	private final Restclient restclient = new Restclient();
 	/**
 	 * Comma-separated list of the Elasticsearch instances to use.
 	 */
 	private List<String> uris = new ArrayList<>(Collections.singletonList("http://localhost:9200"));
-
 	/**
 	 * Username for authentication with Elasticsearch.
 	 */
 	private String username;
-
 	/**
 	 * Password for authentication with Elasticsearch.
 	 */
 	private String password;
-
 	/**
 	 * Connection timeout used when communicating with Elasticsearch.
 	 */
 	private Duration connectionTimeout = Duration.ofSeconds(1);
-
 	/**
 	 * Socket timeout used when communicating with Elasticsearch.
 	 */
 	private Duration socketTimeout = Duration.ofSeconds(30);
-
 	/**
 	 * Whether to enable socket keep alive between client and Elasticsearch.
 	 */
 	private boolean socketKeepAlive = false;
-
 	/**
 	 * Prefix added to the path of every request sent to Elasticsearch.
 	 */
 	private String pathPrefix;
-
-	private final Restclient restclient = new Restclient();
-
 
 	public static class Restclient {
 

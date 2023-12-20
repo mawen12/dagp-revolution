@@ -42,7 +42,6 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
@@ -51,19 +50,21 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 
 	protected final Method method;
 	protected final Class<?> unwrappedReturnType;
+	private final MappingContext<? extends ElasticsearchPersistentEntity<?>, ElasticsearchPersistentProperty> mappingContext;
+	@Nullable
+	private final Query queryAnnotation;
+	@Nullable
+	private final Highlight highlightAnnotation;
+	private final Lazy<HighlightQuery> highlightQueryLazy = Lazy.of(this::createAnnotatedHighlightQuery);
+	@Nullable
+	private final SourceFilters sourceFilters;
 	@Nullable
 	private Boolean unwrappedReturnTypeFromSearchHit = null;
-
-	private final MappingContext<? extends ElasticsearchPersistentEntity<?>, ElasticsearchPersistentProperty> mappingContext;
-	@Nullable private ElasticsearchEntityMetadata<?> metadata;
-	@Nullable private final Query queryAnnotation;
-	@Nullable private final Highlight highlightAnnotation;
-	private final Lazy<HighlightQuery> highlightQueryLazy = Lazy.of(this::createAnnotatedHighlightQuery);
-
-	@Nullable private final SourceFilters sourceFilters;
+	@Nullable
+	private ElasticsearchEntityMetadata<?> metadata;
 
 	public ElasticsearchQueryMethod(Method method, RepositoryMetadata repositoryMetadata, ProjectionFactory factory,
-	                                MappingContext<? extends ElasticsearchPersistentEntity<?>, ElasticsearchPersistentProperty> mappingContext) {
+			MappingContext<? extends ElasticsearchPersistentEntity<?>, ElasticsearchPersistentProperty> mappingContext) {
 
 		super(method, repositoryMetadata, factory);
 
@@ -154,7 +155,8 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 				this.metadata = new SimpleElasticsearchEntityMetadata<>((Class<Object>) domainClass,
 						mappingContext.getRequiredPersistentEntity(domainClass));
 
-			} else {
+			}
+			else {
 
 				ElasticsearchPersistentEntity<?> returnedEntity = mappingContext.getPersistentEntity(returnedObjectType);
 				ElasticsearchPersistentEntity<?> managedEntity = mappingContext.getRequiredPersistentEntity(domainClass);
@@ -198,7 +200,8 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 					return true;
 				}
 			}
-		} catch (Exception ignored) {}
+		}
+		catch (Exception ignored) {}
 
 		return false;
 	}
@@ -262,7 +265,7 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 	}
 
 	private String[] mapParameters(String[] source, ParameterAccessor parameterAccessor,
-	                               StringQueryUtil stringQueryUtil) {
+			StringQueryUtil stringQueryUtil) {
 
 		List<String> fieldNames = new ArrayList<>();
 
@@ -277,7 +280,8 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 							Arrays.asList(fieldName.substring(1, fieldName.length() - 2) //
 									.replaceAll("\\\"", "") //
 									.split(","))); //
-				} else {
+				}
+				else {
 					fieldNames.add(fieldName);
 				}
 			}
@@ -295,17 +299,20 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		if (!QueryExecutionConverters.supports(returnType.getType())
 				&& !ReactiveWrapperConverters.supports(returnType.getType())) {
 			return returnType.getType();
-		} else {
+		}
+		else {
 			TypeInformation<?> componentType = returnType.getComponentType();
 			if (componentType == null) {
 				throw new IllegalStateException(
 						String.format("Couldn't find component type for return value of method %s", method));
-			} else {
+			}
+			else {
 
 				if (SearchHit.class.isAssignableFrom(componentType.getType())) {
 					unwrappedReturnTypeFromSearchHit = true;
 					return componentType.getComponentType().getType();
-				} else {
+				}
+				else {
 					return componentType.getType();
 				}
 			}
@@ -313,7 +320,7 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 	}
 
 	void addMethodParameter(BaseQuery query, ElasticsearchParametersParameterAccessor parameterAccessor,
-	                        ElasticsearchConverter elasticsearchConverter) {
+			ElasticsearchConverter elasticsearchConverter) {
 
 		if (hasAnnotatedHighlight()) {
 			query.setHighlightQuery(getAnnotatedHighlightQuery());

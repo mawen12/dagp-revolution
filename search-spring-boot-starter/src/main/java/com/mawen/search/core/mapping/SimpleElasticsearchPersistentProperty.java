@@ -27,7 +27,9 @@ import org.springframework.data.mapping.Association;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.model.AnnotationBasedPersistentProperty;
+import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.Property;
+import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
 import org.springframework.data.mapping.model.SimpleTypeHolder;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.lang.Nullable;
@@ -43,6 +45,8 @@ public class SimpleElasticsearchPersistentProperty
 		implements ElasticsearchPersistentProperty {
 
 	private static final List<String> SUPPORTED_ID_PROPERTY_TYPES = Arrays.asList("id", "document");
+	private static final PropertyNameFieldNamingStrategy DEFAULT_FIELD_NAMING_STRATEGY = PropertyNameFieldNamingStrategy.INSTANCE;
+
 
 	private final boolean isId;
 	private final boolean isSeqNoPrimaryTerm;
@@ -81,7 +85,14 @@ public class SimpleElasticsearchPersistentProperty
 	public String getFieldName() {
 
 		if (annotatedFieldName == null) {
-			throw new MappingException(String.format("Invalid (null or empty) field name returned for property %s by %s!", this, getOwner().getType()));
+			FieldNamingStrategy fieldNamingStrategy = getFieldNamingStrategy();
+			String fieldName = fieldNamingStrategy.getFieldName(this);
+
+			if (!StringUtils.hasText(fieldName)) {
+				throw new MappingException(String.format("Invalid (null or empty) field name returned for property %s by %s!", this, getOwner().getType()));
+			}
+
+			return fieldName;
 		}
 
 		return annotatedFieldName;
@@ -116,7 +127,6 @@ public class SimpleElasticsearchPersistentProperty
 	public String getIndexName() {
 		return indexName;
 	}
-
 
 	@Nullable
 	private String getAnnotatedFieldName() {
@@ -251,6 +261,10 @@ public class SimpleElasticsearchPersistentProperty
 			}
 		}
 
+	}
+
+	private FieldNamingStrategy getFieldNamingStrategy() {
+		return DEFAULT_FIELD_NAMING_STRATEGY;
 	}
 
 	private List<ElasticsearchDateConverter> getDateConverters(Field field, Class<?> actualType) {

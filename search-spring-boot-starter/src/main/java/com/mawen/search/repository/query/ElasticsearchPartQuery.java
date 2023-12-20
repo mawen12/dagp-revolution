@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.parser.PartTree;
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
-public class ElasticsearchPartQuery extends AbstractElasticsearchRepositoryQuery{
+public class ElasticsearchPartQuery extends AbstractElasticsearchRepositoryQuery {
 
 	private final PartTree tree;
 	private final MappingContext<?, ElasticsearchPersistentProperty> mappingContext;

@@ -27,7 +27,7 @@ public @interface Document {
 	 *     <li>Cannot be longer than 255 bytes ()</li>
 	 * </ul>
 	 */
-	String indexName();
+	String indexName() default "";
 
 	/**
 	 * determine index is dynamic or not.

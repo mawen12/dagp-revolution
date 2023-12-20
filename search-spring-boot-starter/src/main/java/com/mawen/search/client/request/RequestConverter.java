@@ -71,6 +71,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
 import static com.mawen.search.client.util.TypeUtils.*;
 import static org.springframework.util.CollectionUtils.*;
 
@@ -111,7 +112,7 @@ public class RequestConverter {
 	}
 
 	public IndexRequest<?> documentIndexRequest(IndexQuery query, IndexCoordinates indexCoordinates,
-	                                            @Nullable RefreshPolicy refreshPolicy) {
+			@Nullable RefreshPolicy refreshPolicy) {
 
 		Assert.notNull(query, "query must not be null");
 		Assert.notNull(indexCoordinates, "indexCoordinates must not be null");
@@ -157,8 +158,7 @@ public class RequestConverter {
 		return builder.build();
 	}
 
-	private IndexOperation<?> bulkIndexOperation(IndexQuery query, IndexCoordinates indexCoordinates,
-	                                             @Nullable RefreshPolicy refreshPolicy) {
+	private IndexOperation<?> bulkIndexOperation(IndexQuery query, IndexCoordinates indexCoordinates) {
 
 		IndexOperation.Builder<Object> builder = new IndexOperation.Builder<>();
 
@@ -188,8 +188,7 @@ public class RequestConverter {
 		return builder.build();
 	}
 
-	private CreateOperation<?> bulkCreateOperation(IndexQuery query, IndexCoordinates indexCoordinates,
-	                                               @Nullable RefreshPolicy refreshPolicy) {
+	private CreateOperation<?> bulkCreateOperation(IndexQuery query, IndexCoordinates indexCoordinates) {
 
 		CreateOperation.Builder<Object> builder = new CreateOperation.Builder<>();
 
@@ -220,7 +219,7 @@ public class RequestConverter {
 	}
 
 	private UpdateOperation<?, ?> bulkUpdateOperation(UpdateQuery query, IndexCoordinates index,
-	                                                  @Nullable RefreshPolicy refreshPolicy) {
+			@Nullable RefreshPolicy refreshPolicy) {
 
 		UpdateOperation.Builder<Object, Object> uob = new UpdateOperation.Builder<>();
 		String indexName = query.getIndexName() != null ? query.getIndexName() : index.getIndexName();
@@ -286,12 +285,12 @@ public class RequestConverter {
 	}
 
 	public BulkRequest documentBulkRequest(List<?> queries, BulkOptions bulkOptions, IndexCoordinates indexCoordinates,
-	                                       @Nullable RefreshPolicy refreshPolicy) {
+			@Nullable RefreshPolicy refreshPolicy) {
 
 		BulkRequest.Builder builder = new BulkRequest.Builder();
 
 		if (bulkOptions.getTimeout() != null) {
-			builder.timeout(tb -> tb.time(Long.valueOf(bulkOptions.getTimeout().toMillis()).toString() + "ms"));
+			builder.timeout(tb -> tb.time(bulkOptions.getTimeout().toMillis() + "ms"));
 		}
 
 		builder.refresh(refresh(refreshPolicy));
@@ -316,10 +315,10 @@ public class RequestConverter {
 			if (query instanceof IndexQuery) {
 				IndexQuery indexQuery = (IndexQuery) query;
 				if (indexQuery.getOpType() == IndexQuery.OpType.CREATE) {
-					ob.create(bulkCreateOperation(indexQuery, indexCoordinates, refreshPolicy));
+					ob.create(bulkCreateOperation(indexQuery, indexCoordinates));
 				}
 				else {
-					ob.index(bulkIndexOperation(indexQuery, indexCoordinates, refreshPolicy));
+					ob.index(bulkIndexOperation(indexQuery, indexCoordinates));
 				}
 			}
 			else if (query instanceof UpdateQuery) {
@@ -346,7 +345,7 @@ public class RequestConverter {
 	}
 
 	public co.elastic.clients.elasticsearch.core.ExistsRequest documentExistsRequest(String id, @Nullable String routing,
-	                                                                                 IndexCoordinates indexCoordinates) {
+			IndexCoordinates indexCoordinates) {
 
 		Assert.notNull(id, "id must not be null");
 		Assert.notNull(indexCoordinates, "indexCoordinates must not be null");
@@ -384,7 +383,7 @@ public class RequestConverter {
 	}
 
 	public DeleteRequest documentDeleteRequest(String id, @Nullable String routing, IndexCoordinates index,
-	                                           @Nullable RefreshPolicy refreshPolicy) {
+			@Nullable RefreshPolicy refreshPolicy) {
 
 		Assert.notNull(id, "id must not be null");
 		Assert.notNull(index, "index must not be null");
@@ -401,7 +400,7 @@ public class RequestConverter {
 	}
 
 	public DeleteByQueryRequest documentDeleteByQueryRequest(Query query, @Nullable String routing, Class<?> clazz,
-	                                                         IndexCoordinates index, @Nullable RefreshPolicy refreshPolicy) {
+			IndexCoordinates index, @Nullable RefreshPolicy refreshPolicy) {
 
 		Assert.notNull(query, "query must not be null");
 		Assert.notNull(index, "index must not be null");
@@ -429,7 +428,7 @@ public class RequestConverter {
 	}
 
 	public UpdateRequest<Document, ?> documentUpdateRequest(UpdateQuery query, IndexCoordinates index,
-	                                                        @Nullable RefreshPolicy refreshPolicy, @Nullable String routing) {
+			@Nullable RefreshPolicy refreshPolicy, @Nullable String routing) {
 
 		String indexName = query.getIndexName() != null ? query.getIndexName() : index.getIndexName();
 		return UpdateRequest.of(uqb -> {
@@ -510,7 +509,7 @@ public class RequestConverter {
 	// region search
 
 	public UpdateByQueryRequest documentUpdateByQueryRequest(UpdateQuery updateQuery, IndexCoordinates index,
-	                                                         @Nullable RefreshPolicy refreshPolicy) {
+			@Nullable RefreshPolicy refreshPolicy) {
 
 		return UpdateByQueryRequest.of(ub -> {
 			ub //
@@ -561,23 +560,23 @@ public class RequestConverter {
 	}
 
 	public <T> SearchRequest searchRequest(Query query, @Nullable String routing, @Nullable Class<T> clazz,
-	                                       IndexCoordinates indexCoordinates, boolean forCount) {
+			IndexCoordinates indexCoordinates, boolean forCount) {
 		return searchRequest(query, routing, clazz, indexCoordinates, forCount, false, null);
 	}
 
 	public <T> SearchRequest searchRequest(Query query, @Nullable String routing, @Nullable Class<T> clazz,
-	                                       IndexCoordinates indexCoordinates, boolean forCount, long scrollTimeInMillis) {
+			IndexCoordinates indexCoordinates, boolean forCount, long scrollTimeInMillis) {
 		return searchRequest(query, routing, clazz, indexCoordinates, forCount, true, scrollTimeInMillis);
 	}
 
 	public <T> SearchRequest searchRequest(Query query, @Nullable String routing, @Nullable Class<T> clazz,
-	                                       IndexCoordinates indexCoordinates, boolean forCount, boolean forBatchedSearch) {
+			IndexCoordinates indexCoordinates, boolean forCount, boolean forBatchedSearch) {
 		return searchRequest(query, routing, clazz, indexCoordinates, forCount, forBatchedSearch, null);
 	}
 
 	public <T> SearchRequest searchRequest(Query query, @Nullable String routing, @Nullable Class<T> clazz,
-	                                       IndexCoordinates indexCoordinates, boolean forCount, boolean forBatchedSearch,
-	                                       @Nullable Long scrollTimeInMillis) {
+			IndexCoordinates indexCoordinates, boolean forCount, boolean forBatchedSearch,
+			@Nullable Long scrollTimeInMillis) {
 
 		Assert.notNull(query, "query must not be null");
 		Assert.notNull(indexCoordinates, "indexCoordinates must not be null");
@@ -712,7 +711,7 @@ public class RequestConverter {
 	}
 
 	private <T> void prepareSearchRequest(Query query, @Nullable String routing, @Nullable Class<T> clazz,
-	                                      IndexCoordinates indexCoordinates, SearchRequest.Builder builder, boolean forCount, boolean forBatchedSearch) {
+			IndexCoordinates indexCoordinates, SearchRequest.Builder builder, boolean forCount, boolean forBatchedSearch) {
 
 		String[] indexNames = indexCoordinates.getIndexNames();
 
@@ -931,7 +930,7 @@ public class RequestConverter {
 
 	@Nullable
 	private NestedSortValue getNestedSort(@Nullable Order.Nested nested,
-	                                      @Nullable ElasticsearchPersistentEntity<?> persistentEntity) {
+			@Nullable ElasticsearchPersistentEntity<?> persistentEntity) {
 		return (nested == null || persistentEntity == null) ? null
 				: NestedSortValue.of(b -> b //
 				.path(elasticsearchConverter.updateFieldNames(nested.getPath(), persistentEntity)) //
@@ -985,7 +984,7 @@ public class RequestConverter {
 
 	@Nullable
 	private co.elastic.clients.elasticsearch._types.query_dsl.Query getQuery(@Nullable Query query,
-	                                                                         @Nullable Class<?> clazz) {
+			@Nullable Class<?> clazz) {
 
 		if (query == null) {
 			return null;
@@ -1039,7 +1038,7 @@ public class RequestConverter {
 	// region helper functions
 
 	public co.elastic.clients.elasticsearch._types.query_dsl.MoreLikeThisQuery moreLikeThisQuery(MoreLikeThisQuery query,
-	                                                                                             IndexCoordinates index) {
+			IndexCoordinates index) {
 
 		Assert.notNull(query, "query must not be null");
 		Assert.notNull(index, "index must not be null");

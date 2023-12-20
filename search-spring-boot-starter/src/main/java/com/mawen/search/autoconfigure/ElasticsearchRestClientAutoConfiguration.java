@@ -18,12 +18,10 @@ package com.mawen.search.autoconfigure;
 
 import com.mawen.search.autoconfigure.ElasticsearchRestClientConfigurations.RestClientBuilderConfiguration;
 import com.mawen.search.autoconfigure.ElasticsearchRestClientConfigurations.RestClientConfiguration;
-import com.mawen.search.autoconfigure.ElasticsearchRestClientConfigurations.RestClientSnifferConfiguration;
 import org.elasticsearch.client.RestClientBuilder;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
@@ -31,7 +29,7 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @ConditionalOnClass(RestClientBuilder.class)
 @EnableConfigurationProperties(ElasticsearchProperties.class)
-@Import({ RestClientBuilderConfiguration.class, RestClientConfiguration.class, RestClientSnifferConfiguration.class })
+@Import({RestClientBuilderConfiguration.class, RestClientConfiguration.class})
 public class ElasticsearchRestClientAutoConfiguration {
 
 }

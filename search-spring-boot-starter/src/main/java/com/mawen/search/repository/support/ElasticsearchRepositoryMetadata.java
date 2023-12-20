@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 import com.mawen.search.core.domain.SearchHit;
+import lombok.Getter;
 
 import org.springframework.data.repository.core.support.DefaultRepositoryMetadata;
 
@@ -13,6 +14,7 @@ import org.springframework.data.repository.core.support.DefaultRepositoryMetadat
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
+@Getter
 public class ElasticsearchRepositoryMetadata extends DefaultRepositoryMetadata {
 
 	public ElasticsearchRepositoryMetadata(Class<?> repositoryInterface) {
@@ -33,7 +35,8 @@ public class ElasticsearchRepositoryMetadata extends DefaultRepositoryMetadata {
 						returnedDomainClass = (Class<?>) collectionTypeArgument.getActualTypeArguments()[0];
 					}
 				}
-			} catch (Exception ignored) {}
+			}
+			catch (Exception ignored) {}
 		}
 		return returnedDomainClass;
 	}

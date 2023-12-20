@@ -16,7 +16,7 @@ public class ElasticsearchStringQuery extends AbstractElasticsearchRepositoryQue
 	private final String queryString;
 
 	public ElasticsearchStringQuery(ElasticsearchQueryMethod queryMethod, ElasticsearchOperations elasticsearchOperations,
-	                                String queryString) {
+			String queryString) {
 		super(queryMethod, elasticsearchOperations);
 		Assert.notNull(queryString, "Query cannot be empty");
 		this.queryString = queryString;

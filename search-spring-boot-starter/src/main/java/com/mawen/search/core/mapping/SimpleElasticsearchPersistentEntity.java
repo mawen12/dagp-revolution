@@ -22,6 +22,7 @@ import org.springframework.expression.common.LiteralExpression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
@@ -40,6 +41,7 @@ public class SimpleElasticsearchPersistentEntity<T>
 	private final ConcurrentHashMap<String, Expression> indexNameExpressions = new ConcurrentHashMap<>();
 	@Nullable
 	private String indexName;
+	private boolean isDynamicIndex;
 	private final Lazy<EvaluationContext> indexNameEvaluationContext = Lazy.of(this::getIndexNameEvaluationContext);
 	@Nullable
 	private ElasticsearchPersistentProperty seqNoPrimaryTermProperty;
@@ -57,6 +59,7 @@ public class SimpleElasticsearchPersistentEntity<T>
 		document = AnnotatedElementUtils.findMergedAnnotation(clazz, Document.class);
 		if (document != null) {
 			this.indexName = document.indexName();
+			this.isDynamicIndex = document.dynamicIndex();
 		}
 
 		Routing routingAnnotation = AnnotatedElementUtils.findMergedAnnotation(clazz, Routing.class);
@@ -104,7 +107,11 @@ public class SimpleElasticsearchPersistentEntity<T>
 		if (property.isIndexNameProperty()) {
 
 			if (!property.getActualType().isAssignableFrom(String.class)) {
-				throw new MappingException("@IndexName annotation must be put on String property");
+				throw new MappingException(String.format("@IndexName annotation must be put on String property on %s", this.getType()));
+			}
+
+			if (StringUtils.hasText(indexName)) {
+				throw new MappingException(String.format("@IndexName annotation cannot be combined with @Document(value=%s) on %s", indexName, this.getType()));
 			}
 
 			if (indexNameProperty != null) {
@@ -174,7 +181,6 @@ public class SimpleElasticsearchPersistentEntity<T>
 		throw new MappingException("Could not resolve expression: " + routing + " for object of class " + bean.getClass().getCanonicalName());
 	}
 
-	// region SpEL handling
 	private IndexCoordinates resolve(IndexCoordinates indexCoordinates) {
 
 		String[] indexNames = indexCoordinates.getIndexNames();
@@ -213,7 +219,6 @@ public class SimpleElasticsearchPersistentEntity<T>
 		ExpressionDependencies expressionDependencies = expression != null ? ExpressionDependencies.discover(expression)
 				: ExpressionDependencies.none();
 
-		// noinspection ConstantConditions
 		return getEvaluationContext(null, expressionDependencies);
 	}
 

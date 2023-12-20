@@ -7,11 +7,10 @@ import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.util.Assert;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
-public class ElasticsearchEntityInformationCreatorImpl implements ElasticsearchEntityInformationCreator{
+public class ElasticsearchEntityInformationCreatorImpl implements ElasticsearchEntityInformationCreator {
 
 	private final MappingContext<? extends ElasticsearchPersistentEntity<?>, ElasticsearchPersistentProperty> mappingContext;
 

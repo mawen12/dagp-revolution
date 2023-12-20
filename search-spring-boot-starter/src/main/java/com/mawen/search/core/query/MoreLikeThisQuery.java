@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
 import static com.mawen.search.core.query.Query.*;
 import static java.util.Collections.*;
 

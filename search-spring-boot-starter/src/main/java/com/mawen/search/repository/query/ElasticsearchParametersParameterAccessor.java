@@ -3,7 +3,6 @@ package com.mawen.search.repository.query;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */

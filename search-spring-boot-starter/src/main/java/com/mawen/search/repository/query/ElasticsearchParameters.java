@@ -7,7 +7,6 @@ import org.springframework.core.MethodParameter;
 import org.springframework.data.repository.query.Parameters;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
@@ -20,12 +19,12 @@ public class ElasticsearchParameters extends Parameters<ElasticsearchParameters,
 
 	}
 
-	private ElasticsearchParameter parameterFactory(MethodParameter methodParameter) {
-		return new ElasticsearchParameter(methodParameter);
-	}
-
 	private ElasticsearchParameters(List<ElasticsearchParameter> parameters) {
 		super(parameters);
+	}
+
+	private ElasticsearchParameter parameterFactory(MethodParameter methodParameter) {
+		return new ElasticsearchParameter(methodParameter);
 	}
 
 	@Override

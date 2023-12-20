@@ -1,11 +1,14 @@
 package com.mawen.search;
 
+import lombok.Getter;
+
 import org.springframework.lang.Nullable;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
+@Getter
 public class UncategorizedElasticsearchException extends SearchException {
 
 	@Nullable
@@ -26,21 +29,5 @@ public class UncategorizedElasticsearchException extends SearchException {
 		super(msg, cause);
 		this.statusCode = statusCode;
 		this.responseBody = responseBody;
-	}
-
-	/**
-	 * @since 4.4
-	 */
-	@Nullable
-	public Integer getStatusCode() {
-		return statusCode;
-	}
-
-	/**
-	 * @since 4.4
-	 */
-	@Nullable
-	public String getResponseBody() {
-		return responseBody;
 	}
 }

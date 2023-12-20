@@ -20,7 +20,7 @@ import org.springframework.util.NumberUtils;
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/20
  */
-public class ElasticsearchCustomConversions  extends CustomConversions {
+public class ElasticsearchCustomConversions extends CustomConversions {
 
 	private static final StoreConversions STORE_CONVERSIONS;
 	private static final List<Converter<?, ?>> STORE_CONVERTERS;
@@ -112,7 +112,8 @@ public class ElasticsearchCustomConversions  extends CustomConversions {
 	@WritingConverter
 	enum ByteArrayToBase64Converter implements Converter<byte[], String> {
 
-		INSTANCE,;
+		INSTANCE,
+		;
 
 		@Override
 		public String convert(byte[] source) {

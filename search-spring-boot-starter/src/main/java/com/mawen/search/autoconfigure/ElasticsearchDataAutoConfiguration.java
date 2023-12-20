@@ -16,18 +16,17 @@
 
 package com.mawen.search.autoconfigure;
 
+import com.mawen.search.autoconfigure.ElasticsearchDataConfiguration.BaseConfiguration;
+import com.mawen.search.autoconfigure.ElasticsearchDataConfiguration.JavaClientConfiguration;
 import com.mawen.search.client.ElasticsearchTemplate;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Import;
 
-@AutoConfiguration(
-		after = { ElasticsearchClientAutoConfiguration.class })
-@ConditionalOnClass({ ElasticsearchTemplate.class })
-@Import({ BaseConfiguration.class,
-		JavaClientConfiguration.class})
+@AutoConfiguration(after = {ElasticsearchClientAutoConfiguration.class})
+@ConditionalOnClass({ElasticsearchTemplate.class})
+@Import({BaseConfiguration.class, JavaClientConfiguration.class})
 public class ElasticsearchDataAutoConfiguration {
 
 }

@@ -58,8 +58,8 @@ public class SearchDocumentResponseBuilder {
 
 
 	public static <T> SearchDocumentResponse from(HitsMetadata<?> hitsMetadata, @Nullable String scrollId,
-	                                              @Nullable Map<String, Aggregate> aggregations, Map<String, List<Suggestion<EntityAsMap>>> suggestES,
-	                                              SearchDocumentResponse.EntityCreator<T> entityCreator) {
+			@Nullable Map<String, Aggregate> aggregations, Map<String, List<Suggestion<EntityAsMap>>> suggestES,
+			SearchDocumentResponse.EntityCreator<T> entityCreator) {
 
 		Assert.notNull(hitsMetadata, "hitsMetadata must not be null");
 

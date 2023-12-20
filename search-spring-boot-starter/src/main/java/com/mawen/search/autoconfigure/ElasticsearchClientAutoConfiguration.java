@@ -22,16 +22,13 @@ import com.mawen.search.autoconfigure.ElasticsearchClientConfigurations.Elastics
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.autoconfigure.jsonb.JsonbAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 
-@AutoConfiguration(after = { JacksonAutoConfiguration.class, JsonbAutoConfiguration.class,
-		ElasticsearchRestClientAutoConfiguration.class })
+@AutoConfiguration(after = {JacksonAutoConfiguration.class, ElasticsearchRestClientAutoConfiguration.class})
 @ConditionalOnClass(ElasticsearchClient.class)
-@Import({ ElasticsearchTransportConfiguration.class, ElasticsearchClientConfiguration.class })
+@Import({ElasticsearchTransportConfiguration.class, ElasticsearchClientConfiguration.class})
 public class ElasticsearchClientAutoConfiguration {
 
 }

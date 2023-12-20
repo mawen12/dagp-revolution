@@ -24,7 +24,8 @@ public final class Range<T> {
 		Assert.notNull(lowerBound, "Lower bound must not be null");
 		Assert.notNull(upperBound, "Upper bound must not be null");
 
-		this.lowerBound = lowerBound; this.upperBound = upperBound;
+		this.lowerBound = lowerBound;
+		this.upperBound = upperBound;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -58,7 +59,8 @@ public final class Range<T> {
 
 	public static <T> Range.RangeBuilder<T> from(Range.Bound<T> lower) {
 
-		Assert.notNull(lower, "Lower bound must not be null"); return new Range.RangeBuilder<>(lower);
+		Assert.notNull(lower, "Lower bound must not be null");
+		return new Range.RangeBuilder<>(lower);
 	}
 
 	public static <T> Range<T> of(Range.Bound<T> lowerBound, Range.Bound<T> upperBound) {
@@ -137,7 +139,8 @@ public final class Range<T> {
 	@Override
 	public int hashCode() {
 		int result = ObjectUtils.nullSafeHashCode(lowerBound);
-		result = 31 * result + ObjectUtils.nullSafeHashCode(upperBound); return result;
+		result = 31 * result + ObjectUtils.nullSafeHashCode(upperBound);
+		return result;
 	}
 
 	public static final class Bound<T> {
@@ -148,7 +151,8 @@ public final class Range<T> {
 		private final boolean inclusive;
 
 		private Bound(Optional<T> value, boolean inclusive) {
-			this.value = value; this.inclusive = inclusive;
+			this.value = value;
+			this.inclusive = inclusive;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -156,61 +160,61 @@ public final class Range<T> {
 			return (Range.Bound<T>) UNBOUNDED;
 		}
 
-
-		public boolean isBounded() {
-			return value.isPresent();
-		}
-
-
 		public static <T> Range.Bound<T> inclusive(T value) {
 
-			Assert.notNull(value, "Value must not be null"); return Range.Bound.of(Optional.of(value), true);
+			Assert.notNull(value, "Value must not be null");
+			return Range.Bound.of(Optional.of(value), true);
 		}
-
 
 		public static Range.Bound<Integer> inclusive(int value) {
 			return inclusive((Integer) value);
 		}
 
-
 		public static Range.Bound<Long> inclusive(long value) {
 			return inclusive((Long) value);
 		}
-
 
 		public static Range.Bound<Float> inclusive(float value) {
 			return inclusive((Float) value);
 		}
 
-
 		public static Range.Bound<Double> inclusive(double value) {
 			return inclusive((Double) value);
 		}
 
-
 		public static <T> Range.Bound<T> exclusive(T value) {
 
-			Assert.notNull(value, "Value must not be null"); return Range.Bound.of(Optional.of(value), false);
+			Assert.notNull(value, "Value must not be null");
+			return Range.Bound.of(Optional.of(value), false);
 		}
-
 
 		public static Range.Bound<Integer> exclusive(int value) {
 			return exclusive((Integer) value);
 		}
 
-
 		public static Range.Bound<Long> exclusive(long value) {
 			return exclusive((Long) value);
 		}
-
 
 		public static Range.Bound<Float> exclusive(float value) {
 			return exclusive((Float) value);
 		}
 
-
 		public static Range.Bound<Double> exclusive(double value) {
 			return exclusive((Double) value);
+		}
+
+		private static <R> Range.Bound<R> of(Optional<R> value, boolean inclusive) {
+
+			if (value.isPresent()) {
+				return new Range.Bound<>(value, inclusive);
+			}
+
+			return unbounded();
+		}
+
+		public boolean isBounded() {
+			return value.isPresent();
 		}
 
 		String toPrefixString() {
@@ -271,24 +275,16 @@ public final class Range<T> {
 				return ObjectUtils.nullSafeHashCode(value);
 			}
 
-			int result = ObjectUtils.nullSafeHashCode(value); result = 31 * result + (inclusive ? 1 : 0); return result;
+			int result = ObjectUtils.nullSafeHashCode(value);
+			result = 31 * result + (inclusive ? 1 : 0);
+			return result;
 		}
-
 
 		public <R> Range.Bound<R> map(Function<? super T, ? extends R> mapper) {
 
 			Assert.notNull(mapper, "Mapping function must not be null");
 
 			return Range.Bound.of(value.map(mapper), inclusive);
-		}
-
-		private static <R> Range.Bound<R> of(Optional<R> value, boolean inclusive) {
-
-			if (value.isPresent()) {
-				return new Range.Bound<>(value, inclusive);
-			}
-
-			return unbounded();
 		}
 
 	}
@@ -304,7 +300,8 @@ public final class Range<T> {
 
 		public Range<T> to(Range.Bound<T> upper) {
 
-			Assert.notNull(upper, "Upper bound must not be null"); return new Range<>(lower, upper);
+			Assert.notNull(upper, "Upper bound must not be null");
+			return new Range<>(lower, upper);
 		}
 	}
 

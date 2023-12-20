@@ -10,12 +10,11 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.data.annotation.QueryAnnotation;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Documented
 @QueryAnnotation
 public @interface Query {

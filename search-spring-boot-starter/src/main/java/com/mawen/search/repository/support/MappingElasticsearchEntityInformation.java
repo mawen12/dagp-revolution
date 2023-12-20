@@ -7,7 +7,6 @@ import com.mawen.search.core.mapping.IndexCoordinates;
 import org.springframework.data.repository.core.support.PersistentEntityInformation;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
@@ -19,6 +18,25 @@ public class MappingElasticsearchEntityInformation<T, ID> extends PersistentEnti
 	public MappingElasticsearchEntityInformation(ElasticsearchPersistentEntity<T> persistentEntity) {
 		super(persistentEntity);
 		this.persistentEntity = persistentEntity;
+	}
+
+	@Override
+	public boolean isDynamicIndex() {
+		return false;
+	}
+
+	@Override
+	public String getIndexName(T entity) {
+
+		ElasticsearchPersistentProperty indexNameProperty = persistentEntity.getIndexNameProperty();
+		try {
+			return indexNameProperty != null
+					? (String)persistentEntity.getPropertyAccessor(entity).getProperty(indexNameProperty)
+					: null;
+		}
+		catch (Exception e) {
+			throw new IllegalStateException("failed to load indexName field", e);
+		}
 	}
 
 	@Override
@@ -38,7 +56,8 @@ public class MappingElasticsearchEntityInformation<T, ID> extends PersistentEnti
 		try {
 			return versionProperty != null ? (Long) persistentEntity.getPropertyAccessor(entity).getProperty(versionProperty)
 					: null;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new IllegalStateException("failed to load version field", e);
 		}
 	}

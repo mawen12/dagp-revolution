@@ -21,5 +21,5 @@ public @interface IndexName {
 	/**
 	 * Name of the Elasticsearch index.
 	 */
-	String value();
+	String value() default "";
 }

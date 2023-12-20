@@ -29,12 +29,12 @@ import org.springframework.util.ClassUtils;
 public abstract class AbstractElasticsearchRepositoryQuery implements RepositoryQuery {
 
 	protected static final int DEFAULT_STREAM_BATCH_SIZE = 500;
-	protected ElasticsearchQueryMethod queryMethod;
 	protected final ElasticsearchOperations elasticsearchOperations;
 	protected final ElasticsearchConverter elasticsearchConverter;
+	protected ElasticsearchQueryMethod queryMethod;
 
 	public AbstractElasticsearchRepositoryQuery(ElasticsearchQueryMethod queryMethod,
-	                                            ElasticsearchOperations elasticsearchOperations) {
+			ElasticsearchOperations elasticsearchOperations) {
 		this.queryMethod = queryMethod;
 		this.elasticsearchOperations = elasticsearchOperations;
 		this.elasticsearchConverter = elasticsearchOperations.getElasticsearchConverter();
@@ -71,33 +71,41 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 		if (isDeleteQuery()) {
 			result = countOrGetDocumentsForDelete(query, parameterAccessor);
 			elasticsearchOperations.delete(query, clazz, index);
-		} else if (isCountQuery()) {
+		}
+		else if (isCountQuery()) {
 			result = elasticsearchOperations.count(query, clazz, index);
-		} else if (isExistsQuery()) {
+		}
+		else if (isExistsQuery()) {
 			result = elasticsearchOperations.count(query, clazz, index) > 0;
-		} else if (queryMethod.isPageQuery()) {
+		}
+		else if (queryMethod.isPageQuery()) {
 			query.setPageable(parameterAccessor.getPageable());
 			SearchHits<?> searchHits = elasticsearchOperations.search(query, clazz, index);
 			if (queryMethod.isSearchPageMethod()) {
 				result = SearchHitSupport.searchPageFor(searchHits, query.getPageable());
-			} else {
+			}
+			else {
 				result = SearchHitSupport.unwrapSearchHits(SearchHitSupport.searchPageFor(searchHits, query.getPageable()));
 			}
-		} else if (queryMethod.isStreamQuery()) {
+		}
+		else if (queryMethod.isStreamQuery()) {
 			query.setPageable(parameterAccessor.getPageable().isPaged() ? parameterAccessor.getPageable()
 					: PageRequest.of(0, DEFAULT_STREAM_BATCH_SIZE));
 			result = StreamUtils.createStreamFromIterator(elasticsearchOperations.searchForStream(query, clazz, index));
-		} else if (queryMethod.isCollectionQuery()) {
+		}
+		else if (queryMethod.isCollectionQuery()) {
 
 			if (parameterAccessor.getPageable().isUnpaged()) {
 				int itemCount = (int) elasticsearchOperations.count(query, clazz, index);
 
 				if (itemCount == 0) {
 					result = new SearchHitsImpl<>(0, TotalHitsRelation.EQUAL_TO, Float.NaN, null, Collections.emptyList(), null);
-				} else {
+				}
+				else {
 					query.setPageable(PageRequest.of(0, Math.max(1, itemCount)));
 				}
-			} else {
+			}
+			else {
 				query.setPageable(parameterAccessor.getPageable());
 			}
 
@@ -105,7 +113,8 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 				result = elasticsearchOperations.search(query, clazz, index);
 			}
 
-		} else {
+		}
+		else {
 			result = elasticsearchOperations.searchOne(query, clazz, index);
 		}
 
@@ -142,7 +151,8 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 			if (accessor.getPageable().isUnpaged()) {
 				int itemCount = (int) elasticsearchOperations.count(query, entityClass, index);
 				query.setPageable(PageRequest.of(0, Math.max(1, itemCount)));
-			} else {
+			}
+			else {
 				query.setPageable(accessor.getPageable());
 			}
 			result = elasticsearchOperations.search(query, entityClass, index);

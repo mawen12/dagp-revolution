@@ -1,3 +1,4 @@
+org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 com.mawen.search.autoconfigure.ElasticsearchDataAutoConfiguration
 com.mawen.search.autoconfigure.ElasticsearchRepositoriesAutoConfiguration
 com.mawen.search.autoconfigure.ElasticsearchClientAutoConfiguration

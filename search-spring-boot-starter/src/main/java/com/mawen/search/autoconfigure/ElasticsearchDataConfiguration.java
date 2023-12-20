@@ -59,7 +59,7 @@ abstract class ElasticsearchDataConfiguration {
 		@Bean
 		@ConditionalOnMissingBean
 		ElasticsearchConverter elasticsearchConverter(SimpleElasticsearchMappingContext mappingContext,
-		                                              ElasticsearchCustomConversions elasticsearchCustomConversions) {
+				ElasticsearchCustomConversions elasticsearchCustomConversions) {
 			MappingElasticsearchConverter converter = new MappingElasticsearchConverter(mappingContext);
 			converter.setConversions(elasticsearchCustomConversions);
 			return converter;

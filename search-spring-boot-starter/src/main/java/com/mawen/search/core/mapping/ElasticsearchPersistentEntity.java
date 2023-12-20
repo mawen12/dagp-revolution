@@ -29,6 +29,15 @@ public interface ElasticsearchPersistentEntity<T> extends PersistentEntity<T, El
 
 	ElasticsearchPersistentProperty getIndexNameProperty();
 
+	default ElasticsearchPersistentProperty getRequiredIndexNameProperty() {
+
+		ElasticsearchPersistentProperty indexNameProperty = this.getIndexNameProperty();
+
+		Assert.isTrue(indexNameProperty != null, String.format("Required IndexName property not found for %s", this.getType()));
+
+		return indexNameProperty;
+	}
+
 	@Nullable
 	String resolveRouting(T bean);
 }

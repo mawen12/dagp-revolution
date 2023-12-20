@@ -59,6 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
 import static com.mawen.search.client.util.TypeUtils.*;
 
 /**
@@ -106,8 +107,7 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 	@Nullable
 	public <T> T get(String id, Class<T> clazz, IndexCoordinates index) {
 
-		GetRequest getRequest = requestConverter.documentGetRequest(elasticsearchConverter.convertId(id),
-				routingResolver.getRouting(), index);
+		GetRequest getRequest = requestConverter.documentGetRequest(elasticsearchConverter.convertId(id), routingResolver.getRouting(), index);
 		GetResponse<EntityAsMap> getResponse = execute(client -> client.get(getRequest, EntityAsMap.class));
 
 		ReadDocumentCallback<T> callback = new ReadDocumentCallback<>(elasticsearchConverter, clazz, index);

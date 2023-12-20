@@ -26,7 +26,7 @@ public class ElasticsearchQueryCreator extends AbstractQueryCreator<CriteriaQuer
 	private final MappingContext<?, ElasticsearchPersistentProperty> context;
 
 	public ElasticsearchQueryCreator(PartTree tree, ParameterAccessor parameters,
-	                                 MappingContext<?, ElasticsearchPersistentProperty> context) {
+			MappingContext<?, ElasticsearchPersistentProperty> context) {
 		super(tree, parameters);
 		this.context = context;
 	}
@@ -139,6 +139,6 @@ public class ElasticsearchQueryCreator extends AbstractQueryCreator<CriteriaQuer
 		else if (o.getClass().isArray()) {
 			return (Object[]) o;
 		}
-		return new Object[] {o};
+		return new Object[]{o};
 	}
 }

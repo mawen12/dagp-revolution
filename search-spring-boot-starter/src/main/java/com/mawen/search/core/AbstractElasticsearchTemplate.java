@@ -82,11 +82,6 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 		this.routingResolver = new DefaultRoutingResolver(mappingContext);
 	}
 
-	protected static String[] toArray(List<String> values) {
-		String[] valuesAsArray = new String[values.size()];
-		return values.toArray(valuesAsArray);
-	}
-
 	private AbstractElasticsearchTemplate copy() {
 
 		AbstractElasticsearchTemplate copy = doCopy();
@@ -185,11 +180,15 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 		List<IndexQuery> indexQueries = Streamable.of(entities).stream().map(this::getIndexQuery)
 				.collect(Collectors.toList());
 
+		return save(indexQueries);
+	}
+
+	protected <T> Iterable<T> save(List<IndexQuery> indexQueries) {
 		if (indexQueries.isEmpty()) {
 			return Collections.emptyList();
 		}
 
-		List<IndexedObjectInformation> indexedObjectInformationList = bulkIndex(indexQueries, index);
+		List<IndexedObjectInformation> indexedObjectInformationList = bulkIndex(indexQueries);
 		Iterator<IndexedObjectInformation> iterator = indexedObjectInformationList.iterator();
 
 		// noinspection unchecked
@@ -283,6 +282,14 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 	protected abstract ByQueryResponse doDelete(Query query, Class<?> clazz, IndexCoordinates index);
 
 	@Override
+	public List<IndexedObjectInformation> bulkIndex(List<IndexQuery> queries) {
+
+		Assert.isTrue(queries.stream().noneMatch(query -> query.getIndexName() != null), String.format("IndexQuery %s must all have indexName.", queries.stream().filter(query -> query.getIndexName() == null).map(IndexQuery::getId).collect(Collectors.joining(","))));
+
+		return doBulkOperation(queries, BulkOptions.defaultOptions(), null);
+	}
+
+	@Override
 	public List<IndexedObjectInformation> bulkIndex(List<IndexQuery> queries, Class<?> clazz) {
 		return bulkIndex(queries, getIndexCoordinatesFor(clazz));
 	}
@@ -307,7 +314,7 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 		bulkUpdate(queries, getIndexCoordinatesFor(clazz));
 	}
 
-	public List<IndexedObjectInformation> bulkOperation(List<?> queries, BulkOptions bulkOptions,
+	public List<IndexedObjectInformation> bulkOperation(List<IndexQuery> queries, BulkOptions bulkOptions,
 			IndexCoordinates index) {
 
 		Assert.notNull(queries, "List of IndexQuery must not be null");

@@ -11,6 +11,11 @@ import org.springframework.lang.Nullable;
  */
 public interface ElasticsearchEntityInformation<T, ID> extends EntityInformation<T, ID> {
 
+	boolean isDynamicIndex();
+
+	@Nullable
+	String getIndexName(T entity);
+
 	String getIdAttribute();
 
 	IndexCoordinates getIndexCoordinates();

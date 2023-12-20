@@ -13,6 +13,7 @@
 
     <modules>
         <module>search-spring-boot-starter</module>
+        <module>search-sample</module>
     </modules>
 
     <profiles>

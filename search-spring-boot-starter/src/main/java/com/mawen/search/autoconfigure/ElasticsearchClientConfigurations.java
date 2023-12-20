@@ -22,72 +22,49 @@ import co.elastic.clients.json.SimpleJsonpMapper;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.json.jsonb.JsonbJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
-import co.elastic.clients.transport.TransportOptions;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.json.spi.JsonProvider;
 import org.elasticsearch.client.RestClient;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-class ElasticsearchClientConfigurations {
+public class ElasticsearchClientConfigurations {
 
 	@ConditionalOnMissingBean(JsonpMapper.class)
-	@ConditionalOnBean(ObjectMapper.class)
 	@Configuration(proxyBeanMethods = false)
 	static class JacksonJsonpMapperConfiguration {
+
+		@Bean
+		@ConditionalOnMissingBean
+		ObjectMapper objectMapper() {
+			return new ObjectMapper();
+		}
 
 		@Bean
 		JacksonJsonpMapper jacksonJsonpMapper() {
 			return new JacksonJsonpMapper();
 		}
-
 	}
 
-	@ConditionalOnMissingBean(JsonpMapper.class)
-	@ConditionalOnBean(Jsonb.class)
+	@Import({JacksonJsonpMapperConfiguration.class})
 	@Configuration(proxyBeanMethods = false)
-	static class JsonbJsonpMapperConfiguration {
-
-		@Bean
-		JsonbJsonpMapper jsonbJsonpMapper(Jsonb jsonb) {
-			return new JsonbJsonpMapper(JsonProvider.provider(), jsonb);
-		}
-
-	}
-
-	@ConditionalOnMissingBean(JsonpMapper.class)
-	@Configuration(proxyBeanMethods = false)
-	static class SimpleJsonpMapperConfiguration {
-
-		@Bean
-		SimpleJsonpMapper simpleJsonpMapper() {
-			return new SimpleJsonpMapper();
-		}
-
-	}
-
-	@Import({ JacksonJsonpMapperConfiguration.class, JsonbJsonpMapperConfiguration.class,
-			SimpleJsonpMapperConfiguration.class })
-	@ConditionalOnBean(RestClient.class)
-	@ConditionalOnMissingBean(ElasticsearchTransport.class)
+	@ConditionalOnClass(RestClientTransport.class)
 	static class ElasticsearchTransportConfiguration {
 
 		@Bean
-		RestClientTransport restClientTransport(RestClient restClient, JsonpMapper jsonMapper,
-				ObjectProvider<TransportOptions> transportOptions) {
-			return new RestClientTransport(restClient, jsonMapper, transportOptions.getIfAvailable());
+		RestClientTransport restClientTransport(RestClient restClient, JsonpMapper jsonMapper) {
+			return new RestClientTransport(restClient, jsonMapper, null);
 		}
-
 	}
 
 	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnBean(ElasticsearchTransport.class)
+	@ConditionalOnClass(ElasticsearchClient.class)
 	static class ElasticsearchClientConfiguration {
 
 		@Bean

@@ -48,6 +48,8 @@ public interface DocumentOperations {
 
 	boolean exists(String id, IndexCoordinates index);
 
+	List<IndexedObjectInformation> bulkIndex(List<IndexQuery> queries);
+
 	default List<IndexedObjectInformation> bulkIndex(List<IndexQuery> queries, Class<?> clazz) {
 		return bulkIndex(queries, BulkOptions.defaultOptions(), clazz);
 	}

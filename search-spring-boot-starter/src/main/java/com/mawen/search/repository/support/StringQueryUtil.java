@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.util.NumberUtils;
 
 /**
- *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
@@ -61,13 +60,15 @@ public class StringQueryUtil {
 			sb.append(collectionParam.stream().map(o -> {
 				if (o instanceof String) {
 					return "\"" + convert(o) + "\"";
-				} else {
+				}
+				else {
 					return convert(o);
 				}
 			}).collect(Collectors.joining(",")));
 			sb.append("]");
 			return sb.toString();
-		} else {
+		}
+		else {
 			String parameterValue = "null";
 			if (conversionService.canConvert(parameter.getClass(), String.class)) {
 				String converted = conversionService.convert(parameter, String.class);
@@ -75,7 +76,8 @@ public class StringQueryUtil {
 				if (converted != null) {
 					parameterValue = converted;
 				}
-			} else {
+			}
+			else {
 				parameterValue = parameter.toString();
 			}
 

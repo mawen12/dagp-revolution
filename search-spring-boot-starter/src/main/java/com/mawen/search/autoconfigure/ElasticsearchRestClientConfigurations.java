@@ -15,9 +15,8 @@ import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,8 +44,7 @@ public class ElasticsearchRestClientConfigurations {
 		}
 
 		@Bean
-		RestClientBuilder elasticsearchRestClientBuilder(
-				ObjectProvider<RestClientBuilderCustomizer> builderCustomizers) {
+		RestClientBuilder elasticsearchRestClientBuilder(ObjectProvider<RestClientBuilderCustomizer> builderCustomizers) {
 			HttpHost[] hosts = this.properties.getUris().stream().map(this::createHttpHost).toArray(HttpHost[]::new);
 			RestClientBuilder builder = RestClient.builder(hosts);
 			builder.setHttpClientConfigCallback((httpClientBuilder) -> {
@@ -93,27 +91,8 @@ public class ElasticsearchRestClientConfigurations {
 	static class RestClientConfiguration {
 
 		@Bean
-		RestClient elasticsearchRestClient(RestClientBuilder restClientBuilder) {
+		RestClient restClient(RestClientBuilder restClientBuilder) {
 			return restClientBuilder.build();
-		}
-
-	}
-
-	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnClass(Sniffer.class)
-	@ConditionalOnSingleCandidate(RestClient.class)
-	static class RestClientSnifferConfiguration {
-
-		@Bean
-		@ConditionalOnMissingBean
-		Sniffer elasticsearchSniffer(RestClient client, ElasticsearchProperties properties) {
-			SnifferBuilder builder = Sniffer.builder(client);
-			PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
-			Duration interval = properties.getRestclient().getSniffer().getInterval();
-			map.from(interval).asInt(Duration::toMillis).to(builder::setSniffIntervalMillis);
-			Duration delayAfterFailure = properties.getRestclient().getSniffer().getDelayAfterFailure();
-			map.from(delayAfterFailure).asInt(Duration::toMillis).to(builder::setSniffAfterFailureDelayMillis);
-			return builder.build();
 		}
 
 	}
