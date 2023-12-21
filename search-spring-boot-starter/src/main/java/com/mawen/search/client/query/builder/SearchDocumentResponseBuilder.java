@@ -72,12 +72,13 @@ public class SearchDocumentResponseBuilder {
 			switch (responseTotalHits.relation().jsonValue()) {
 				case "eq":
 					totalHitsRelation = TotalHitsRelation.EQUAL_TO.name();
+					break;
 				case "gte":
 					totalHitsRelation = TotalHitsRelation.GREATER_THAN_OR_EQUAL_TO.name();
+					break;
 				default:
 					totalHitsRelation = TotalHitsRelation.OFF.name();
 			}
-			;
 		}
 		else {
 			totalHits = hitsMetadata.hits().size();

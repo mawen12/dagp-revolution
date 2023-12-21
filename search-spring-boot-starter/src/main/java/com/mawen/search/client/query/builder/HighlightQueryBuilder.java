@@ -98,10 +98,6 @@ public class HighlightQueryBuilder {
 			builder.postTags(Arrays.asList(parameters.getPostTags()));
 		}
 
-		if (!parameters.getRequireFieldMatch()) { // default is true
-			builder.requireFieldMatch(false);
-		}
-
 		if (StringUtils.hasLength(parameters.getType())) {
 			builder.type(highlighterType(parameters.getType()));
 		}
@@ -137,10 +133,6 @@ public class HighlightQueryBuilder {
 			builder.boundaryScannerLocale(parameters.getBoundaryScannerLocale());
 		}
 
-		if (parameters.getForceSource()) { // default is false
-			builder.forceSource(parameters.getForceSource());
-		}
-
 		if (StringUtils.hasLength(parameters.getFragmenter())) {
 			builder.fragmenter(highlighterFragmenter(parameters.getFragmenter()));
 		}
@@ -171,10 +163,6 @@ public class HighlightQueryBuilder {
 
 		if (parameters.getPostTags().length > 0) {
 			builder.postTags(Arrays.asList(parameters.getPostTags()));
-		}
-
-		if (!parameters.getRequireFieldMatch()) { // default is true
-			builder.requireFieldMatch(false);
 		}
 
 		if (StringUtils.hasLength(parameters.getType())) {

@@ -12,6 +12,8 @@ public interface ElasticsearchPersistentEntity<T> extends PersistentEntity<T, El
 
 	IndexCoordinates getIndexCoordinates();
 
+	boolean isDynamicIndex();
+
 	ElasticsearchPersistentProperty getPersistentPropertyWithFieldName(String fieldName);
 
 	boolean hasSeqNoPrimaryTermProperty();

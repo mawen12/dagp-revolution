@@ -19,6 +19,10 @@ public interface ElasticsearchPersistentProperty extends PersistentProperty<Elas
 
 	PropertyValueConverter getPropertyValueConverter();
 
+	boolean storeNullValue();
+
+	boolean storeEmptyValue();
+
 	boolean isIndexNameProperty();
 
 	String getIndexName();

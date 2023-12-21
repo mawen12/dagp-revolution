@@ -1018,7 +1018,15 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 
 				Object value = accessor.getProperty(property);
 
-				if (hasEmptyValue(value)) {
+				if (value == null) {
+
+					if (property.storeNullValue()) {
+						sink.set(property, null);
+					}
+					continue;
+				}
+
+				if (!property.storeEmptyValue() && hasEmptyValue(value)) {
 					continue;
 				}
 

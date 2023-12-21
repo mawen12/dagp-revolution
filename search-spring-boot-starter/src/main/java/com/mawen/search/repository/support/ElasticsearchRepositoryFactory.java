@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 
 import com.mawen.search.core.ElasticsearchOperations;
+import com.mawen.search.repository.query.ElasticsearchParamQuery;
 import com.mawen.search.repository.query.ElasticsearchPartQuery;
 import com.mawen.search.repository.query.ElasticsearchQueryMethod;
 import com.mawen.search.repository.query.ElasticsearchStringQuery;
@@ -90,7 +91,10 @@ public class ElasticsearchRepositoryFactory extends RepositoryFactorySupport {
 					elasticsearchOperations.getElasticsearchConverter().getMappingContext());
 			String namedQueryName = queryMethod.getNamedQueryName();
 
-			if (namedQueries.hasQuery(namedQueryName)) {
+			if (queryMethod.hasAnnotatedParamQuery()) {
+				return new ElasticsearchParamQuery(queryMethod, elasticsearchOperations);
+			}
+			else if (namedQueries.hasQuery(namedQueryName)) {
 				String namedQuery = namedQueries.getQuery(namedQueryName);
 				return new ElasticsearchStringQuery(queryMethod, elasticsearchOperations, namedQuery);
 			}

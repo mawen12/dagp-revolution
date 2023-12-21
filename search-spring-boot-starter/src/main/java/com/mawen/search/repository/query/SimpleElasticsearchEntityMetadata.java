@@ -1,6 +1,7 @@
 package com.mawen.search.repository.query;
 
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
+import lombok.Getter;
 
 import org.springframework.util.Assert;
 
@@ -8,6 +9,7 @@ import org.springframework.util.Assert;
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
+@Getter
 public class SimpleElasticsearchEntityMetadata<T> implements ElasticsearchEntityMetadata<T> {
 
 	private final Class<T> type;

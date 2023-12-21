@@ -30,4 +30,9 @@ public @interface Field {
 	DateFormat[] format() default {DateFormat.date_optional_time, DateFormat.epoch_millis};
 
 	String[] pattern() default {};
+
+
+	boolean storeNullValue() default false;
+
+	boolean storeEmptyValue() default true;
 }

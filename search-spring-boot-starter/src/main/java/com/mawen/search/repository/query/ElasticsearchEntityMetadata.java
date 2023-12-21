@@ -1,5 +1,7 @@
 package com.mawen.search.repository.query;
 
+import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
+
 import org.springframework.data.repository.core.EntityMetadata;
 
 /**
@@ -9,5 +11,7 @@ import org.springframework.data.repository.core.EntityMetadata;
 public interface ElasticsearchEntityMetadata<T> extends EntityMetadata<T> {
 
 	String getIndexName();
+
+	ElasticsearchPersistentEntity<?> getEntity();
 
 }

@@ -1,6 +1,7 @@
 package com.mawen.search.repository.query;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.stream.Stream;
 
 import com.mawen.search.InvalidApiUsageException;
 import com.mawen.search.core.annotation.Highlight;
+import com.mawen.search.core.annotation.ParamQuery;
 import com.mawen.search.core.annotation.Query;
 import com.mawen.search.core.annotation.SourceFilters;
 import com.mawen.search.core.convert.ElasticsearchConverter;
@@ -53,6 +55,8 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 	@Nullable
 	private final Query queryAnnotation;
 	@Nullable
+	private final ParamQuery paramQueryAnnotation;
+	@Nullable
 	private final Highlight highlightAnnotation;
 	private final Lazy<HighlightQuery> highlightQueryLazy = Lazy.of(this::createAnnotatedHighlightQuery);
 	@Nullable
@@ -72,6 +76,7 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		this.method = method;
 		this.mappingContext = mappingContext;
 		this.queryAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, Query.class);
+		this.paramQueryAnnotation = findParamQueryAnnotation(method);
 		this.highlightAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, Highlight.class);
 		this.sourceFilters = AnnotatedElementUtils.findMergedAnnotation(method, SourceFilters.class);
 		this.unwrappedReturnType = potentiallyUnwrapReturnTypeFor(repositoryMetadata, method);
@@ -104,6 +109,10 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		return queryAnnotation != null ? queryAnnotation.value() : null;
 	}
 
+	public boolean hasAnnotatedParamQuery() {
+		return this.paramQueryAnnotation != null;
+	}
+
 	public boolean hasAnnotatedHighlight() {
 		return highlightAnnotation != null;
 	}
@@ -122,6 +131,18 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		return new HighlightQuery(
 				com.mawen.search.core.query.highlight.Highlight.of(highlightAnnotation),
 				getDomainClass());
+	}
+
+	private ParamQuery findParamQueryAnnotation(Method method) {
+
+		for (Parameter parameter : method.getParameters()) {
+			ParamQuery annotation = AnnotatedElementUtils.findMergedAnnotation(parameter, ParamQuery.class);
+			if (annotation != null) {
+				return annotation;
+			}
+		}
+
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -214,7 +235,6 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		return queryAnnotation != null && queryAnnotation.count();
 	}
 
-
 	@Nullable
 	SourceFilter getSourceFilter(ParameterAccessor parameterAccessor, ElasticsearchConverter converter) {
 
@@ -305,8 +325,8 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 			query.addSourceFilter(sourceFilter);
 		}
 
-		if (parameterAccessor.getParameters() instanceof ElasticsearchParameters) {
-			ElasticsearchParameters methodParameters = (ElasticsearchParameters) parameterAccessor.getParameters();
+		if (parameterAccessor.getElasticsearchParameters() instanceof ElasticsearchParameters) {
+			ElasticsearchParameters methodParameters = (ElasticsearchParameters) parameterAccessor.getElasticsearchParameters();
 
 		}
 	}

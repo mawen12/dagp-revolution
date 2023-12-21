@@ -146,7 +146,7 @@ public class MapDocument implements Document {
 
 	@Override
 	public boolean containsKey(Object key) {
-		return delegate.containsValue(key);
+		return delegate.containsKey(key);
 	}
 
 	@Override

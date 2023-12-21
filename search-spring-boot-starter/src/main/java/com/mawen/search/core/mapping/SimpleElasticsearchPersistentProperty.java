@@ -57,6 +57,8 @@ public class SimpleElasticsearchPersistentProperty
 	private final String annotatedFieldName;
 	@Nullable
 	private PropertyValueConverter propertyValueConverter;
+	private final boolean storeNullValue;
+	private final boolean storeEmptyValue;
 
 	public SimpleElasticsearchPersistentProperty(Property property,
 			PersistentEntity<?, ElasticsearchPersistentProperty> owner,
@@ -70,6 +72,11 @@ public class SimpleElasticsearchPersistentProperty
 		this.indexName = getAnnotatedIndexNameValue();
 
 		initPropertyValueConverter();
+
+		boolean isField = isAnnotationPresent(Field.class);
+
+		this.storeNullValue = isField && getRequiredAnnotation(Field.class).storeNullValue();
+		this.storeEmptyValue = isField ? getRequiredAnnotation(Field.class).storeEmptyValue() : true;
 	}
 
 	@Override
@@ -115,6 +122,16 @@ public class SimpleElasticsearchPersistentProperty
 	}
 
 	@Override
+	public boolean storeNullValue() {
+		return storeNullValue;
+	}
+
+	@Override
+	public boolean storeEmptyValue() {
+		return storeEmptyValue;
+	}
+
+	@Override
 	public boolean isIndexNameProperty() {
 		return indexName != null;
 	}
@@ -122,10 +139,13 @@ public class SimpleElasticsearchPersistentProperty
 	@Nullable
 	private String getAnnotatedFieldName() {
 
+		String name = null;
+
 		if (isAnnotationPresent(Field.class)) {
-			return findAnnotation(Field.class).value();
+			name = findAnnotation(Field.class).value();
 		}
-		return null;
+
+		return StringUtils.hasText(name) ? name : null;
 	}
 
 	@Nullable

@@ -2,6 +2,7 @@ package com.mawen.controller;
 
 import com.mawen.entity.DynamicPerson;
 import com.mawen.entity.Person;
+import com.mawen.query.PersonQuery;
 import com.mawen.repository.DynamicPersonRepository;
 import com.mawen.repository.PersonRepository;
 import com.mawen.search.core.mapping.IndexCoordinates;
@@ -34,5 +35,13 @@ public class PersonController {
 	@GetMapping("/dynamic/{id}")
 	DynamicPerson loadDynamic(@PathVariable("id") String id) {
 		return dynamicPersonRepository.findById(id, IndexCoordinates.of("person")).orElse(null);
+	}
+
+	@GetMapping("/search/dynamic/{name}")
+	DynamicPerson searchDynamic(@PathVariable("name") String name) {
+		PersonQuery personQuery = new PersonQuery();
+		personQuery.setName(name);
+
+		return dynamicPersonRepository.search(personQuery, IndexCoordinates.of("person"));
 	}
 }

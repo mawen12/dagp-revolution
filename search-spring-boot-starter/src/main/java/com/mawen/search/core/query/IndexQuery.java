@@ -3,6 +3,7 @@ package com.mawen.search.core.query;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import org.springframework.lang.Nullable;
 
@@ -14,6 +15,7 @@ import org.springframework.lang.Nullable;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class IndexQuery {
 
 	@Nullable

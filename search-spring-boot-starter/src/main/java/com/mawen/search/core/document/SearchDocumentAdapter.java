@@ -52,18 +52,20 @@ public class SearchDocumentAdapter implements SearchDocument {
 		return this;
 	}
 
-
 	@Override
 	public Map<String, List<Object>> getFields() {
 		return fields;
 	}
 
+	@Override
+	public String getIndex() {
+		return delegate.getIndex();
+	}
 
 	@Override
 	public boolean hasId() {
 		return delegate.hasId();
 	}
-
 
 	@Override
 	public void setId(String id) {
@@ -71,10 +73,19 @@ public class SearchDocumentAdapter implements SearchDocument {
 	}
 
 	@Override
+	public String getId() {
+		return delegate.getId();
+	}
+
+	@Override
 	public boolean hasVersion() {
 		return delegate.hasVersion();
 	}
 
+	@Override
+	public long getVersion() {
+		return delegate.getVersion();
+	}
 
 	@Override
 	public void setVersion(long version) {
@@ -87,6 +98,11 @@ public class SearchDocumentAdapter implements SearchDocument {
 	}
 
 	@Override
+	public long getSeqNo() {
+		return delegate.getSeqNo();
+	}
+
+	@Override
 	public void setSeqNo(long seqNo) {
 		delegate.setSeqNo(seqNo);
 	}
@@ -94,6 +110,11 @@ public class SearchDocumentAdapter implements SearchDocument {
 	@Override
 	public boolean hasPrimaryTerm() {
 		return delegate.hasPrimaryTerm();
+	}
+
+	@Override
+	public long getPrimaryTerm() {
+		return delegate.getPrimaryTerm();
 	}
 
 	@Override
@@ -214,4 +235,6 @@ public class SearchDocumentAdapter implements SearchDocument {
 
 		return getClass().getSimpleName() + '@' + id + '#' + version + ' ' + toJson();
 	}
+
+
 }

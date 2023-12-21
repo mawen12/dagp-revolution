@@ -1,6 +1,9 @@
 package com.mawen.repository;
 
 import com.mawen.entity.DynamicPerson;
+import com.mawen.query.PersonQuery;
+import com.mawen.search.core.annotation.ParamQuery;
+import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.repository.ElasticsearchRepository;
 
 import org.springframework.stereotype.Repository;
@@ -11,4 +14,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface DynamicPersonRepository extends ElasticsearchRepository<DynamicPerson, String> {
+
+	DynamicPerson search(@ParamQuery PersonQuery query, IndexCoordinates index);
 }

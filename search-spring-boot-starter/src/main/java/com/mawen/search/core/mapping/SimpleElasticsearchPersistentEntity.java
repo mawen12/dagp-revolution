@@ -9,6 +9,7 @@ import com.mawen.search.core.annotation.Routing;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PropertyHandler;
 import org.springframework.data.mapping.model.BasicPersistentEntity;
@@ -16,6 +17,7 @@ import org.springframework.data.spel.ExpressionDependencies;
 import org.springframework.data.util.Lazy;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.LiteralExpression;
@@ -76,6 +78,11 @@ public class SimpleElasticsearchPersistentEntity<T>
 	@Override
 	public IndexCoordinates getIndexCoordinates() {
 		return resolve(IndexCoordinates.of(getIndexName()));
+	}
+
+	@Override
+	public boolean isDynamicIndex() {
+		return isDynamicIndex;
 	}
 
 	@Override

@@ -14,11 +14,7 @@ import org.springframework.data.repository.Repository;
 @NoRepositoryBean
 public interface DynamicCrudRepository<T, ID> extends Repository<T, ID> {
 
-	<S extends T> S save(S entity);
-
 	<S extends T> S save(S entity, IndexCoordinates index);
-
-	<S extends T> Iterable<S> saveAll(Iterable<S> entities);
 
 	<S extends T> Iterable<S> saveAll(Iterable<S> entities, IndexCoordinates index);
 
@@ -34,11 +30,7 @@ public interface DynamicCrudRepository<T, ID> extends Repository<T, ID> {
 
 	void deleteAllById(Iterable<? extends ID> ids, IndexCoordinates index);
 
-	void delete(T entity);
-
 	void delete(T entity, IndexCoordinates index);
-
-	void deleteAll(Iterable<? extends T> entities);
 
 	void deleteAll(Iterable<? extends T> entities, IndexCoordinates index);
 

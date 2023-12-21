@@ -1,5 +1,7 @@
 package com.mawen.search.core.event;
 
+import com.mawen.search.core.mapping.IndexCoordinates;
+
 import org.springframework.data.mapping.callback.EntityCallback;
 
 /**
@@ -10,6 +12,6 @@ import org.springframework.data.mapping.callback.EntityCallback;
  */
 public interface BeforeConvertCallback<T> extends EntityCallback<T> {
 
-	T onBeforeConvert(T entity);
+	T onBeforeConvert(T entity, IndexCoordinates index);
 
 }

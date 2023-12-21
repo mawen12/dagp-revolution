@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.mawen.search.InvalidApiUsageException;
+import lombok.Getter;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -17,6 +18,7 @@ import org.springframework.util.Assert;
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
  */
+@Getter
 public class Criteria {
 	public static final String CRITERIA_VALUE_SEPARATOR = " ";
 	private final CriteriaChain criteriaChain = new CriteriaChain();
@@ -32,20 +34,10 @@ public class Criteria {
 	public Criteria() {
 	}
 
-	/**
-	 * Creates a new Criteria with provided field name
-	 *
-	 * @param fieldName the field name
-	 */
 	public Criteria(String fieldName) {
 		this(new SimpleField(fieldName));
 	}
 
-	/**
-	 * Creates a new Criteria for the given field
-	 *
-	 * @param field field to create the Criteria for
-	 */
 	public Criteria(Field field) {
 
 		Assert.notNull(field, "Field for criteria must not be null");
@@ -55,25 +47,11 @@ public class Criteria {
 		this.criteriaChain.add(this);
 	}
 
-	/**
-	 * Creates a Criteria for the given field, sets it's criteriaChain to the given value and adds itself to the end of
-	 * the chain.
-	 *
-	 * @param criteriaChain the chain to add to
-	 * @param fieldName     field to create the Criteria for
-	 */
-	protected Criteria(List<Criteria> criteriaChain, String fieldName) {
+	public Criteria(List<Criteria> criteriaChain, String fieldName) {
 		this(criteriaChain, new SimpleField(fieldName));
 	}
 
-	/**
-	 * Creates a Criteria for the given field, sets it's criteriaChain to the given value and adds itself to the end of
-	 * the chain.
-	 *
-	 * @param criteriaChain the chain to add to
-	 * @param field         field to create the Criteria for
-	 */
-	protected Criteria(List<Criteria> criteriaChain, Field field) {
+	public Criteria(List<Criteria> criteriaChain, Field field) {
 
 		Assert.notNull(criteriaChain, "CriteriaChain must not be null");
 		Assert.notNull(field, "Field for criteria must not be null");
@@ -84,36 +62,18 @@ public class Criteria {
 		this.criteriaChain.add(this);
 	}
 
-	/**
-	 * @return factory method to create an and-Criteria that is not bound to a field
-	 * @since 4.1
-	 */
 	public static Criteria and() {
 		return new Criteria();
 	}
 
-	/**
-	 * @return factory method to create an or-Criteria that is not bound to a field
-	 * @since 4.1
-	 */
 	public static Criteria or() {
 		return new OrCriteria();
 	}
 
-	/**
-	 * Static factory method to create a new Criteria for field with given name
-	 *
-	 * @param fieldName field to create the Criteria for
-	 */
 	public static Criteria where(String fieldName) {
 		return new Criteria(fieldName);
 	}
 
-	/**
-	 * Static factory method to create a new Criteria for provided field
-	 *
-	 * @param field field to create the Criteria for
-	 */
 	public static Criteria where(Field field) {
 		return new Criteria(field);
 	}
@@ -121,9 +81,6 @@ public class Criteria {
 
 	// region criteria attributes
 
-	/**
-	 * @return the Field targeted by this Criteria
-	 */
 	@Nullable
 	public Field getField() {
 		return this.field;
@@ -145,36 +102,17 @@ public class Criteria {
 		return Collections.unmodifiableList(this.criteriaChain);
 	}
 
-	/**
-	 * Sets the negating flag
-	 *
-	 * @return this object
-	 */
 	public Criteria not() {
 		this.negating = true;
 		return this;
 	}
 
-	public boolean isNegating() {
-		return this.negating;
-	}
-
-	/**
-	 * Sets the boost factor.
-	 *
-	 * @param boost boost factor
-	 * @return this object
-	 */
 	public Criteria boost(float boost) {
 
 		Assert.isTrue(boost >= 0, "boost must not be negative");
 
 		this.boost = boost;
 		return this;
-	}
-
-	public float getBoost() {
-		return this.boost;
 	}
 
 	public boolean isAnd() {
@@ -185,44 +123,18 @@ public class Criteria {
 		return getOperator() == Operator.OR;
 	}
 
-	/**
-	 * @return the set ob subCriteria
-	 * @since 4.1
-	 */
-	public Set<Criteria> getSubCriteria() {
-		return subCriteria;
-	}
-
 	// endregion
 
 	// region criteria chaining
 
-	/**
-	 * Chain a new and-Criteria
-	 *
-	 * @param field the field for the new Criteria
-	 * @return the new chained Criteria
-	 */
 	public Criteria and(Field field) {
 		return new Criteria(criteriaChain, field);
 	}
 
-	/**
-	 * Chain a new and- Criteria
-	 *
-	 * @param fieldName the field for the new Criteria
-	 * @return the new chained Criteria
-	 */
 	public Criteria and(String fieldName) {
 		return new Criteria(criteriaChain, fieldName);
 	}
 
-	/**
-	 * Chain a Criteria to this object.
-	 *
-	 * @param criteria the Criteria to add
-	 * @return this object
-	 */
 	public Criteria and(Criteria criteria) {
 
 		Assert.notNull(criteria, "Cannot chain 'null' criteria.");
@@ -231,12 +143,6 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Chain an array of Criteria to this object.
-	 *
-	 * @param criterias the Criteria to add
-	 * @return this object
-	 */
 	public Criteria and(Criteria... criterias) {
 
 		Assert.notNull(criterias, "Cannot chain 'null' criterias.");
@@ -245,34 +151,14 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Chain a new or-Criteria
-	 *
-	 * @param field the field for the new Criteria
-	 * @return the new chained Criteria
-	 */
 	public Criteria or(Field field) {
 		return new OrCriteria(this.criteriaChain, field);
 	}
 
-	/**
-	 * Chain a new or-Criteria
-	 *
-	 * @param fieldName the field for the new Criteria
-	 * @return the new chained Criteria
-	 */
 	public Criteria or(String fieldName) {
 		return or(new SimpleField(fieldName));
 	}
 
-	/**
-	 * Chain a new or-Criteria. The new Criteria uses the {@link #getField()}, {@link #getQueryCriteriaEntries()} and
-	 * {@link #getFilterCriteriaEntries()} of the passed in parameter. the new created criteria is added to the criteria
-	 * chain.
-	 *
-	 * @param criteria contains the information for the new Criteria
-	 * @return the new chained criteria
-	 */
 	public Criteria or(Criteria criteria) {
 
 		Assert.notNull(criteria, "Cannot chain 'null' criteria.");
@@ -284,13 +170,6 @@ public class Criteria {
 		return orCriteria;
 	}
 
-	/**
-	 * adds a Criteria as subCriteria
-	 *
-	 * @param criteria the criteria to add, must not be {@literal null}
-	 * @return this object
-	 * @since 4.1
-	 */
 	public Criteria subCriteria(Criteria criteria) {
 
 		Assert.notNull(criteria, "criteria must not be null");
@@ -303,36 +182,16 @@ public class Criteria {
 
 	// region criteria entries - query
 
-	/**
-	 * Add a {@link OperationKey#EQUALS} entry to the {@link #queryCriteriaEntries}
-	 *
-	 * @param o the argument to the operation
-	 * @return this object
-	 */
 	public Criteria is(Object o) {
 		queryCriteriaEntries.add(new CriteriaEntry(OperationKey.EQUALS, o));
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#EXISTS} entry to the {@link #queryCriteriaEntries}
-	 *
-	 * @return this object
-	 * @since 4.0
-	 */
 	public Criteria exists() {
 		queryCriteriaEntries.add(new CriteriaEntry(OperationKey.EXISTS));
 		return this;
 	}
 
-	/**
-	 * Adds a OperationKey.BETWEEN entry to the {@link #queryCriteriaEntries}. Only one of the parameters may be null to
-	 * define an unbounded end of the range.
-	 *
-	 * @param lowerBound the lower bound of the range, null for unbounded
-	 * @param upperBound the upper bound of the range, null for unbounded
-	 * @return this object
-	 */
 	public Criteria between(@Nullable Object lowerBound, @Nullable Object upperBound) {
 
 		if (lowerBound == null && upperBound == null) {
@@ -343,12 +202,6 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#STARTS_WITH} entry to the {@link #queryCriteriaEntries}
-	 *
-	 * @param s the argument to the operation
-	 * @return this object
-	 */
 	public Criteria startsWith(String s) {
 
 		Assert.notNull(s, "s may not be null");
@@ -358,13 +211,6 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#CONTAINS} entry to the {@link #queryCriteriaEntries} <br/>
-	 * <strong>NOTE: </strong> mind your schema as leading wildcards may not be supported and/or execution might be slow.
-	 *
-	 * @param s the argument to the operation
-	 * @return this object
-	 */
 	public Criteria contains(String s) {
 
 		Assert.notNull(s, "s may not be null");
@@ -374,13 +220,6 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#ENDS_WITH} entry to the {@link #queryCriteriaEntries} <br/>
-	 * <strong>NOTE: </strong> mind your schema as leading wildcards may not be supported and/or execution might be slow.
-	 *
-	 * @param s the argument to the operation
-	 * @return this object
-	 */
 	public Criteria endsWith(String s) {
 
 		Assert.notNull(s, "s may not be null");
@@ -390,25 +229,10 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#IN} entry to the {@link #queryCriteriaEntries}. This will create a terms query, so don't
-	 * use it with text fields as these are analyzed and changed by Elasticsearch (converted to lowercase with the default
-	 * analyzer). If used for Strings, these should be marked as field type Keyword.
-	 *
-	 * @param values the argument to the operation
-	 * @return this object
-	 */
 	public Criteria in(Object... values) {
 		return in(toCollection(values));
 	}
 
-	/**
-	 * Add a {@link OperationKey#IN} entry to the {@link #queryCriteriaEntries}. See the comment at
-	 * {@link Criteria#in(Object...)}.
-	 *
-	 * @param values the argument to the operation
-	 * @return this object
-	 */
 	public Criteria in(Iterable<?> values) {
 
 		Assert.notNull(values, "Collection of 'in' values must not be null");
@@ -417,24 +241,10 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#NOT_IN} entry to the {@link #queryCriteriaEntries}. See the comment at
-	 * {@link Criteria#in(Object...)}.
-	 *
-	 * @param values the argument to the operation
-	 * @return this object
-	 */
 	public Criteria notIn(Object... values) {
 		return notIn(toCollection(values));
 	}
 
-	/**
-	 * Add a {@link OperationKey#NOT_IN} entry to the {@link #queryCriteriaEntries}. See the comment at
-	 * {@link Criteria#in(Object...)}.
-	 *
-	 * @param values the argument to the operation
-	 * @return this object
-	 */
 	public Criteria notIn(Iterable<?> values) {
 
 		Assert.notNull(values, "Collection of 'NotIn' values must not be null");
@@ -443,35 +253,16 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#EXPRESSION} entry to the {@link #queryCriteriaEntries} allowing native elasticsearch
-	 * expressions
-	 *
-	 * @param s the argument to the operation
-	 * @return this object
-	 */
 	public Criteria expression(String s) {
 		queryCriteriaEntries.add(new CriteriaEntry(OperationKey.EXPRESSION, s));
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#FUZZY} entry to the {@link #queryCriteriaEntries}
-	 *
-	 * @param s the argument to the operation
-	 * @return this object
-	 */
 	public Criteria fuzzy(String s) {
 		queryCriteriaEntries.add(new CriteriaEntry(OperationKey.FUZZY, s));
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#LESS_EQUAL} entry to the {@link #queryCriteriaEntries}
-	 *
-	 * @param upperBound the argument to the operation
-	 * @return this object
-	 */
 	public Criteria lessThanEqual(Object upperBound) {
 
 		Assert.notNull(upperBound, "upperBound must not be null");
@@ -480,12 +271,6 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#LESS} entry to the {@link #queryCriteriaEntries}
-	 *
-	 * @param upperBound the argument to the operation
-	 * @return this object
-	 */
 	public Criteria lessThan(Object upperBound) {
 
 		Assert.notNull(upperBound, "upperBound must not be null");
@@ -494,12 +279,6 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#GREATER_EQUAL} entry to the {@link #queryCriteriaEntries}
-	 *
-	 * @param lowerBound the argument to the operation
-	 * @return this object
-	 */
 	public Criteria greaterThanEqual(Object lowerBound) {
 
 		Assert.notNull(lowerBound, "lowerBound must not be null");
@@ -508,12 +287,6 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#GREATER} entry to the {@link #queryCriteriaEntries}
-	 *
-	 * @param lowerBound the argument to the operation
-	 * @return this object
-	 */
 	public Criteria greaterThan(Object lowerBound) {
 
 		Assert.notNull(lowerBound, "lowerBound must not be null");
@@ -655,9 +428,6 @@ public class Criteria {
 				'}'; //
 	}
 
-	/**
-	 * Operator to join the entries of the criteria chain
-	 */
 	public enum Operator {
 		AND, //
 		OR //
@@ -671,13 +441,7 @@ public class Criteria {
 		EXPRESSION, //
 		BETWEEN, //
 		FUZZY, //
-		/**
-		 * @since 4.1
-		 */
 		MATCHES, //
-		/**
-		 * @since 4.1
-		 */
 		MATCHES_ALL, //
 		IN, //
 		NOT_IN, //
@@ -687,51 +451,19 @@ public class Criteria {
 		LESS_EQUAL, //
 		GREATER, //
 		GREATER_EQUAL, //
-		/**
-		 * @since 4.0
-		 */
 		EXISTS, //
-		/**
-		 * @since 4.1
-		 */
 		GEO_INTERSECTS, //
-		/**
-		 * @since 4.1
-		 */
 		GEO_IS_DISJOINT, //
-		/**
-		 * @since 4.1
-		 */
 		GEO_WITHIN, //
-		/**
-		 * @since 4.1
-		 */
 		GEO_CONTAINS, //
-		/**
-		 * @since 4.3
-		 */
 		EMPTY, //
-		/**
-		 * @since 4.3
-		 */
 		NOT_EMPTY, //
-		/**
-		 * @since 5.1
-		 */
 		REGEXP;
 
-		/**
-		 * @return true if this key does not have an associated value
-		 * @since 4.4
-		 */
 		public boolean hasNoValue() {
 			return this == OperationKey.EXISTS || this == OperationKey.EMPTY || this == OperationKey.NOT_EMPTY;
 		}
 
-		/**
-		 * @return true if this key does have an associated value
-		 * @since 4.4
-		 */
 		public boolean hasValue() {
 			return !hasNoValue();
 		}
@@ -766,16 +498,8 @@ public class Criteria {
 		}
 	}
 
-	/**
-	 * a list of {@link Criteria} objects that belong to one query.
-	 *
-	 * @since 4.1
-	 */
 	public static class CriteriaChain extends LinkedList<Criteria> {}
 
-	/**
-	 * A class defining a single operation and it's argument value for the field of a {@link Criteria}.
-	 */
 	public static class CriteriaEntry {
 
 		private final OperationKey key;

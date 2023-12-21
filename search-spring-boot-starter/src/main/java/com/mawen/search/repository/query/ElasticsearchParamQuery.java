@@ -1,12 +1,10 @@
 package com.mawen.search.repository.query;
 
 import com.mawen.search.core.ElasticsearchOperations;
-import com.mawen.search.core.annotation.ParamQuery;
 import com.mawen.search.core.query.BaseQuery;
+import com.mawen.search.repository.query.parser.ElasticsearchParamQueryCreator;
 
-import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
-import org.springframework.util.Assert;
 
 /**
  *
@@ -19,15 +17,13 @@ public class ElasticsearchParamQuery extends AbstractElasticsearchRepositoryQuer
 	private final String methodName;
 	private final Class<?> returnType;
 	private final Parameters<?, ?> parameters;
-	private Parameter paramQueryParameter;
 
-	protected ElasticsearchParamQuery(ElasticsearchQueryMethod queryMethod, ElasticsearchOperations elasticsearchOperations) {
+	public ElasticsearchParamQuery(ElasticsearchQueryMethod queryMethod, ElasticsearchOperations elasticsearchOperations) {
 		super(queryMethod, elasticsearchOperations);
 
 		this.methodName = queryMethod.getName();
 		this.returnType = queryMethod.methodReturnType();
 		this.parameters = queryMethod.getParameters();
-		this.paramQueryParameter = getParamQueryParameter();
 	}
 
 	@Override
@@ -49,20 +45,6 @@ public class ElasticsearchParamQuery extends AbstractElasticsearchRepositoryQuer
 	@Override
 	protected BaseQuery createQuery(ElasticsearchParametersParameterAccessor accessor) {
 
-
-
-		return null;
-	}
-
-	private Parameter getParamQueryParameter() {
-
-		Parameter paramQueryParameter = null;
-		for (Parameter parameter : parameters) {
-			if (parameter.getType().isAnnotationPresent(ParamQuery.class)) {
-				paramQueryParameter = parameter;
-			}
-		}
-
-		return paramQueryParameter;
+		return new ElasticsearchParamQueryCreator(accessor.getParamQuery(), accessor).createQuery();
 	}
 }
