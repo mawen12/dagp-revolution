@@ -20,15 +20,8 @@ public abstract class AbstractRangePropertyValueConverter<T> extends AbstractPro
 	protected static final String GT_FIELD = "gt";
 	protected static final String GTE_FIELD = "gte";
 
-	private final Class<?> genericType;
-
-	protected AbstractRangePropertyValueConverter(PersistentProperty<?> property, Class<?> genericType) {
+	protected AbstractRangePropertyValueConverter(PersistentProperty<?> property) {
 		super(property);
-		this.genericType = genericType;
-	}
-
-	protected Class<?> getGenericType() {
-		return genericType;
 	}
 
 	@Override
@@ -114,6 +107,10 @@ public abstract class AbstractRangePropertyValueConverter<T> extends AbstractPro
 			throw new MappingException(
 					String.format("Unable to convert value '%s' of property '%s'", value, getProperty().getName()), e);
 		}
+	}
+
+	protected Class<?> getGenericType() {
+		return getProperty().getTypeInformation().getTypeArguments().get(0).getType();
 	}
 
 	protected abstract String format(T value);

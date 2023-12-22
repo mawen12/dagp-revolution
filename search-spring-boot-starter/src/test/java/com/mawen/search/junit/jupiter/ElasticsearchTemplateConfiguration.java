@@ -29,14 +29,6 @@ import static org.springframework.util.StringUtils.*;
 @Configuration
 public class ElasticsearchTemplateConfiguration extends ElasticsearchConfiguration {
 
-//	@Autowired private ClusterConnectionInfo clusterConnectionInfo;
-//	@Autowired private ClusterConnection clusterConnection;
-
-//	@Bean
-//	public ClusterConnectionInfo clusterConnectionInfo() {
-//		return null;
-//	}
-
 	@Override
 	public ClientConfiguration clientConfiguration() {
 		System.out.println(ClusterConnection.clusterConnectionInfo());
@@ -76,4 +68,6 @@ public class ElasticsearchTemplateConfiguration extends ElasticsearchConfigurati
 	protected RefreshPolicy refreshPolicy() {
 		return RefreshPolicy.IMMEDIATE;
 	}
+
+
 }

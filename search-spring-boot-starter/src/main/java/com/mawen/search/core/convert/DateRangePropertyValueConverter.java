@@ -17,10 +17,9 @@ public class DateRangePropertyValueConverter extends AbstractRangePropertyValueC
 
 	private final List<ElasticsearchDateConverter> dateConverters;
 
-	public DateRangePropertyValueConverter(PersistentProperty<?> property,
-			Class<?> genericType, List<ElasticsearchDateConverter> dateConverters) {
+	public DateRangePropertyValueConverter(PersistentProperty<?> property, List<ElasticsearchDateConverter> dateConverters) {
 
-		super(property, genericType);
+		super(property);
 
 		this.dateConverters = dateConverters;
 	}

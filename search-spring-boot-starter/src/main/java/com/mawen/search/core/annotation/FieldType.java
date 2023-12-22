@@ -12,6 +12,7 @@ import lombok.Getter;
 public enum FieldType {
 
 	Auto("auto"), //
+	Object("object"),
 	Text("text"), //
 	Keyword("keyword"), //
 	Long("long"), //
@@ -32,6 +33,7 @@ public enum FieldType {
 	Double_Range("double_range"), //
 	Date_Range("date_range"), //
 	Nested("nested"), //
+	Ip("ip")
 	;
 
 	private final String mappedName;

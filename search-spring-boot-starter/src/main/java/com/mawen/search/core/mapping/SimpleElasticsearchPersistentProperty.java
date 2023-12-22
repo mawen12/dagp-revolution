@@ -208,10 +208,10 @@ public class SimpleElasticsearchPersistentProperty
 
 				Class<?> genericType = getGenericType();
 				if (TemporalAccessor.class.isAssignableFrom(genericType)) {
-					propertyValueConverter = new TemporalRangePropertyValueConverter(this, genericType, dateConverters);
+					propertyValueConverter = new TemporalRangePropertyValueConverter(this, dateConverters);
 				}
 				else if (Date.class.isAssignableFrom(genericType)) {
-					propertyValueConverter = new DateRangePropertyValueConverter(this, genericType, dateConverters);
+					propertyValueConverter = new DateRangePropertyValueConverter(this, dateConverters);
 				}
 				else {
 					log.warn(
@@ -239,7 +239,7 @@ public class SimpleElasticsearchPersistentProperty
 					return;
 				}
 
-				propertyValueConverter = new NumberRangePropertyValueConverter(this, genericType);
+				propertyValueConverter = new NumberRangePropertyValueConverter(this);
 				break;
 			}
 			default:

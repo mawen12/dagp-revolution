@@ -33,6 +33,8 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.data.mapping.model.FieldNamingStrategy;
+import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -137,5 +139,10 @@ public class ElasticsearchConfigurationSupport {
 	protected RefreshPolicy refreshPolicy() {
 		return null;
 	}
+
+	protected FieldNamingStrategy fieldNamingStrategy() {
+		return PropertyNameFieldNamingStrategy.INSTANCE;
+	}
+
 
 }

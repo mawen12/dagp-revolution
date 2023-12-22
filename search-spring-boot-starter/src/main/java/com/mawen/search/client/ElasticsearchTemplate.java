@@ -231,8 +231,7 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 		Assert.notNull(query, "query must not be null");
 		Assert.notNull(index, "index must not be null");
 
-		SearchRequest searchRequest = requestConverter.searchRequest(query, routingResolver.getRouting(), clazz, index,
-				true);
+		SearchRequest searchRequest = requestConverter.searchRequest(query, routingResolver.getRouting(), clazz, index, true);
 
 		SearchResponse<EntityAsMap> searchResponse = execute(client -> client.search(searchRequest, EntityAsMap.class));
 

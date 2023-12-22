@@ -63,7 +63,9 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 		boolean dynamicIndex = queryMethod.getEntityInformation().getEntity().isDynamicIndex();
 		IndexCoordinates index = parameterAccessor.getIndexCoordinates();
 
-		Assert.isTrue(dynamicIndex && index != null, String.format("The Entity %s is dynamic index, so the method %s must provider non-null index", queryMethod.getEntityInformation().getEntity(), queryMethod));
+		if (dynamicIndex && index == null) {
+			throw new IllegalArgumentException(String.format("The Entity %s is dynamic index, so the method %s must provider non-null index", queryMethod.getEntityInformation().getEntity(), queryMethod));
+		}
 
 		if (index == null) {
 			index = elasticsearchOperations.getIndexCoordinatesFor(clazz);

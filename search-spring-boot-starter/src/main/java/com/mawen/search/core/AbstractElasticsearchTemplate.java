@@ -180,7 +180,13 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 		List<IndexQuery> indexQueries = Streamable.of(entities).stream().map(this::getIndexQuery)
 				.collect(Collectors.toList());
 
-		return save(indexQueries);
+		List<IndexedObjectInformation> indexedObjectInformationList = bulkIndex(indexQueries, index);
+		Iterator<IndexedObjectInformation> iterator = indexedObjectInformationList.iterator();
+
+		return indexQueries.stream() //
+				.map(IndexQuery::getObject) //
+				.map(entity -> (T) updateIndexedObject(entity, iterator.next())) //
+				.collect(Collectors.toList()); //
 	}
 
 	protected <T> Iterable<T> save(List<IndexQuery> indexQueries) {
@@ -284,7 +290,7 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 	@Override
 	public List<IndexedObjectInformation> bulkIndex(List<IndexQuery> queries) {
 
-		Assert.isTrue(queries.stream().noneMatch(query -> query.getIndexName() != null), String.format("IndexQuery %s must all have indexName.", queries.stream().filter(query -> query.getIndexName() == null).map(IndexQuery::getId).collect(Collectors.joining(","))));
+		Assert.isTrue(queries.stream().anyMatch(query -> query.getIndexName() != null), String.format("IndexQuery %s must all have indexName.", queries.stream().filter(query -> query.getIndexName() == null).map(IndexQuery::getId).collect(Collectors.joining(","))));
 
 		return doBulkOperation(queries, BulkOptions.defaultOptions(), null);
 	}
