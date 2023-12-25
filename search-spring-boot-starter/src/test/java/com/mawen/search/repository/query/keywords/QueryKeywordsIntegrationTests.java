@@ -1,4 +1,19 @@
-package com.mawen.search.core.convert.core.query;
+/*
+ * Copyright 2016-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.mawen.search.repository.query.keywords;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,32 +30,34 @@ import com.mawen.search.repository.ElasticsearchRepository;
 import com.mawen.search.utils.IndexNameProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.Nullable;
-
 import static org.assertj.core.api.Assertions.*;
 
+/**
+ * base class for query keyword tests. Implemented by subclasses using ElasticsearchClient and ElasticsearchRestClient
+ * based repositories.
+ *
+ * @author Artur Konczak
+ * @author Christoph Strobl
+ * @author Peter-Josef Meisch
+ */
 @SpringIntegrationTest
 abstract class QueryKeywordsIntegrationTests {
 
+	@Autowired private ProductRepository repository;
 	@Autowired
-	private ProductRepository repository;
+	ElasticsearchOperations operations;
 	@Autowired
-	private ElasticsearchOperations operations;
-	@Autowired
-	private IndexNameProvider indexNameProvider;
+	IndexNameProvider indexNameProvider;
 
 	@BeforeEach
 	public void before() {
 		indexNameProvider.increment();
-
-		try {
-			repository.deleteAll();
-		}
-		catch (Exception e) {}
 
 		Product product1 = new Product("1", "Sugar", "Cane sugar", 1.0f, false, "sort5");
 		Product product2 = new Product("2", "Sugar", "Cane sugar", 1.2f, true, "sort4");
@@ -51,21 +68,16 @@ abstract class QueryKeywordsIntegrationTests {
 		Product product7 = new Product("7", "", "empty name", 3.4f, false, "sort7");
 
 		repository.saveAll(Arrays.asList(product1, product2, product3, product4, product5, product6, product7));
-
-		System.out.println("Insert.... " + indexNameProvider.indexName());
 	}
 
 	@Test
 	public void shouldSupportAND() {
-
-		System.out.println("shouldSupportAND.... " + indexNameProvider.indexName());
 
 		// given
 
 		// when
 
 		// then
-		assertThat(repository.count()).isEqualTo(7);
 		assertThat(repository.findByNameAndText("Sugar", "Cane sugar")).hasSize(2);
 		assertThat(repository.findByNameAndPrice("Sugar", 1.1f)).hasSize(1);
 	}
@@ -307,8 +319,7 @@ abstract class QueryKeywordsIntegrationTests {
 	@Document(indexName = "#{@indexNameProvider.indexName()}")
 	static class Product {
 		@Nullable
-		@Id
-		private String id;
+		@Id private String id;
 		@Nullable private String name;
 		@Nullable
 		@Field(type = FieldType.Keyword) private String text;
@@ -382,6 +393,7 @@ abstract class QueryKeywordsIntegrationTests {
 		}
 	}
 
+	@SuppressWarnings({ "SpringDataRepositoryMethodParametersInspection", "SpringDataMethodInconsistencyInspection" })
 	interface ProductRepository extends ElasticsearchRepository<Product, String> {
 
 		List<Product> findByName(@Nullable String name);

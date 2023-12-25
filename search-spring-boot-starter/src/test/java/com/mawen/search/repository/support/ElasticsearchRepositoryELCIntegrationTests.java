@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mawen.search.core.convert.core.mapping;
+package com.mawen.search.repository.support;
 
-import java.util.Arrays;
-
-import com.mawen.search.core.convert.ElasticsearchCustomConversions;
 import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
 import com.mawen.search.repository.config.EnableElasticsearchRepositories;
 import com.mawen.search.utils.IndexNameProvider;
@@ -31,22 +28,18 @@ import org.springframework.test.context.ContextConfiguration;
  * @author Peter-Josef Meisch
  * @since 4.4
  */
-@ContextConfiguration(classes = { EntityCustomConversionELCIntegrationTests.Config.class })
-public class EntityCustomConversionELCIntegrationTests extends EntityCustomConversionIntegrationTests {
+@ContextConfiguration(classes = {ElasticsearchRepositoryELCIntegrationTests.Config.class })
+public class ElasticsearchRepositoryELCIntegrationTests extends ElasticsearchRepositoryIntegrationTests {
 
 	@Configuration
-	@Import({ EntityCustomConversionIntegrationTests.Config.class })
-	@EnableElasticsearchRepositories(basePackages = { "org.springframework.data.elasticsearch.core.mapping" },
+	@Import({ElasticsearchTemplateConfiguration.class })
+	@EnableElasticsearchRepositories(basePackages = {"org.springframework.data.elasticsearch.repository.support" },
 			considerNestedRepositories = true)
-	static class Config extends ElasticsearchTemplateConfiguration {
+	static class Config {
 		@Bean
 		IndexNameProvider indexNameProvider() {
-			return new IndexNameProvider("entity-customconversions-operations");
+			return new IndexNameProvider("repository");
 		}
 
-		@Override
-		public ElasticsearchCustomConversions elasticsearchCustomConversions() {
-			return new ElasticsearchCustomConversions(Arrays.asList(new EntityToMapConverter(), new MapToEntityConverter()));
-		}
 	}
 }

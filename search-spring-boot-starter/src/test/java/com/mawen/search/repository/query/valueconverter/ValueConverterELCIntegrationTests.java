@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 the original author or authors.
+ * Copyright 2022-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mawen.search.core.convert.core.callback;
+package com.mawen.search.repository.query.valueconverter;
 
 import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
+import com.mawen.search.repository.config.EnableElasticsearchRepositories;
 import com.mawen.search.utils.IndexNameProvider;
 
 import org.springframework.context.annotation.Bean;
@@ -24,19 +25,21 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
+ * {@link ValueConverterIntegrationTests} using a Repository backed by an ElasticsearchTemplate.
+ *
  * @author Peter-Josef Meisch
+ * @since 5.0
  */
-@ContextConfiguration(classes = { CallbackELCIntegrationTests.Config.class })
-class CallbackELCIntegrationTests extends CallbackIntegrationTests {
+@ContextConfiguration(classes = { ValueConverterELCIntegrationTests.Config.class })
+public class ValueConverterELCIntegrationTests extends ValueConverterIntegrationTests {
 
 	@Configuration
-	@Import({ ElasticsearchTemplateConfiguration.class, CallbackIntegrationTests.Config.class })
-
+	@Import({ ElasticsearchTemplateConfiguration.class })
+	@EnableElasticsearchRepositories(considerNestedRepositories = true)
 	static class Config {
 		@Bean
 		IndexNameProvider indexNameProvider() {
-			return new IndexNameProvider("callback");
+			return new IndexNameProvider("valueconverter");
 		}
-
 	}
 }

@@ -13,44 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mawen.search.core.convert.core.mapping;
+package com.mawen.search.immutable;
 
-import com.mawen.search.client.query.NativeQuery;
-import com.mawen.search.core.query.Query;
 import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
+import com.mawen.search.repository.config.EnableElasticsearchRepositories;
 import com.mawen.search.utils.IndexNameProvider;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mapping.model.FieldNamingStrategy;
-import org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
  * @author Peter-Josef Meisch
  * @since 4.4
  */
-@ContextConfiguration(classes = { FieldNamingStrategyELCIntegrationTests.Config.class })
-public class FieldNamingStrategyELCIntegrationTests extends FieldNamingStrategyIntegrationTests {
+@ContextConfiguration(classes = ImmutableRepositoryELCIntegrationTests.Config.class)
+public class ImmutableRepositoryELCIntegrationTests extends ImmutableRepositoryIntegrationTests {
 
 	@Configuration
-	static class Config extends ElasticsearchTemplateConfiguration {
-
+	@Import({ ElasticsearchTemplateConfiguration.class })
+	@EnableElasticsearchRepositories(basePackages = { "org.springframework.data.elasticsearch.immutable" },
+			considerNestedRepositories = true)
+	static class Config {
 		@Bean
 		IndexNameProvider indexNameProvider() {
-			return new IndexNameProvider("fieldnaming-strategy");
+			return new IndexNameProvider("immutable");
 		}
-
-		@Override
-		protected FieldNamingStrategy fieldNamingStrategy() {
-			return new SnakeCaseFieldNamingStrategy();
-		}
-
-	}
-
-	@Override
-	protected Query nativeMatchQuery(String fieldName, String value) {
-		return NativeQuery.builder() //
-				.withQuery(q -> q.match(mq -> mq.field(fieldName).query(fv -> fv.stringValue(value)))).build();
 	}
 }
