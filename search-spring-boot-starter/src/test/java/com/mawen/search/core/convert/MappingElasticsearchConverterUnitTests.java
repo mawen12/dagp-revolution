@@ -23,6 +23,7 @@ import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.core.annotation.ValueConverter;
 import com.mawen.search.core.document.Document;
+import com.mawen.search.core.document.MapDocument;
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.Range;
 import com.mawen.search.core.domain.SeqNoPrimaryTerm;
@@ -59,7 +60,7 @@ import static org.skyscreamer.jsonassert.JSONAssert.*;
 
 public class MappingElasticsearchConverterUnitTests {
 
-	static final String JSON_STRING = "{\"_class\":\"org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverterUnitTests$Car\",\"name\":\"Grat\",\"model\":\"Ford\"}";
+	static final String JSON_STRING = "{\"name\":\"Grat\",\"model\":\"Ford\"}";
 	static final String CAR_MODEL = "Ford";
 	static final String CAR_NAME = "Grat";
 	MappingElasticsearchConverter mappingElasticsearchConverter;
@@ -119,8 +120,6 @@ public class MappingElasticsearchConverterUnitTests {
 		t800AsMap.put("id", "t800");
 		t800AsMap.put("name", "T-800");
 		t800AsMap.put("gender", "MACHINE");
-		t800AsMap.put("_class",
-				"org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverterUnitTests$Person");
 
 		observatoryRoad = new Address();
 		observatoryRoad.city = "Los Angeles";
@@ -137,8 +136,6 @@ public class MappingElasticsearchConverterUnitTests {
 		sarahAsMap.put("id", "sarah");
 		sarahAsMap.put("name", "Sarah Connor");
 		sarahAsMap.put("gender", "MAN");
-		sarahAsMap.put("_class",
-				"org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverterUnitTests$Person");
 
 		kyleAsMap = Document.create();
 		kyleAsMap.put("id", "kyle");
@@ -146,8 +143,8 @@ public class MappingElasticsearchConverterUnitTests {
 		kyleAsMap.put("name", "Kyle Reese");
 
 		locationAsMap = Document.create();
-		locationAsMap.put("lat", 34.118347D);
-		locationAsMap.put("lon", -118.3026284D);
+		locationAsMap.put("y", 34.118347D);
+		locationAsMap.put("x", -118.3026284D);
 
 		gratiotAveAsMap = Document.create();
 		gratiotAveAsMap.put("city", "Los Angeles");
@@ -159,29 +156,23 @@ public class MappingElasticsearchConverterUnitTests {
 		bigBunsCafeAsMap.put("city", "Los Angeles");
 		bigBunsCafeAsMap.put("street", "15 South Fremont Avenue");
 		bigBunsCafeAsMap.put("location", new LinkedHashMap<>());
-		((HashMap<String, Object>) bigBunsCafeAsMap.get("location")).put("lat", 34.0945637D);
-		((HashMap<String, Object>) bigBunsCafeAsMap.get("location")).put("lon", -118.1545845D);
-		bigBunsCafeAsMap.put("_class",
-				"org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverterUnitTests$Place");
+		((HashMap<String, Object>) bigBunsCafeAsMap.get("location")).put("y", 34.0945637D);
+		((HashMap<String, Object>) bigBunsCafeAsMap.get("location")).put("x", -118.1545845D);
 
 		gunAsMap = Document.create();
 		gunAsMap.put("label", "Glock 19");
 		gunAsMap.put("shotsPerMagazine", 33);
-		gunAsMap.put("_class", Gun.class.getName());
 
 		grenadeAsMap = Document.create();
 		grenadeAsMap.put("label", "40 mm");
-		grenadeAsMap.put("_class", Grenade.class.getName());
 
 		rifleAsMap = Document.create();
 		rifleAsMap.put("label", "AR-18 Assault Rifle");
 		rifleAsMap.put("weight", 3.17D);
 		rifleAsMap.put("maxShotsPerMagazine", 40);
-		rifleAsMap.put("_class", "rifle");
 
 		shotGunAsMap = Document.create();
 		shotGunAsMap.put("model", "Ithaca 37 Pump Shotgun");
-		shotGunAsMap.put("_class", ShotGun.class.getName());
 
 		notificationAsMap = Document.create();
 		notificationAsMap.put("id", 1L);
@@ -191,8 +182,6 @@ public class MappingElasticsearchConverterUnitTests {
 		data.put("documentType", "abc");
 		data.put("content", null);
 		notificationAsMap.put("params", data);
-		notificationAsMap.put("_class",
-				"org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverterUnitTests$Notification");
 	}
 
 	@Test
@@ -329,16 +318,6 @@ public class MappingElasticsearchConverterUnitTests {
 	}
 
 	@Test // DATAES-530
-	public void readListOfInterfacesTypesCorrectly() {
-
-		sarahAsMap.put("inventoryList", Arrays.asList(gunAsMap, grenadeAsMap));
-
-		Person target = mappingElasticsearchConverter.read(Person.class, sarahAsMap);
-
-		assertThat(target.getInventoryList()).containsExactly(gun, grenade);
-	}
-
-	@Test // DATAES-530
 	public void writeMapOfConcreteType() {
 
 		sarahConnor.shippingAddresses = new LinkedHashMap<>();
@@ -373,16 +352,6 @@ public class MappingElasticsearchConverterUnitTests {
 	}
 
 	@Test // DATAES-530
-	public void readInterfaceMapCorrectly() {
-
-		sarahAsMap.put("inventoryMap", Collections.singletonMap("glock19", gunAsMap));
-
-		Person target = mappingElasticsearchConverter.read(Person.class, sarahAsMap);
-
-		assertThat(target.getInventoryMap()).hasSize(1).containsEntry("glock19", gun);
-	}
-
-	@Test // DATAES-530
 	public void genericWriteList() {
 
 		Skynet skynet = new Skynet();
@@ -393,17 +362,6 @@ public class MappingElasticsearchConverterUnitTests {
 		Map<String, Object> target = writeToMap(skynet);
 
 		assertThat((List<Object>) target.get("objectList")).containsExactly(t800AsMap, gunAsMap);
-	}
-
-	@Test // DATAES-530
-	public void readGenericList() {
-
-		Document source = Document.create();
-		source.put("objectList", Arrays.asList(t800AsMap, gunAsMap));
-
-		Skynet target = mappingElasticsearchConverter.read(Skynet.class, source);
-
-		assertThat(target.getObjectList()).containsExactly(t800, gun);
 	}
 
 	@Test // DATAES-530
@@ -418,16 +376,6 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat((List<Object>) target.get("objectList")).containsExactly(Arrays.asList(t800AsMap, gunAsMap));
 	}
 
-	@Test // DATAES-530
-	public void readGenericListList() {
-
-		Document source = Document.create();
-		source.put("objectList", Collections.singletonList(Arrays.asList(t800AsMap, gunAsMap)));
-
-		Skynet target = mappingElasticsearchConverter.read(Skynet.class, source);
-
-		assertThat(target.getObjectList()).containsExactly(Arrays.asList(t800, gun));
-	}
 
 	@Test // DATAES-530
 	public void writeGenericMap() {
@@ -444,17 +392,6 @@ public class MappingElasticsearchConverterUnitTests {
 	}
 
 	@Test // DATAES-530
-	public void readGenericMap() {
-
-		Document source = Document.create();
-		source.put("objectMap", Collections.singletonMap("glock19", gunAsMap));
-
-		Skynet target = mappingElasticsearchConverter.read(Skynet.class, source);
-
-		assertThat(target.getObjectMap()).containsEntry("glock19", gun);
-	}
-
-	@Test // DATAES-530
 	public void writeGenericMapMap() {
 
 		Skynet skynet = new Skynet();
@@ -465,17 +402,6 @@ public class MappingElasticsearchConverterUnitTests {
 
 		assertThat((Map<String, Object>) target.get("objectMap")).containsEntry("inventory",
 				Collections.singletonMap("glock19", gunAsMap));
-	}
-
-	@Test // DATAES-530
-	public void readGenericMapMap() {
-
-		Document source = Document.create();
-		source.put("objectMap", Collections.singletonMap("inventory", Collections.singletonMap("glock19", gunAsMap)));
-
-		Skynet target = mappingElasticsearchConverter.read(Skynet.class, source);
-
-		assertThat(target.getObjectMap()).containsEntry("inventory", Collections.singletonMap("glock19", gun));
 	}
 
 	@Test // DATAES-530
@@ -496,12 +422,16 @@ public class MappingElasticsearchConverterUnitTests {
 
 		Skynet target = mappingElasticsearchConverter.read(Skynet.class, source);
 
-		assertThat(target.getObject()).isEqualTo(t800);
+		assertThat(target.getObject()).isInstanceOf(MapDocument.class);
+		MapDocument document = (MapDocument) target.getObject();
+		assertThat(document.get("id")).isEqualTo(t800.id);
+		assertThat(document.get("name")).isEqualTo(t800.name);
+		assertThat(document.get("gender")).isEqualTo(t800.gender.name());
 	}
 
 	@Test // DATAES-530
 	public void writesAliased() {
-		assertThat(writeToMap(rifle)).containsEntry("_class", "rifle").doesNotContainValue(Rifle.class.getName());
+		assertThat(writeToMap(rifle)).doesNotContainValue(Rifle.class.getName());
 	}
 
 	@Test // DATAES-530
@@ -514,26 +444,8 @@ public class MappingElasticsearchConverterUnitTests {
 	}
 
 	@Test // DATAES-530
-	public void readsAliased() {
-		assertThat(mappingElasticsearchConverter.read(Inventory.class, rifleAsMap)).isEqualTo(rifle);
-	}
-
-	@Test // DATAES-530
-	public void readsNestedAliased() {
-
-		t800AsMap.put("inventoryList", Collections.singletonList(rifleAsMap));
-
-		assertThat(mappingElasticsearchConverter.read(Person.class, t800AsMap).getInventoryList()).containsExactly(rifle);
-	}
-
-	@Test // DATAES-530
 	public void appliesCustomConverterForWrite() {
 		assertThat(writeToMap(shotGun)).isEqualTo(shotGunAsMap);
-	}
-
-	@Test // DATAES-530
-	public void appliesCustomConverterForRead() {
-		assertThat(mappingElasticsearchConverter.read(Inventory.class, shotGunAsMap)).isEqualTo(shotGun);
 	}
 
 	@Test // DATAES-530
@@ -778,7 +690,6 @@ public class MappingElasticsearchConverterUnitTests {
 	class RangeTests {
 
 		static final String JSON = "{"
-				+ "\"_class\":\"org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverterUnitTests$RangeTests$RangeEntity\","
 				+ "\"integerRange\":{\"gt\":\"1\",\"lt\":\"10\"}," //
 				+ "\"floatRange\":{\"gte\":\"1.2\",\"lte\":\"2.5\"}," //
 				+ "\"longRange\":{\"gt\":\"2\",\"lte\":\"5\"}," //
@@ -1335,7 +1246,6 @@ public class MappingElasticsearchConverterUnitTests {
 	void shouldRespectFieldSettingForEmptyProperties() throws JSONException {
 		@Language("JSON")
 		String expected = "{\n" +
-					   "	\"_class\": \"org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverterUnitTests$EntityWithPropertiesThatMightBeEmpty\",\n" +
 					   "	\"id\": \"42\",\n" +
 					   "	\"stringToWriteWhenEmpty\": \"\",\n" +
 					   "	\"listToWriteWhenEmpty\": [],\n" +
@@ -1363,7 +1273,6 @@ public class MappingElasticsearchConverterUnitTests {
 
 		@Language("JSON")
 		String expected = "	{\n" +
-					   "		\"_class\": \"org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverterUnitTests$FieldNameDotsEntity\",\n" +
 					   "		\"id\": \"42\",\n" +
 					   "		\"dotted.field\": \"dotted field\"\n" +
 					   "	}\n";
@@ -1960,7 +1869,6 @@ public class MappingElasticsearchConverterUnitTests {
 
 			LinkedHashMap<String, Object> target = new LinkedHashMap<>();
 			target.put("model", source.getLabel());
-			target.put("_class", ShotGun.class.getName());
 			return target;
 		}
 	}

@@ -33,7 +33,7 @@ public class ElasticsearchRepositoryELCIntegrationTests extends ElasticsearchRep
 
 	@Configuration
 	@Import({ElasticsearchTemplateConfiguration.class })
-	@EnableElasticsearchRepositories(basePackages = {"org.springframework.data.elasticsearch.repository.support" },
+	@EnableElasticsearchRepositories(basePackages = {"com.mawen.search.repository.support" },
 			considerNestedRepositories = true)
 	static class Config {
 		@Bean

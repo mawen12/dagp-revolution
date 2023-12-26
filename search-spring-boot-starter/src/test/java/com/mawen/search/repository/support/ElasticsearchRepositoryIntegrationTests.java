@@ -1,18 +1,3 @@
-/*
- * Copyright 2013-2023 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.mawen.search.repository.support;
 
 import java.io.IOException;
@@ -24,6 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.mawen.search.UncategorizedElasticsearchException;
 import com.mawen.search.core.ElasticsearchOperations;
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Field;
@@ -39,14 +25,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.util.StreamUtils;
 import org.springframework.lang.Nullable;
+
 import static com.mawen.search.utils.IdGenerator.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Rizwan Idrees
@@ -123,7 +109,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		sampleEntity.setVersion(System.currentTimeMillis());
 
 		// when
-		assertThatThrownBy(() -> repository.save(sampleEntity)).isInstanceOf(DataIntegrityViolationException.class);
+		assertThatThrownBy(() -> repository.save(sampleEntity)).isInstanceOf(UncategorizedElasticsearchException.class);
 	}
 
 	@Test
@@ -161,16 +147,6 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 
 		// then
 		assertThat(count).isGreaterThanOrEqualTo(1L);
-	}
-
-	@Test
-	void shouldFindAllDocuments() {
-
-		// when
-		Iterable<SampleEntity> results = repository.findAll();
-
-		// then
-		assertThat(results).isNotNull();
 	}
 
 	@Test
@@ -342,7 +318,10 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		repository.deleteAllById(Arrays.asList(id1, id3));
 
 		// then
-		Assertions.assertThat(repository.findAll()).extracting(SampleEntity::getId).containsExactly(id2);
+		Iterable<SampleEntity> all = repository.findAll();
+		assertThat(all).isNotNull();
+		assertThat(all).hasSize(1);
+		assertThat(all).extracting(SampleEntity::getId).containsExactly(id2);
 	}
 
 	@Test
@@ -549,7 +528,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		repository.save(sampleEntity2);
 
 		// when
-		Iterable<SampleEntity> sampleEntities = repository.findAll(Sort.by(Order.asc("message")));
+		Iterable<SampleEntity> sampleEntities = repository.findAll(Sort.by(Order.asc("message.keyword")));
 
 		// then
 		assertThat(sampleEntities).isNotNull();

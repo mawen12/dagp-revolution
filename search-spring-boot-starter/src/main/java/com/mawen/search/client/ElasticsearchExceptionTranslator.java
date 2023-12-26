@@ -14,6 +14,8 @@ import com.mawen.search.UncategorizedElasticsearchException;
 import com.mawen.search.VersionConflictException;
 import org.elasticsearch.client.ResponseException;
 
+import org.springframework.dao.OptimisticLockingFailureException;
+
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 2023/12/19
@@ -48,6 +50,7 @@ public class ElasticsearchExceptionTranslator {
 			ErrorResponse response = elasticsearchException.response();
 			String errorType = response.error().type();
 			String errorReason = response.error().reason() != null ? response.error().reason() : "undefined reason";
+			String causedByReason = response.error().causedBy() != null ? response.error().causedBy().reason() : errorReason;
 
 			if (response.status() == 404) {
 
@@ -65,8 +68,7 @@ public class ElasticsearchExceptionTranslator {
 				return new ResourceNotFoundException(errorReason);
 			}
 
-
-			return new UncategorizedElasticsearchException(ex.getMessage(), response.status(), null, ex);
+			return new UncategorizedElasticsearchException(causedByReason, response.status(), null, ex);
 		}
 
 		Throwable cause = ex.getCause();
@@ -93,11 +95,11 @@ public class ElasticsearchExceptionTranslator {
 		if (status != null && message != null) {
 			if (status == 409 && message.contains("type\":\"version_conflict_engine_exception"))
 				if (message.contains("version conflict, required seqNo")) {
-					throw new InvalidApiUsageException("Cannot index a document due to seq_no+primary_term conflict",
+					throw new OptimisticLockingFailureException("Cannot index a document due to seq_no+primary_term conflict",
 							exception);
 				}
 				else if (message.contains("version conflict, current version [")) {
-					throw new VersionConflictException("Version conflict", exception);
+					throw new VersionConflictException("version conflict", exception);
 				}
 		}
 	}

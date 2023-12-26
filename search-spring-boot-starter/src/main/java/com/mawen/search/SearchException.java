@@ -17,4 +17,5 @@ public abstract class SearchException extends RuntimeException {
 	protected SearchException(@Nullable String message, @Nullable Throwable cause) {
 		super(message, cause);
 	}
+
 }

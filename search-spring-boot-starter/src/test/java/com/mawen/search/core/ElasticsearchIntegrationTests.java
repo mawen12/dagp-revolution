@@ -13,8 +13,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.mawen.search.InvalidApiUsageException;
+import com.mawen.search.ResourceNotFoundException;
+import com.mawen.search.core.annotation.Document.VersionType;
 import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
+import com.mawen.search.core.annotation.WriteOnlyProperty;
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.SearchHit;
@@ -42,14 +46,12 @@ import com.mawen.search.core.support.ScriptType;
 import com.mawen.search.junit.jupiter.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import org.assertj.core.api.SoftAssertions;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.Id;
@@ -60,12 +62,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.util.StreamUtils;
 import org.springframework.lang.Nullable;
 
-import static com.mawen.search.client.query.Queries.*;
 import static com.mawen.search.core.annotation.FieldType.*;
 import static com.mawen.search.utils.IdGenerator.*;
 import static com.mawen.search.utils.IndexBuilder.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 
 @SpringIntegrationTest
@@ -122,7 +124,7 @@ public abstract class ElasticsearchIntegrationTests {
 		SampleEntity sampleEntity = SampleEntity.builder().id(documentId).message(messageBeforeUpdate)
 				.version(System.currentTimeMillis()).build();
 
-		assertThatThrownBy(() -> operations.update(sampleEntity)).isInstanceOf(DataAccessException.class);
+		assertThatThrownBy(() -> operations.update(sampleEntity)).isInstanceOf(ResourceNotFoundException.class);
 	}
 
 	@Test // #2405
@@ -152,7 +154,7 @@ public abstract class ElasticsearchIntegrationTests {
 				.create();
 		UpdateQuery updateQuery = UpdateQuery.builder(nextIdAsString()).withDocument(document).build();
 		assertThatThrownBy(() -> operations.update(updateQuery, IndexCoordinates.of(indexNameProvider.indexName())))
-				.isInstanceOf(DataAccessException.class);
+				.isInstanceOf(ResourceNotFoundException.class);
 	}
 
 	@Test // DATAES-106
@@ -344,27 +346,27 @@ public abstract class ElasticsearchIntegrationTests {
 	@DisplayName("should do bulk index into different indices")
 	void shouldDoBulkIndexIntoDifferentIndices() {
 
-		var indexName = indexNameProvider.indexName();
-		var documentId1 = "1";
-		var sampleEntity1 = SampleEntity.builder().id(documentId1).message("some message").build();
-		var indexQuery1 = new IndexQueryBuilder() //
+		String indexName = indexNameProvider.indexName();
+		String documentId1 = "1";
+		SampleEntity sampleEntity1 = SampleEntity.builder().id(documentId1).message("some message").build();
+		IndexQuery indexQuery1 = new IndexQueryBuilder() //
 				.withId(documentId1) //
 				.withObject(sampleEntity1) //
 				.withIndex(indexName + "-" + documentId1) //
 				.build();
-		var documentId2 = "2";
-		var sampleEntity2 = SampleEntity.builder().id(documentId2).message("some message").build();
-		var indexQuery2 = new IndexQueryBuilder() //
+		String documentId2 = "2";
+		SampleEntity sampleEntity2 = SampleEntity.builder().id(documentId2).message("some message").build();
+		IndexQuery indexQuery2 = new IndexQueryBuilder() //
 				.withId(documentId2) //
 				.withObject(sampleEntity2) //
 				.withIndex(indexName + "-" + documentId2) //
 				.build();
 
-		var indexQueries = Arrays.asList(indexQuery1, indexQuery2);
+		List<IndexQuery> indexQueries = Arrays.asList(indexQuery1, indexQuery2);
 
 		operations.bulkIndex(indexQueries, IndexCoordinates.of(indexName));
 
-		var searchHits = operations.search(operations.matchAllQuery(), SampleEntity.class,
+		SearchHits<SampleEntity> searchHits = operations.search(operations.matchAllQuery(), SampleEntity.class,
 				IndexCoordinates.of(indexName + "*"));
 
 		assertThat(searchHits.getTotalHits()).isEqualTo(2);
@@ -572,7 +574,7 @@ public abstract class ElasticsearchIntegrationTests {
 		operations.bulkIndex(indexQueries, IndexCoordinates.of(indexNameProvider.indexName()));
 		Query query = operations.matchAllQuery();
 		query.addSort(Sort.by(Sort.Direction.ASC, "rate"));
-		query.addSort(Sort.by(Sort.Direction.ASC, "message"));
+		query.addSort(Sort.by(Sort.Direction.ASC, "message.keyword"));
 
 		SearchHits<SampleEntity> searchHits = operations.search(query, SampleEntity.class,
 				IndexCoordinates.of(indexNameProvider.indexName()));
@@ -608,7 +610,7 @@ public abstract class ElasticsearchIntegrationTests {
 		operations.bulkIndex(indexQueries, IndexCoordinates.of(indexNameProvider.indexName()));
 
 		Query searchQuery = operations.matchAllQuery();
-		searchQuery.setPageable(PageRequest.of(0, 10, Sort.by(Sort.Order.asc("message").nullsFirst())));
+		searchQuery.setPageable(PageRequest.of(0, 10, Sort.by(Sort.Order.asc("message.keyword").nullsFirst())));
 
 		// when
 		SearchHits<SampleEntity> searchHits = operations.search(searchQuery, SampleEntity.class,
@@ -646,7 +648,7 @@ public abstract class ElasticsearchIntegrationTests {
 		operations.bulkIndex(indexQueries, IndexCoordinates.of(indexNameProvider.indexName()));
 
 		Query searchQuery = operations.matchAllQuery();
-		searchQuery.setPageable(PageRequest.of(0, 10, Sort.by(Sort.Order.asc("message").nullsLast())));
+		searchQuery.setPageable(PageRequest.of(0, 10, Sort.by(Sort.Order.asc("message.keyword").nullsLast())));
 
 		// when
 		SearchHits<SampleEntity> searchHits = operations.search(searchQuery, SampleEntity.class,
@@ -744,7 +746,7 @@ public abstract class ElasticsearchIntegrationTests {
 		operations.index(indexQuery, IndexCoordinates.of(indexNameProvider.indexName()));
 
 		StringQuery stringQuery = new StringQuery(matchAllQuery().toString(), PageRequest.of(0, 10),
-				Sort.by(Sort.Order.asc("message")));
+				Sort.by(Sort.Order.asc("message.keyword")));
 
 		// when
 		SearchHits<SampleEntity> searchHits = operations.search(stringQuery, SampleEntity.class,
@@ -766,7 +768,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 		operations.index(indexQuery, IndexCoordinates.of(indexNameProvider.indexName()));
 
-		StringQuery stringQuery = new StringQuery(termQuery("id", documentId).toString());
+		StringQuery stringQuery = new StringQuery(QueryBuilders.termQuery("id", documentId).toString());
 
 		// when
 		SearchHit<SampleEntity> sampleEntity1 = operations.searchOne(stringQuery, SampleEntity.class,
@@ -1344,7 +1346,7 @@ public abstract class ElasticsearchIntegrationTests {
 				.withParams(Collections.singletonMap("newMessage", messageAfterUpdate)).withAbortOnVersionConflict(true)
 				.build();
 
-		operations.update(updateQuery, IndexCoordinates.of(indexNameProvider.indexName()));
+		operations.updateByQuery(updateQuery, IndexCoordinates.of(indexNameProvider.indexName()));
 
 		SampleEntity indexedEntity = operations.get(documentId, SampleEntity.class,
 				IndexCoordinates.of(indexNameProvider.indexName()));
@@ -1424,7 +1426,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 		// when
 		assertThatThrownBy(() -> operations.index(indexQuery, IndexCoordinates.of(indexNameProvider.indexName())))
-				.isInstanceOf(InvalidDataAccessApiUsageException.class);
+				.isInstanceOf(InvalidApiUsageException.class);
 	}
 
 	@Test // DATAES-848
@@ -1477,7 +1479,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 		operations.bulkIndex(indexQueries, IndexCoordinates.of(indexNameProvider.indexName()));
 
-		Query query = getBuilderWithTermQuery("message", "xz").withSort(Sort.by("message")).withTrackScores(true).build();
+		Query query = getBuilderWithTermQuery("message", "xz").withTrackScores(true).build();
 
 		SearchHits<SampleEntity> searchHits = operations.search(query, SampleEntity.class,
 				IndexCoordinates.of(indexNameProvider.indexName()));
@@ -1744,13 +1746,15 @@ public abstract class ElasticsearchIntegrationTests {
 
 		IndexQuery indexQuery2 = new IndexQueryBuilder().withId(sampleEntity2.getId()).withObject(sampleEntity2).build();
 
-		operations.index(indexQuery1, IndexCoordinates.of(MULTI_INDEX_1_NAME));
-		operations.index(indexQuery2, IndexCoordinates.of(MULTI_INDEX_2_NAME));
+		String multiIndex1 = MULTI_INDEX_1_NAME + "-" + indexNameProvider.indexName();
+		String multiIndex2 = MULTI_INDEX_2_NAME + "-" + indexNameProvider.indexName();
+		operations.index(indexQuery1, IndexCoordinates.of(multiIndex1));
+		operations.index(indexQuery2, IndexCoordinates.of(multiIndex2));
 
 		CriteriaQuery criteriaQuery = new CriteriaQuery(new Criteria());
 
 		// when
-		long count = operations.count(criteriaQuery, IndexCoordinates.of(MULTI_INDEX_1_NAME, MULTI_INDEX_2_NAME));
+		long count = operations.count(criteriaQuery, IndexCoordinates.of(multiIndex1, multiIndex2));
 
 		// then
 		assertThat(count).isEqualTo(2);
@@ -1772,13 +1776,16 @@ public abstract class ElasticsearchIntegrationTests {
 
 		IndexQuery indexQuery2 = new IndexQueryBuilder().withId(sampleEntity2.getId()).withObject(sampleEntity2).build();
 
-		operations.index(indexQuery1, IndexCoordinates.of(MULTI_INDEX_1_NAME));
-		operations.index(indexQuery2, IndexCoordinates.of(MULTI_INDEX_2_NAME));
+		String multiIndex1 = MULTI_INDEX_1_NAME + "-" + indexNameProvider.indexName();
+		String multiIndex2 = MULTI_INDEX_2_NAME + "-" + indexNameProvider.indexName();
+
+		operations.index(indexQuery1, IndexCoordinates.of(multiIndex1));
+		operations.index(indexQuery2, IndexCoordinates.of(multiIndex2));
 
 		Query searchQuery = operations.matchAllQuery();
 
 		// when
-		long count = operations.count(searchQuery, IndexCoordinates.of(MULTI_INDEX_1_NAME, MULTI_INDEX_2_NAME));
+		long count = operations.count(searchQuery, IndexCoordinates.of(multiIndex1, multiIndex2));
 
 		// then
 		assertThat(count).isEqualTo(2);
@@ -1801,13 +1808,16 @@ public abstract class ElasticsearchIntegrationTests {
 
 		IndexQuery indexQuery2 = new IndexQueryBuilder().withId(sampleEntity2.getId()).withObject(sampleEntity2).build();
 
-		operations.index(indexQuery1, IndexCoordinates.of(MULTI_INDEX_1_NAME));
-		operations.index(indexQuery2, IndexCoordinates.of(MULTI_INDEX_2_NAME));
+		String multiIndex1 = MULTI_INDEX_1_NAME + "-" + indexNameProvider.indexName();
+		String multiIndex2 = MULTI_INDEX_2_NAME + "-" + indexNameProvider.indexName();
+
+		operations.index(indexQuery1, IndexCoordinates.of(multiIndex1));
+		operations.index(indexQuery2, IndexCoordinates.of(multiIndex2));
 
 		CriteriaQuery criteriaQuery = new CriteriaQuery(new Criteria());
 
 		// when
-		long count = operations.count(criteriaQuery, IndexCoordinates.of(MULTI_INDEX_1_NAME));
+		long count = operations.count(criteriaQuery, IndexCoordinates.of(multiIndex1));
 
 		// then
 		assertThat(count).isEqualTo(1);
@@ -1829,13 +1839,16 @@ public abstract class ElasticsearchIntegrationTests {
 
 		IndexQuery indexQuery2 = new IndexQueryBuilder().withId(sampleEntity2.getId()).withObject(sampleEntity2).build();
 
-		operations.index(indexQuery1, IndexCoordinates.of(MULTI_INDEX_1_NAME));
-		operations.index(indexQuery2, IndexCoordinates.of(MULTI_INDEX_2_NAME));
+		String multiIndex1 = MULTI_INDEX_1_NAME + "-" + indexNameProvider.indexName();
+		String multiIndex2 = MULTI_INDEX_2_NAME + "-" + indexNameProvider.indexName();
+
+		operations.index(indexQuery1, IndexCoordinates.of(multiIndex1));
+		operations.index(indexQuery2, IndexCoordinates.of(multiIndex2));
 
 		Query searchQuery = operations.matchAllQuery();
 
 		// when
-		long count = operations.count(searchQuery, IndexCoordinates.of(MULTI_INDEX_1_NAME));
+		long count = operations.count(searchQuery, IndexCoordinates.of(multiIndex1));
 
 		// then
 		assertThat(count).isEqualTo(1);
@@ -1879,8 +1892,11 @@ public abstract class ElasticsearchIntegrationTests {
 
 	@Test
 	public void shouldTestResultsAcrossMultipleIndices() {
-		IndexCoordinates index1 = IndexCoordinates.of(MULTI_INDEX_1_NAME);
-		IndexCoordinates index2 = IndexCoordinates.of(MULTI_INDEX_2_NAME);
+
+		String multiIndex1 = MULTI_INDEX_1_NAME + "-" + indexNameProvider.indexName();
+		String multiIndex2 = MULTI_INDEX_2_NAME + "-" + indexNameProvider.indexName();
+		IndexCoordinates index1 = IndexCoordinates.of(multiIndex1);
+		IndexCoordinates index2 = IndexCoordinates.of(multiIndex2);
 
 		String documentId1 = nextIdAsString();
 		SampleEntity sampleEntity1 = SampleEntity.builder().id(documentId1).message("some message")
@@ -1901,7 +1917,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 		// when
 		SearchHits<SampleEntity> sampleEntities = operations.search(searchQuery, SampleEntity.class,
-				IndexCoordinates.of(MULTI_INDEX_1_NAME, MULTI_INDEX_2_NAME));
+				IndexCoordinates.of(multiIndex1, multiIndex2));
 
 		// then
 		assertThat(sampleEntities).hasSize(2);
@@ -1910,8 +1926,10 @@ public abstract class ElasticsearchIntegrationTests {
 	@Test
 	public void shouldComposeObjectsReturnedFromHeterogeneousIndexes() {
 
-		IndexCoordinates index1 = IndexCoordinates.of(MULTI_INDEX_1_NAME);
-		IndexCoordinates index2 = IndexCoordinates.of(MULTI_INDEX_2_NAME);
+		String multiIndex1 = MULTI_INDEX_1_NAME + "-" + indexNameProvider.indexName();
+		String multiIndex2 = MULTI_INDEX_2_NAME + "-" + indexNameProvider.indexName();
+		IndexCoordinates index1 = IndexCoordinates.of(multiIndex1);
+		IndexCoordinates index2 = IndexCoordinates.of(multiIndex2);
 
 		HetroEntity1 entity1 = new HetroEntity1(nextIdAsString(), "aFirstName");
 		HetroEntity2 entity2 = new HetroEntity2(nextIdAsString(), "aLastName");
@@ -1925,7 +1943,7 @@ public abstract class ElasticsearchIntegrationTests {
 		// when
 		Query searchQuery = operations.matchAllQuery();
 		SearchHits<ResultAggregator> page = operations.search(searchQuery, ResultAggregator.class,
-				IndexCoordinates.of(MULTI_INDEX_1_NAME, MULTI_INDEX_2_NAME));
+				IndexCoordinates.of(multiIndex1, multiIndex2));
 
 		assertThat(page.getTotalHits()).isEqualTo(2);
 	}
@@ -1976,17 +1994,26 @@ public abstract class ElasticsearchIntegrationTests {
 				.version(System.currentTimeMillis()).build()));
 		operations.bulkIndex(indexQueries, IndexCoordinates.of(indexNameProvider.indexName()));
 
+
 		// when
+		SearchHits<SampleEntity> searchHits2 = operations.search(operations.matchAllQuery(), SampleEntity.class, IndexCoordinates.of(indexNameProvider.indexName()));
+		assertThat(searchHits2.getTotalHits()).isEqualTo(2);
+
 		CriteriaQuery criteriaQuery = new CriteriaQuery(new Criteria("id").is(documentIdToDelete));
+
+		SearchHits<SampleEntity> searchHits = operations.search(criteriaQuery, SampleEntity.class, IndexCoordinates.of(indexNameProvider.indexName()));
+		assertThat(searchHits.getTotalHits()).isEqualTo(1);
+		assertThat(searchHits.getSearchHit(0).getContent().getId()).isEqualTo(documentIdToDelete);
+
 		operations.delete(criteriaQuery, SampleEntity.class, IndexCoordinates.of(indexNameProvider.indexName()));
 
 		// then
 		// document with id "remainingDocumentId" should still be indexed
 		Query searchQuery = operations.matchAllQuery();
-		SearchHits<SampleEntity> searchHits = operations.search(searchQuery, SampleEntity.class,
+		SearchHits<SampleEntity> searchHits1 = operations.search(searchQuery, SampleEntity.class,
 				IndexCoordinates.of(indexNameProvider.indexName()));
-		assertThat(searchHits.getTotalHits()).isEqualTo(1);
-		assertThat(searchHits.getSearchHit(0).getContent().getId()).isEqualTo(remainingDocumentId);
+		assertThat(searchHits1.getTotalHits()).isEqualTo(1);
+		assertThat(searchHits1.getSearchHit(0).getContent().getId()).isEqualTo(remainingDocumentId);
 	}
 
 	@Test // DATAES-525
@@ -2149,7 +2176,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 		Query query = getBuilderWithMatchAllQuery() //
 				.withSort(Sort.by(Sort.Order.asc("rate"))) //
-				.withSort(Sort.by(Sort.Order.desc("message"))) //
+				.withSort(Sort.by(Sort.Order.desc("message.keyword"))) //
 				.withPageable(PageRequest.of(0, 10)).build();
 
 		SearchScrollHits<SampleEntity> scroll = ((AbstractElasticsearchTemplate) operations).searchScrollStart(1000, query,
@@ -2175,17 +2202,17 @@ public abstract class ElasticsearchIntegrationTests {
 		// given
 		// first document
 		String documentId = nextIdAsString();
-		SampleEntity sampleEntity1 = SampleEntity.builder().id(documentId).message("abc").rate(10)
+		SampleEntity sampleEntity1 = SampleEntity.builder().id(documentId).message("abc").rate(1)
 				.version(System.currentTimeMillis()).build();
 
 		// second document
 		String documentId2 = nextIdAsString();
-		SampleEntity sampleEntity2 = SampleEntity.builder().id(documentId2).message("xyz").rate(5)
+		SampleEntity sampleEntity2 = SampleEntity.builder().id(documentId2).message("xyz").rate(3)
 				.version(System.currentTimeMillis()).build();
 
 		// third document
 		String documentId3 = nextIdAsString();
-		SampleEntity sampleEntity3 = SampleEntity.builder().id(documentId3).message("xyz").rate(10)
+		SampleEntity sampleEntity3 = SampleEntity.builder().id(documentId3).message("xyz").rate(2)
 				.version(System.currentTimeMillis()).build();
 
 		List<IndexQuery> indexQueries = getIndexQueries(Arrays.asList(sampleEntity1, sampleEntity2, sampleEntity3));
@@ -2194,7 +2221,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 		Query query = getBuilderWithMatchAllQuery()
 				.withPageable(
-						PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "rate").and(Sort.by(Sort.Direction.DESC, "message"))))
+						PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "rate")))
 				.build();
 
 		// when
@@ -2209,11 +2236,11 @@ public abstract class ElasticsearchIntegrationTests {
 
 		// then
 		assertThat(sampleEntities).hasSize(3);
-		assertThat(sampleEntities.get(0).getContent().getRate()).isEqualTo(sampleEntity2.getRate());
+		assertThat(sampleEntities.get(0).getContent().getRate()).isEqualTo(sampleEntity1.getRate());
 		assertThat(sampleEntities.get(1).getContent().getRate()).isEqualTo(sampleEntity3.getRate());
 		assertThat(sampleEntities.get(1).getContent().getMessage()).isEqualTo(sampleEntity3.getMessage());
-		assertThat(sampleEntities.get(2).getContent().getRate()).isEqualTo(sampleEntity1.getRate());
-		assertThat(sampleEntities.get(2).getContent().getMessage()).isEqualTo(sampleEntity1.getMessage());
+		assertThat(sampleEntities.get(2).getContent().getRate()).isEqualTo(sampleEntity2.getRate());
+		assertThat(sampleEntities.get(2).getContent().getMessage()).isEqualTo(sampleEntity2.getMessage());
 	}
 
 	@Test // DATAES-593
@@ -2343,7 +2370,6 @@ public abstract class ElasticsearchIntegrationTests {
 		operations.index(indexQuery, index);
 
 		Query query = getBuilderWithMatchAllQuery() //
-				.withSort(Sort.by(Sort.Direction.ASC, "keyword")) //
 				.withSort(Sort.by(Sort.Direction.DESC, "number")) //
 				.build();
 
@@ -2354,10 +2380,9 @@ public abstract class ElasticsearchIntegrationTests {
 
 		SearchHit<SearchHitsEntity> searchHit = searchHits.getSearchHit(0);
 		List<Object> sortValues = searchHit.getSortValues();
-		assertThat(sortValues).hasSize(2);
-		assertThat(sortValues.get(0)).isInstanceOf(String.class).isEqualTo("thousands");
+		assertThat(sortValues).hasSize(1);
 		// transport client returns Long, RestHighlevelClient Integer, new ElasticsearchClient String
-		java.lang.Object o = sortValues.get(1);
+		java.lang.Object o = sortValues.get(0);
 		if (o instanceof Integer) {
 			assertThat(o).isInstanceOf(Integer.class).isEqualTo(1000);
 		} else if (o instanceof Long) {
@@ -2823,17 +2848,6 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThatThrownBy(() -> operations.search(query, SampleEntity.class));
 	}
 
-	@Test // #1945
-	@DisplayName("should not error on sort with unmapped field and unmapped_type settings")
-	void shouldNotErrorOnSortWithUnmappedFieldAndUnmappedTypeSettings() {
-
-		Sort.Order order = new Sort.Order(
-				Sort.Direction.ASC, "unmappedField");
-		Query query = operations.matchAllQuery().addSort(Sort.by(order));
-
-		operations.search(query, SampleEntity.class);
-	}
-
 	// region entities
 	@com.mawen.search.core.annotation.Document(indexName = "#{@indexNameProvider.indexName()}")
 	static class SampleEntity {
@@ -3202,7 +3216,7 @@ public abstract class ElasticsearchIntegrationTests {
 		}
 	}
 
-	@com.mawen.search.core.annotation.Document(indexName = "#{@indexNameProvider.indexName()}")
+	@com.mawen.search.core.annotation.Document(indexName = "#{@indexNameProvider.indexName()}", versionType = VersionType.EXTERNAL_GTE)
 	private static class GTEVersionEntity {
 		@Nullable
 		@Version private Long version;
@@ -3661,6 +3675,7 @@ public abstract class ElasticsearchIntegrationTests {
 		@Field(type = FieldType.Keyword) private String part2;
 
 		@Id
+		@WriteOnlyProperty
 		@AccessType(AccessType.Type.PROPERTY)
 		public String getId() {
 			return part1 + '-' + part2;
@@ -3695,6 +3710,7 @@ public abstract class ElasticsearchIntegrationTests {
 		@Field(type = Text) private String lastName;
 
 		@Field(type = Keyword)
+		@WriteOnlyProperty
 		@AccessType(AccessType.Type.PROPERTY)
 		public String getFullName() {
 			return sanitize(firstName) + sanitize(lastName);

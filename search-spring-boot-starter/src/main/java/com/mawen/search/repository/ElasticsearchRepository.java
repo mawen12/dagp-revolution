@@ -1,5 +1,6 @@
 package com.mawen.search.repository;
 
+import com.mawen.search.core.IndexOperations;
 import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.repository.dynamic.DynamicCrudRepository;
 import com.mawen.search.repository.dynamic.DynamicPagingAndSortingRepository;

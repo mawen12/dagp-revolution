@@ -44,6 +44,8 @@ public class SimpleElasticsearchPersistentEntity<T>
 	@Nullable
 	private String indexName;
 	private boolean isDynamicIndex;
+	@Nullable
+	private Document.VersionType versionType;
 	private final Lazy<EvaluationContext> indexNameEvaluationContext = Lazy.of(this::getIndexNameEvaluationContext);
 	@Nullable
 	private ElasticsearchPersistentProperty seqNoPrimaryTermProperty;
@@ -62,6 +64,7 @@ public class SimpleElasticsearchPersistentEntity<T>
 		if (document != null) {
 			this.indexName = document.indexName();
 			this.isDynamicIndex = document.dynamicIndex();
+			this.versionType = document.versionType();
 		}
 
 		Routing routingAnnotation = AnnotatedElementUtils.findMergedAnnotation(clazz, Routing.class);
@@ -168,6 +171,11 @@ public class SimpleElasticsearchPersistentEntity<T>
 	@Override
 	public ElasticsearchPersistentProperty getIndexNameProperty() {
 		return indexNameProperty;
+	}
+
+	@Override
+	public Document.VersionType getVersionType() {
+		return this.versionType;
 	}
 
 	@Nullable

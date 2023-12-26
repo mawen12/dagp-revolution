@@ -87,4 +87,6 @@ public interface DocumentOperations {
 	<T> UpdateResponse update(T entity, IndexCoordinates index);
 
 	<T> UpdateResponse update(UpdateQuery updateQuery, IndexCoordinates index);
+
+	ByQueryResponse updateByQuery(UpdateQuery updateQuery, IndexCoordinates index);
 }

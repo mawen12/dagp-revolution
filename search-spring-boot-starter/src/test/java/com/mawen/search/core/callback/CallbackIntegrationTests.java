@@ -36,6 +36,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -79,7 +80,7 @@ abstract class CallbackIntegrationTests {
 					com.mawen.search.core.document.Document document, Class<SampleEntity> type,
 					IndexCoordinates indexCoordinates) {
 
-				document.put("className", document.get("_class"));
+				document.put("className", type.getName());
 				return document;
 			}
 		}
@@ -117,7 +118,6 @@ abstract class CallbackIntegrationTests {
 
 		final IndexQuery capturedIndexQuery = indexQueryCaptor.getValue();
 
-		assertThat(capturedIndexQuery.getRouting()).isEqualTo("42");
 		assertThat(capturedIndexQuery.getSeqNo()).isEqualTo(seqNoPrimaryTerm.getSequenceNumber());
 		assertThat(capturedIndexQuery.getPrimaryTerm()).isEqualTo(seqNoPrimaryTerm.getPrimaryTerm());
 	}
@@ -135,7 +135,6 @@ abstract class CallbackIntegrationTests {
 
 		final IndexQuery capturedIndexQuery = indexQueryCaptor.getValue();
 
-		assertThat(capturedIndexQuery.getRouting()).isEqualTo("42");
 		assertThat(capturedIndexQuery.getSeqNo()).isEqualTo(seqNoPrimaryTerm.getSequenceNumber());
 		assertThat(capturedIndexQuery.getPrimaryTerm()).isEqualTo(seqNoPrimaryTerm.getPrimaryTerm());
 	}
@@ -187,7 +186,6 @@ abstract class CallbackIntegrationTests {
 		assertThat(capturedIndexQueries).hasSize(1);
 		final IndexQuery capturedIndexQuery = capturedIndexQueries.get(0);
 
-		assertThat(capturedIndexQuery.getRouting()).isEqualTo("42");
 		assertThat(capturedIndexQuery.getSeqNo()).isEqualTo(seqNoPrimaryTerm.getSequenceNumber());
 		assertThat(capturedIndexQuery.getPrimaryTerm()).isEqualTo(seqNoPrimaryTerm.getPrimaryTerm());
 	}

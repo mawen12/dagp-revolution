@@ -13,6 +13,7 @@ import co.elastic.clients.elasticsearch._types.OpType;
 import co.elastic.clients.elasticsearch._types.SearchType;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.VersionType;
 import co.elastic.clients.elasticsearch._types.WaitForActiveShardOptions;
 import co.elastic.clients.elasticsearch._types.mapping.FieldType;
 import co.elastic.clients.elasticsearch._types.query_dsl.FieldAndFormat;
@@ -36,6 +37,9 @@ import co.elastic.clients.elasticsearch.core.msearch.MultisearchBody;
 import co.elastic.clients.elasticsearch.core.search.Highlight;
 import co.elastic.clients.elasticsearch.core.search.Rescore;
 import co.elastic.clients.elasticsearch.core.search.SourceConfig;
+import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
+import co.elastic.clients.elasticsearch.indices.ExistsRequest;
+import co.elastic.clients.elasticsearch.indices.RefreshRequest;
 import co.elastic.clients.json.JsonData;
 import com.mawen.search.InvalidApiUsageException;
 import com.mawen.search.client.MultiSearchQueryParameter;
@@ -72,6 +76,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import static com.mawen.search.client.util.TypeUtils.*;
+import static com.mawen.search.core.annotation.Document.VersionType.*;
 import static org.springframework.util.CollectionUtils.*;
 
 /**
@@ -88,6 +93,32 @@ public class RequestConverter {
 	public RequestConverter(ElasticsearchConverter elasticsearchConverter) {
 		this.elasticsearchConverter = elasticsearchConverter;
 	}
+
+	// region Indices client
+
+	public ExistsRequest indicesExistsRequest(IndexCoordinates indexCoordinates) {
+
+		Assert.notNull(indexCoordinates, "indexCoordinates must not be null");
+
+		return new ExistsRequest.Builder().index(Arrays.asList(indexCoordinates.getIndexNames())).build();
+	}
+
+	public RefreshRequest indicesRefreshRequest(IndexCoordinates indexCoordinates) {
+
+		Assert.notNull(indexCoordinates, "indexCoordinates must not be null");
+
+		return new RefreshRequest.Builder().index(Arrays.asList(indexCoordinates.getIndexNames())).build();
+	}
+
+	public DeleteIndexRequest indicesDeleteRequest(IndexCoordinates indexCoordinates) {
+
+		Assert.notNull(indexCoordinates, "indexCoordinates must not be null");
+
+		return new DeleteIndexRequest.Builder().index(Arrays.asList(indexCoordinates.getIndexNames())).build();
+	}
+
+
+	// endregion
 
 	// region documents
 
@@ -138,6 +169,11 @@ public class RequestConverter {
 					"object or source is null, failed to index the document [id: " + query.getId() + ']');
 		}
 
+		if (query.getVersion() != null) {
+			VersionType versionType = retrieveVersionTypeFromPersistentEntity(queryObject != null ? queryObject.getClass() : null);
+			builder.version(query.getVersion()).versionType(versionType);
+		}
+
 		builder //
 				.ifSeqNo(query.getSeqNo()) //
 				.ifPrimaryTerm(query.getPrimaryTerm()) //
@@ -179,6 +215,11 @@ public class RequestConverter {
 					"object or source is null, failed to index the document [id: " + query.getId() + ']');
 		}
 
+		if (query.getVersion() != null) {
+			VersionType versionType = retrieveVersionTypeFromPersistentEntity(queryObject != null ? queryObject.getClass() : null);
+			builder.version(query.getVersion()).versionType(versionType);
+		}
+
 		builder //
 				.ifSeqNo(query.getSeqNo()) //
 				.ifPrimaryTerm(query.getPrimaryTerm()) //
@@ -207,6 +248,11 @@ public class RequestConverter {
 		else {
 			throw new InvalidApiUsageException(
 					"object or source is null, failed to index the document [id: " + query.getId() + ']');
+		}
+
+		if (query.getVersion() != null) {
+			VersionType versionType = retrieveVersionTypeFromPersistentEntity(queryObject != null ? queryObject.getClass() : null);
+			builder.version(query.getVersion()).versionType(versionType);
 		}
 
 		builder //
@@ -1086,4 +1132,36 @@ public class RequestConverter {
 			return null;
 		}
 	}
+
+	private VersionType retrieveVersionTypeFromPersistentEntity(@Nullable Class<?> clazz) {
+
+		ElasticsearchPersistentEntity<?> persistentEntity = getPersistentEntity(clazz);
+
+		VersionType versionType = null;
+
+		if (persistentEntity != null) {
+			com.mawen.search.core.annotation.Document.VersionType entityVersionType = persistentEntity
+					.getVersionType();
+
+			if (entityVersionType != null) {
+				switch (entityVersionType) {
+					case INTERNAL:
+						versionType =VersionType.Internal;
+						break;
+					case EXTERNAL:
+						versionType = VersionType.External;
+						break;
+					case EXTERNAL_GTE:
+						versionType =VersionType.ExternalGte;
+						break;
+					case FORCE:
+						versionType = VersionType.Force;
+						break;
+				};
+			}
+		}
+
+		return versionType != null ? versionType : VersionType.External;
+	}
+
 }

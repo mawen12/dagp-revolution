@@ -73,7 +73,7 @@ public class IndexQueryBuilder {
 	}
 
 	public IndexQuery build() {
-		return new IndexQuery(id, object, source, seqNo, primaryTerm, routing, opType, indexName);
+		return new IndexQuery(id, object, version, source, seqNo, primaryTerm, routing, opType, indexName);
 	}
 
 	public IndexQueryBuilder withIndex(@Nullable String indexName) {

@@ -23,6 +23,8 @@ public class IndexQuery {
 	@Nullable
 	private Object object;
 	@Nullable
+	private Long version;
+	@Nullable
 	private String source;
 	@Nullable
 	private Long seqNo;

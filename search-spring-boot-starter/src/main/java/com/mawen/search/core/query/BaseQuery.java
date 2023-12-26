@@ -151,7 +151,7 @@ public class BaseQuery implements Query {
 
 	@Override
 	public boolean getTrackScores() {
-		return false;
+		return this.trackScores;
 	}
 
 	public void setTrackScores(boolean trackScores) {

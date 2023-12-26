@@ -116,6 +116,10 @@ public class Queries {
 		return builder.apply(new Query.Builder()).build();
 	}
 
+	public static Query termQueryAsQuery(TermQuery query) {
+		return query._toQuery();
+	}
+
 	public static WildcardQuery wildcardQuery(String field, String value) {
 
 		Assert.notNull(field, "field must not be null");

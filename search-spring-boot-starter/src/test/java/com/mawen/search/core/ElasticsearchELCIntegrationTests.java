@@ -78,7 +78,7 @@ public class ElasticsearchELCIntegrationTests extends ElasticsearchIntegrationTe
 
 		operations.bulkIndex(indexQueries, IndexCoordinates.of(indexNameProvider.indexName()));
 
-		NativeQuery query = NativeQuery.builder().withSort(b -> b.field(fb -> fb.field("message").order(SortOrder.Asc)))
+		NativeQuery query = NativeQuery.builder().withSort(b -> b.field(fb -> fb.field("message.keyword").order(SortOrder.Asc)))
 				.build();
 
 		SearchHits<SampleEntity> searchHits = operations.search(query, SampleEntity.class,

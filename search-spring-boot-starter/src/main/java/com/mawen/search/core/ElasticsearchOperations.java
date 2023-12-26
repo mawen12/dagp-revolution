@@ -13,6 +13,10 @@ import org.springframework.lang.Nullable;
  */
 public interface ElasticsearchOperations extends DocumentOperations, SearchOperations {
 
+	IndexOperations indexOps(Class<?> clazz);
+
+	IndexOperations indexOps(IndexCoordinates index);
+
 	ElasticsearchConverter getElasticsearchConverter();
 
 	IndexCoordinates getIndexCoordinatesFor(Class<?> clazz);

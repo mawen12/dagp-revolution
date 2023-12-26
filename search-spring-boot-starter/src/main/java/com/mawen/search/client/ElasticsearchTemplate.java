@@ -29,6 +29,8 @@ import co.elastic.clients.elasticsearch.core.ScrollRequest;
 import co.elastic.clients.elasticsearch.core.ScrollResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.UpdateByQueryRequest;
+import co.elastic.clients.elasticsearch.core.UpdateByQueryResponse;
 import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
 import co.elastic.clients.elasticsearch.core.msearch.MultiSearchResponseItem;
@@ -39,6 +41,7 @@ import com.mawen.search.client.query.builder.SearchDocumentResponseBuilder;
 import com.mawen.search.client.request.RequestConverter;
 import com.mawen.search.client.response.ResponseConverter;
 import com.mawen.search.core.AbstractElasticsearchTemplate;
+import com.mawen.search.core.IndexOperations;
 import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.document.SearchDocumentResponse;
@@ -102,6 +105,20 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 	}
 	// endregion
 
+	// region Indices client
+
+	@Override
+	public IndexOperations indexOps(Class<?> clazz) {
+		return new IndicesTemplate(client.indices(), elasticsearchConverter, clazz);
+	}
+
+	@Override
+	public IndexOperations indexOps(IndexCoordinates index) {
+		return new IndicesTemplate(client.indices(), elasticsearchConverter, index);
+	}
+
+	// endregion
+
 	// region document operations
 	@Override
 	@Nullable
@@ -142,26 +159,29 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 	}
 
 	@Override
-	public ByQueryResponse delete(Query query, Class<?> clazz, IndexCoordinates index) {
-
-		Assert.notNull(query, "query must not be null");
-
-		DeleteByQueryRequest request = requestConverter.documentDeleteByQueryRequest(query, routingResolver.getRouting(),
-				clazz, index, getRefreshPolicy());
-
-		DeleteByQueryResponse response = execute(client -> client.deleteByQuery(request));
-
-		return responseConverter.byQueryResponse(response);
-	}
-
-	@Override
 	public UpdateResponse update(UpdateQuery updateQuery, IndexCoordinates index) {
+
+		Assert.notNull(updateQuery, "updateQuery must not be null");
+		Assert.notNull(index, "index must not be null");
 
 		UpdateRequest<Document, ?> request = requestConverter.documentUpdateRequest(updateQuery, index, getRefreshPolicy(),
 				routingResolver.getRouting());
 		co.elastic.clients.elasticsearch.core.UpdateResponse<Document> response = execute(
 				client -> client.update(request, Document.class));
 		return UpdateResponse.of(result(response.result()));
+	}
+
+	@Override
+	public ByQueryResponse updateByQuery(UpdateQuery updateQuery, IndexCoordinates index) {
+
+		Assert.notNull(updateQuery, "updateQuery must not be null");
+		Assert.notNull(index, "index must not be null");
+
+		UpdateByQueryRequest request = requestConverter.documentUpdateByQueryRequest(updateQuery, index, getRefreshPolicy());
+
+		UpdateByQueryResponse response = execute(client -> client.updateByQuery(request));
+
+		return responseConverter.byQueryResponse(response);
 	}
 
 	@Override
@@ -208,7 +228,16 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 
 	@Override
 	protected ByQueryResponse doDelete(Query query, Class<?> clazz, IndexCoordinates index) {
-		return null;
+		Assert.notNull(query, "query must not be null");
+
+		DeleteByQueryRequest request = requestConverter.documentDeleteByQueryRequest(query, routingResolver.getRouting(),
+				clazz, index, getRefreshPolicy());
+
+		DeleteByQueryResponse response = execute(client -> client.deleteByQuery(request));
+
+		log.info("do delete response is {}", response.deleted());
+
+		return responseConverter.byQueryResponse(response);
 	}
 
 	@Override
@@ -444,13 +473,6 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 
 	// region client callback
 
-	/**
-	 * Execute a callback with the {@link ElasticsearchClient} and provide exception translation.
-	 *
-	 * @param callback the callback to execute, must not be {@literal null}
-	 * @param <T>      the type returned from the callback
-	 * @return the callback result
-	 */
 	public <T> T execute(ElasticsearchTemplate.ClientCallback<T> callback) {
 
 		Assert.notNull(callback, "callback must not be null");
@@ -480,12 +502,6 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 		return NativeQuery.builder().withIds(ids);
 	}
 
-	/**
-	 * extract the list of {@link IndexedObjectInformation} from a {@link BulkResponse}.
-	 *
-	 * @param bulkResponse the response to evaluate
-	 * @return the list of the {@link IndexedObjectInformation}s
-	 */
 	protected List<IndexedObjectInformation> checkForBulkOperationFailure(BulkResponse bulkResponse) {
 
 		if (bulkResponse.errors()) {
@@ -508,10 +524,6 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 
 	}
 
-	/**
-	 * Callback interface to be used with {@link #execute(ElasticsearchTemplate.ClientCallback)} for operating directly on
-	 * the {@link ElasticsearchClient}.
-	 */
 	@FunctionalInterface
 	public interface ClientCallback<T> {
 		T doWithClient(ElasticsearchClient client) throws IOException;

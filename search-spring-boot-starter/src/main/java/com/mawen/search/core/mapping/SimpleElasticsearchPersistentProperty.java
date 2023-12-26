@@ -11,6 +11,7 @@ import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.core.annotation.IndexName;
 import com.mawen.search.core.annotation.ValueConverter;
+import com.mawen.search.core.annotation.WriteOnlyProperty;
 import com.mawen.search.core.convert.AbstractPropertyValueConverter;
 import com.mawen.search.core.convert.DatePropertyValueConverter;
 import com.mawen.search.core.convert.DateRangePropertyValueConverter;
@@ -24,6 +25,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mapping.Association;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentEntity;
@@ -75,6 +77,10 @@ public class SimpleElasticsearchPersistentProperty
 
 		boolean isField = isAnnotationPresent(Field.class);
 
+		if (isVersionProperty() && !getType().equals(Long.class)) {
+			throw new MappingException(String.format("Version property %s must be of type Long!", property.getName()));
+		}
+
 		this.storeNullValue = isField && getRequiredAnnotation(Field.class).storeNullValue();
 		this.storeEmptyValue = isField ? getRequiredAnnotation(Field.class).storeEmptyValue() : true;
 	}
@@ -119,6 +125,16 @@ public class SimpleElasticsearchPersistentProperty
 	@Override
 	public boolean hasPropertyValueConverter() {
 		return propertyValueConverter != null;
+	}
+
+	@Override
+	public boolean isWritable() {
+		return !isSeqNoPrimaryTermProperty() && !isAnnotationPresent(ReadOnlyProperty.class);
+	}
+
+	@Override
+	public boolean isReadable() {
+		return !isSeqNoPrimaryTermProperty() && !isAnnotationPresent(WriteOnlyProperty.class);
 	}
 
 	@Override

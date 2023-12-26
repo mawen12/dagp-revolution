@@ -60,11 +60,11 @@ public final class JsonUtils {
 			return null;
 		}
 
-		var baos = new ByteArrayOutputStream();
-		var generator = mapper.jsonProvider().createGenerator(baos);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		JsonGenerator generator = mapper.jsonProvider().createGenerator(baos);
 		query.serialize(generator, mapper);
 		generator.close();
-		return baos.toString(StandardCharsets.UTF_8);
+		return baos.toString();
 	}
 
 }

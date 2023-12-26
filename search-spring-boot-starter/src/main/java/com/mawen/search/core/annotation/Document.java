@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
  * Identifies a domain object to be persisted to Elasticsearch.
  *
@@ -35,4 +36,23 @@ public @interface Document {
 	 * otherwise will use {@link #indexName()} directly.
 	 */
 	boolean dynamicIndex() default false;
+
+	VersionType versionType() default VersionType.EXTERNAL;
+
+	enum VersionType {
+		INTERNAL("internal"), //
+		EXTERNAL("external"), //
+		EXTERNAL_GTE("external_gte"), //
+		FORCE("force");
+
+		private final String esName;
+
+		VersionType(String esName) {
+			this.esName = esName;
+		}
+
+		public String getEsName() {
+			return esName;
+		}
+	}
 }

@@ -19,6 +19,8 @@ public interface ElasticsearchPersistentProperty extends PersistentProperty<Elas
 
 	PropertyValueConverter getPropertyValueConverter();
 
+	boolean isReadable();
+
 	boolean storeNullValue();
 
 	boolean storeEmptyValue();

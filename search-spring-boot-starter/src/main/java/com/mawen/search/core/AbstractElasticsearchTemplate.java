@@ -385,7 +385,8 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 			ElasticsearchPersistentProperty idProperty = persistentEntity.getIdProperty();
 
 			// Only deal with text because ES generated Ids are strings!
-			if (indexedObjectInformation.getId() != null && idProperty != null && idProperty.getType().isAssignableFrom(String.class)) {
+			if (indexedObjectInformation.getId() != null && idProperty != null && idProperty.isReadable()
+					&& idProperty.getType().isAssignableFrom(String.class)) {
 				propertyAccessor.setProperty(idProperty, indexedObjectInformation.getId());
 			}
 

@@ -7,7 +7,10 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.mawen.search.client.IndicesTemplate;
+import com.mawen.search.core.AbstractElasticsearchTemplate;
 import com.mawen.search.core.ElasticsearchOperations;
+import com.mawen.search.core.IndexOperations;
 import com.mawen.search.core.domain.SearchHit;
 import com.mawen.search.core.domain.SearchHitSupport;
 import com.mawen.search.core.domain.SearchHits;
@@ -17,6 +20,7 @@ import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.repository.ElasticsearchRepository;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,11 +38,14 @@ import org.springframework.util.Assert;
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 0.0.1
  */
+@Slf4j
 public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchRepository<T, ID> {
 
 	private static final Function<Class<?>, String> messageFunction = clazz -> String.format("The Entity %s is dynamic index, should use count(IndexCoordinates index) replace it.", clazz);
 
 	protected ElasticsearchOperations operations;
+	protected IndexOperations indexOperations;
+
 	protected ElasticsearchEntityInformation<T, ID> entityInformation;
 	protected Class<T> entityClass;
 	protected boolean isDynamicIndex;
@@ -52,6 +59,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 		this.entityInformation = metadata;
 		this.entityClass = this.entityInformation.getJavaType();
 		this.isDynamicIndex = this.entityInformation.isDynamicIndex();
+		this.indexOperations = operations.indexOps(this.entityClass);
 	}
 
 	@Override
@@ -210,6 +218,8 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 		Assert.notNull(entities, "Cannot insert 'null' as a List.");
 
 		executeAndRefresh(operations -> operations.save(entities), refreshPolicy);
+
+		log.info("do saveAll...");
 
 		return entities;
 	}
@@ -436,5 +446,14 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	}
 
 	private void doRefresh() {
+
+		RefreshPolicy refreshPolicy = null;
+		if (operations instanceof AbstractElasticsearchTemplate) {
+			refreshPolicy = ((AbstractElasticsearchTemplate) operations).getRefreshPolicy();
+		}
+
+		if (refreshPolicy == null) {
+			indexOperations.refresh();
+		}
 	}
 }

@@ -54,7 +54,7 @@ public abstract class ImmutableRepositoryIntegrationTests {
 	public void shouldSaveAndFindImmutableDocument() {
 
 		// when
-		ImmutableEntity entity = repository.save(new ImmutableEntity("test name"));
+		ImmutableEntity entity = repository.save(new ImmutableEntity(null, "test name"));
 		assertThat(entity.getId()).isNotNull();
 
 		// then
@@ -76,10 +76,6 @@ public abstract class ImmutableRepositoryIntegrationTests {
 		public ImmutableEntity(String id, String name) {
 			this.id = id;
 			this.name = name;
-		}
-
-		public ImmutableEntity(String name) {
-			this(null, name);
 		}
 
 		public ImmutableEntity withId(@Nullable String id) {

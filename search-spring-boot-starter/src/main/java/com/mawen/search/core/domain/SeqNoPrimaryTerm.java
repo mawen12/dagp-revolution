@@ -1,8 +1,11 @@
 package com.mawen.search.core.domain;
 
+import java.util.Objects;
+
 import lombok.Getter;
 
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
@@ -21,6 +24,29 @@ public class SeqNoPrimaryTerm {
 
 		this.sequenceNumber = sequenceNumber;
 		this.primaryTerm = primaryTerm;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = ObjectUtils.nullSafeHashCode(primaryTerm);
+		result = 31 * result + ObjectUtils.nullSafeHashCode(sequenceNumber);
+		return result;	}
+
+	@Override
+	public boolean equals(Object obj) {
+
+		if (obj == this) {
+			return true;
+		}
+
+		if (!(obj instanceof SeqNoPrimaryTerm)) {
+			return false;
+		}
+
+		SeqNoPrimaryTerm that = (SeqNoPrimaryTerm) obj;
+
+		return ObjectUtils.nullSafeEquals(this.primaryTerm, that.primaryTerm)
+				&& ObjectUtils.nullSafeEquals(that.sequenceNumber, that.sequenceNumber);
 	}
 
 	@Override
