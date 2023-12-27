@@ -280,7 +280,7 @@ public class SimpleElasticsearchPersistentProperty
 			}
 			else {
 				if (AbstractPropertyValueConverter.class.isAssignableFrom(clazz)) {
-					propertyValueConverter = BeanUtils.instantiateClass(BeanUtils.getResolvableConstructor(clazz));
+					propertyValueConverter = BeanUtils.instantiateClass(BeanUtils.getResolvableConstructor(clazz), this);
 				}
 				else {
 					propertyValueConverter = BeanUtils.instantiateClass(clazz);

@@ -3,6 +3,7 @@ package com.mawen.search.client;
 import java.io.IOException;
 
 import co.elastic.clients.ApiClient;
+import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.transport.Transport;
 import com.mawen.search.client.request.RequestConverter;
 import com.mawen.search.client.response.ResponseConverter;
@@ -24,7 +25,8 @@ public abstract class ChildTemplate<T extends Transport, CLIENT extends ApiClien
 	public ChildTemplate(CLIENT client, ElasticsearchConverter elasticsearchConverter) {
 
 		this.client = client;
-		this.requestConverter = new RequestConverter(elasticsearchConverter);
+		JsonpMapper jsonpMapper = client._transport().jsonpMapper();
+		this.requestConverter = new RequestConverter(elasticsearchConverter, jsonpMapper);
 		this.responseConverter = new ResponseConverter();
 		exceptionTranslator = new ElasticsearchExceptionTranslator();
 	}

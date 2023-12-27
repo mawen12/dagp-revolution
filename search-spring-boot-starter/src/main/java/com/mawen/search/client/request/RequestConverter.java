@@ -41,6 +41,7 @@ import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import co.elastic.clients.elasticsearch.indices.RefreshRequest;
 import co.elastic.clients.json.JsonData;
+import co.elastic.clients.json.JsonpMapper;
 import com.mawen.search.InvalidApiUsageException;
 import com.mawen.search.client.MultiSearchQueryParameter;
 import com.mawen.search.client.query.CriteriaFilterProcessor;
@@ -88,10 +89,15 @@ public class RequestConverter {
 
 	public static final Integer INDEX_MAX_RESULT_WINDOW = 10_000;
 
-	protected final ElasticsearchConverter elasticsearchConverter;
+	private final ElasticsearchConverter elasticsearchConverter;
+	private final JsonpMapper jsonpMapper;
 
-	public RequestConverter(ElasticsearchConverter elasticsearchConverter) {
+	public RequestConverter(ElasticsearchConverter elasticsearchConverter, JsonpMapper jsonpMapper) {
 		this.elasticsearchConverter = elasticsearchConverter;
+
+		Assert.notNull(jsonpMapper, "jsonpMapper must not be null");
+
+		this.jsonpMapper = jsonpMapper;
 	}
 
 	// region Indices client
@@ -316,7 +322,7 @@ public class RequestConverter {
 		Map<String, JsonData> params = new HashMap<>();
 
 		if (scriptData.getParams() != null) {
-			scriptData.getParams().forEach((key, value) -> params.put(key, JsonData.of(value)));
+			scriptData.getParams().forEach((key, value) -> params.put(key, JsonData.of(value, jsonpMapper)));
 		}
 		return co.elastic.clients.elasticsearch._types.Script.of(sb -> {
 			if (scriptData.getType() == ScriptType.INLINE) {
@@ -483,7 +489,7 @@ public class RequestConverter {
 						Map<String, JsonData> params = new HashMap<>();
 
 						if (query.getScriptData().getParams() != null) {
-							query.getScriptData().getParams().forEach((key, value) -> params.put(key, JsonData.of(value)));
+							query.getScriptData().getParams().forEach((key, value) -> params.put(key, JsonData.of(value, jsonpMapper)));
 						}
 
 						uqb.script(sb -> {

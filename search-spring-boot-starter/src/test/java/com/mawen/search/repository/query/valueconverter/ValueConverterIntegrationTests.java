@@ -69,7 +69,7 @@ abstract class ValueConverterIntegrationTests {
 	interface EntityRepository extends ElasticsearchRepository<Entity, String> {
 		SearchHits<Entity> findByText(String text);
 
-		@Query("{ \"term\": { \"text\": \"?0\" } }")
+		@Query("{ \"term\": { \"text.keyword\": \"?0\" } }")
 		SearchHits<Entity> queryByText(String text);
 	}
 

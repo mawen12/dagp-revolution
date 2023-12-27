@@ -295,7 +295,7 @@ public class CriteriaQueryMappingUnitTests {
 		                  "						\"query_string\": {\n" +
 		                  "							\"default_operator\": \"and\",\n" +
 		                  "							\"fields\": [\n" +
-		                  "								\"per-sons.nick-name.keyword\"\n" +
+		                  "								\"per-sons.first-name.keyword\"\n" +
 		                  "							],\n" +
 		                  "							\"query\": \"Foobar\"\n" +
 		                  "						}\n" +
@@ -307,7 +307,7 @@ public class CriteriaQueryMappingUnitTests {
 		                  "	}\n" +
 		                  "}";
 
-		CriteriaQuery criteriaQuery = new CriteriaQuery(new Criteria("persons.nickName.keyword").is("Foobar"));
+		CriteriaQuery criteriaQuery = new CriteriaQuery(new Criteria("persons.firstName.keyword").is("Foobar"));
 		mappingElasticsearchConverter.updateQuery(criteriaQuery, House.class);
 		String queryString = queryToJson(CriteriaQueryProcessor.createQuery(criteriaQuery.getCriteria()), mapper);
 

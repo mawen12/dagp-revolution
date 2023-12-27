@@ -11,6 +11,7 @@ import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
 import co.elastic.clients.elasticsearch.core.search.ResponseBody;
 import co.elastic.clients.elasticsearch.core.search.Suggestion;
 import co.elastic.clients.elasticsearch.core.search.TotalHits;
+import co.elastic.clients.json.JsonpMapper;
 import com.mawen.search.client.DocumentAdapters;
 import com.mawen.search.client.EntityAsMap;
 import com.mawen.search.client.aggregation.ElasticsearchAggregations;
@@ -28,7 +29,7 @@ import org.springframework.util.Assert;
 public class SearchDocumentResponseBuilder {
 
 	public static <T> SearchDocumentResponse from(ResponseBody<EntityAsMap> responseBody,
-			SearchDocumentResponse.EntityCreator<T> entityCreator) {
+			SearchDocumentResponse.EntityCreator<T> entityCreator, JsonpMapper jsonpMapper) {
 
 		Assert.notNull(responseBody, "responseBody must not be null");
 		Assert.notNull(entityCreator, "entityCreator must not be null");
@@ -38,12 +39,12 @@ public class SearchDocumentResponseBuilder {
 		Map<String, Aggregate> aggregations = responseBody.aggregations();
 		Map<String, List<Suggestion<EntityAsMap>>> suggest = responseBody.suggest();
 
-		return from(hitsMetadata, scrollId, aggregations, suggest, entityCreator);
+		return from(hitsMetadata, scrollId, aggregations, suggest, entityCreator, jsonpMapper);
 	}
 
 
 	public static <T> SearchDocumentResponse from(SearchTemplateResponse<EntityAsMap> response,
-			SearchDocumentResponse.EntityCreator<T> entityCreator) {
+			SearchDocumentResponse.EntityCreator<T> entityCreator, JsonpMapper jsonpMapper) {
 
 		Assert.notNull(response, "response must not be null");
 		Assert.notNull(entityCreator, "entityCreator must not be null");
@@ -53,13 +54,13 @@ public class SearchDocumentResponseBuilder {
 		Map<String, Aggregate> aggregations = response.aggregations();
 		Map<String, List<Suggestion<EntityAsMap>>> suggest = response.suggest();
 
-		return from(hitsMetadata, scrollId, aggregations, suggest, entityCreator);
+		return from(hitsMetadata, scrollId, aggregations, suggest, entityCreator, jsonpMapper);
 	}
 
 
 	public static <T> SearchDocumentResponse from(HitsMetadata<?> hitsMetadata, @Nullable String scrollId,
 			@Nullable Map<String, Aggregate> aggregations, Map<String, List<Suggestion<EntityAsMap>>> suggestES,
-			SearchDocumentResponse.EntityCreator<T> entityCreator) {
+			SearchDocumentResponse.EntityCreator<T> entityCreator, JsonpMapper jsonpMapper) {
 
 		Assert.notNull(hitsMetadata, "hitsMetadata must not be null");
 
@@ -89,7 +90,7 @@ public class SearchDocumentResponseBuilder {
 
 		List<SearchDocument> searchDocuments = new ArrayList<>();
 		for (Hit<?> hit : hitsMetadata.hits()) {
-			searchDocuments.add(DocumentAdapters.from(hit));
+			searchDocuments.add(DocumentAdapters.from(hit, jsonpMapper));
 		}
 
 		ElasticsearchAggregations aggregationsContainer = aggregations != null ? new ElasticsearchAggregations(aggregations)

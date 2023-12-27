@@ -21,13 +21,4 @@ public interface ElasticsearchRepository<T, ID> extends
 		CrudRepository<T, ID>,
 		DynamicCrudRepository<T, ID> {
 
-	<S extends T> S save(S entity, @Nullable RefreshPolicy refreshPolicy);
-
-	<S extends T> Iterable<S> saveAll(Iterable<S> entities, @Nullable RefreshPolicy refreshPolicy);
-
-	void deleteById(ID id, @Nullable RefreshPolicy refreshPolicy);
-
-	void delete(T entity, @Nullable RefreshPolicy refreshPolicy);
-
-	void deleteAllById(Iterable<? extends ID> ids, @Nullable RefreshPolicy refreshPolicy);
 }

@@ -21,6 +21,8 @@ import java.util.List;
 
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
+import co.elastic.clients.json.JsonpMapper;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import com.mawen.search.core.document.SearchDocument;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +33,9 @@ import org.junit.jupiter.api.Test;
  * @since 4.4
  */
 class DocumentAdaptersUnitTests {
+
+	private final JsonpMapper jsonpMapper = new JacksonJsonpMapper();
+
 
 	@Test // #1973
 	@DisplayName("should adapt search Hit from fields")
@@ -46,7 +51,7 @@ class DocumentAdaptersUnitTests {
 				.primaryTerm(2l) //
 				.build(); //
 
-		SearchDocument document = DocumentAdapters.from(searchHit);
+		SearchDocument document = DocumentAdapters.from(searchHit, jsonpMapper);
 
 		SoftAssertions softly = new SoftAssertions();
 
@@ -84,7 +89,7 @@ class DocumentAdaptersUnitTests {
 				.source(eam) //
 				.build(); //
 
-		SearchDocument document = DocumentAdapters.from(searchHit);
+		SearchDocument document = DocumentAdapters.from(searchHit, jsonpMapper);
 
 		SoftAssertions softly = new SoftAssertions();
 
@@ -113,7 +118,7 @@ class DocumentAdaptersUnitTests {
 				.matchedQueries("query1", "query2") //
 				.build();
 
-		SearchDocument searchDocument = DocumentAdapters.from(searchHit);
+		SearchDocument searchDocument = DocumentAdapters.from(searchHit, jsonpMapper);
 
 		SoftAssertions softly = new SoftAssertions();
 

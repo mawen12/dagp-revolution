@@ -184,14 +184,6 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 		return executeAndRefresh(operations -> operations.save(entity, index));
 	}
 
-	@Override
-	public <S extends T> S save(S entity, @Nullable RefreshPolicy refreshPolicy) {
-
-		Assert.notNull(entity, "entity must not be null");
-
-		return executeAndRefresh(operations -> operations.save(entity, getIndexCoordinates(entity)), refreshPolicy);
-	}
-
 	public <S extends T> List<S> save(List<S> entities) {
 
 		Assert.notNull(entities, "Cannot insert 'null' as a List.");
@@ -199,27 +191,13 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 		return Streamable.of(saveAll(entities)).stream().collect(Collectors.toList());
 	}
 
-	public <S extends T> List<S> save(List<S> entities, @Nullable RefreshPolicy refreshPolicy) {
-
-		Assert.notNull(entities, "Cannot insert 'null' as a List.");
-
-		return Streamable.of(saveAll(entities, refreshPolicy)).stream().collect(Collectors.toList());
-	}
-
 	@Override
 	public <S extends T> Iterable<S> saveAll(Iterable<S> entities) {
-		return saveAll(entities, (RefreshPolicy) null);
-	}
-
-	@Override
-	public <S extends T> Iterable<S> saveAll(Iterable<S> entities, @Nullable RefreshPolicy refreshPolicy) {
 
 		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
 		Assert.notNull(entities, "Cannot insert 'null' as a List.");
 
-		executeAndRefresh(operations -> operations.save(entities), refreshPolicy);
-
-		log.info("do saveAll...");
+		executeAndRefresh(operations -> operations.save(entities));
 
 		return entities;
 	}
@@ -253,7 +231,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
 		Assert.notNull(id, "Cannot delete entity with id 'null'.");
 
-		deleteById(id, getIndexCoordinates(null));
+		doDelete(id, getIndexCoordinates(null));
 	}
 
 	@Override
@@ -262,15 +240,6 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 		Assert.notNull(id, "Cannot delete entity with id 'null'.");
 
 		doDelete(id, index);
-	}
-
-	@Override
-	public void deleteById(ID id, @Nullable RefreshPolicy refreshPolicy) {
-
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
-		Assert.notNull(id, "Cannot delete entity with id 'null'.");
-
-		doDelete(id, getIndexCoordinates(null), refreshPolicy);
 	}
 
 	@Override
@@ -290,19 +259,22 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	}
 
 	@Override
-	public void delete(T entity, @Nullable RefreshPolicy refreshPolicy) {
-
-		Assert.notNull(entity, "Cannot delete 'null' entity.");
-
-		doDelete(extractIdFromBean(entity), getIndexCoordinates(null), refreshPolicy);
-	}
-
-	@Override
 	public void deleteAllById(Iterable<? extends ID> ids) {
 
 		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.notNull(ids, "Cannot delete 'null' list.");
 
-		deleteAllById(ids, getIndexCoordinates(null));
+		List<String> idStrings = new ArrayList<>();
+		for (ID id : ids) {
+			idStrings.add(stringIdRepresentation(id));
+		}
+
+		if (idStrings.isEmpty()) {
+			return;
+		}
+
+		Query query = operations.idsQuery(idStrings);
+		executeAndRefresh(operations -> operations.delete(query, entityClass, getIndexCoordinates(null)));
 	}
 
 	@Override
@@ -321,28 +293,6 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 
 		Query query = operations.idsQuery(idStrings);
 		executeAndRefresh(operations -> operations.delete(query, entityClass, index));
-	}
-
-	@Override
-	public void deleteAllById(Iterable<? extends ID> ids, @Nullable RefreshPolicy refreshPolicy) {
-
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
-		Assert.notNull(ids, "Cannot delete 'null' list.");
-
-		List<String> idStrings = new ArrayList<>();
-		for (ID id : ids) {
-			idStrings.add(stringIdRepresentation(id));
-		}
-
-		if (idStrings.isEmpty()) {
-			return;
-		}
-
-		Query query = operations.idsQuery(idStrings);
-		executeAndRefresh((OperationsCallback<Void>) operations -> {
-			operations.delete(query, entityClass, getIndexCoordinates(null));
-			return null;
-		});
 	}
 
 	@Override
@@ -392,7 +342,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	private void doDelete(@Nullable ID id, IndexCoordinates indexCoordinates, @Nullable RefreshPolicy refreshPolicy) {
 
 		if (id != null) {
-			executeAndRefresh(operations -> operations.delete(stringIdRepresentation(id), indexCoordinates), refreshPolicy);
+			executeAndRefresh(operations -> operations.delete(stringIdRepresentation(id), indexCoordinates));
 		}
 	}
 
@@ -434,13 +384,6 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	@Nullable
 	public <R> R executeAndRefresh(OperationsCallback<R> callback) {
 		R result = callback.doWithOperations(operations);
-		doRefresh();
-		return result;
-	}
-
-	@Nullable
-	public <R> R executeAndRefresh(OperationsCallback<R> callback, @Nullable RefreshPolicy refreshPolicy) {
-		R result = callback.doWithOperations(operations.withRefreshPolicy(refreshPolicy));
 		doRefresh();
 		return result;
 	}

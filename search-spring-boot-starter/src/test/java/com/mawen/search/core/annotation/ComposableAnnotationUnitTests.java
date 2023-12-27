@@ -40,10 +40,9 @@ import static org.assertj.core.api.Assertions.*;
 /**
  * @author Peter-Josef Meisch
  */
-public class ComposableAnnotationUnitTests {
+class ComposableAnnotationUnitTests {
 
 	private static SimpleElasticsearchMappingContext mappingContext = new SimpleElasticsearchMappingContext();
-	private static MappingElasticsearchConverter converter = new MappingElasticsearchConverter(mappingContext);
 
 
 	@Test // DATAES-362
@@ -85,7 +84,7 @@ public class ComposableAnnotationUnitTests {
 	@Target(ElementType.FIELD)
 	@Field(storeNullValue = true)
 	public @interface NullValueField {
-		@AliasFor(value = "name", annotation = Field.class)
+		@AliasFor(value = "value", annotation = Field.class)
 		String name();
 	}
 
@@ -95,7 +94,7 @@ public class ComposableAnnotationUnitTests {
 	@Target(ElementType.FIELD)
 	@Field(type = FieldType.Date, format = DateFormat.date)
 	public @interface LocalDateField {
-		@AliasFor(value = "name", annotation = Field.class)
+		@AliasFor(value = "value", annotation = Field.class)
 		String name() default "";
 	}
 	@DocumentNoCreate(indexName = "test-no-create")

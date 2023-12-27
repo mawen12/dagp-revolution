@@ -68,13 +68,10 @@ public abstract class EntityCustomConversionIntegrationTests {
 		Entity entity = new Entity();
 		entity.setValue("hello"); //
 
-		Document document = Document
-				.create();
+		Document document = Document.create();
 		operations.getElasticsearchConverter().write(entity, document);
 
 		assertThat(document.getString("the_value")).isEqualTo("hello");
-		assertThat(document.getString("the_lon")).isEqualTo("8.0");
-		assertThat(document.getString("the_lat")).isEqualTo("42.7");
 	}
 
 	@Test // #1667

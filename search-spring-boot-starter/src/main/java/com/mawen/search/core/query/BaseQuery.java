@@ -64,6 +64,8 @@ public class BaseQuery implements Query {
 	@Nullable
 	private Boolean allowNoIndices = null;
 
+	private boolean queryIsUpdatedByConverter = false;
+
 	public BaseQuery() {
 	}
 
@@ -254,4 +256,11 @@ public class BaseQuery implements Query {
 		this.reactiveBatchSize = reactiveBatchSize;
 	}
 
+	public boolean isQueryIsUpdatedByConverter() {
+		return queryIsUpdatedByConverter;
+	}
+
+	public void setQueryIsUpdatedByConverter(boolean queryIsUpdatedByConverter) {
+		this.queryIsUpdatedByConverter = queryIsUpdatedByConverter;
+	}
 }

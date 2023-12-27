@@ -35,6 +35,7 @@ import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
 import co.elastic.clients.elasticsearch.core.msearch.MultiSearchResponseItem;
 import co.elastic.clients.elasticsearch.core.search.ResponseBody;
+import co.elastic.clients.json.JsonpMapper;
 import com.mawen.search.BulkFailureException;
 import com.mawen.search.client.query.NativeQuery;
 import com.mawen.search.client.query.builder.SearchDocumentResponseBuilder;
@@ -73,6 +74,7 @@ import static com.mawen.search.client.util.TypeUtils.*;
 public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 
 	private final ElasticsearchClient client;
+	private final JsonpMapper jsonpMapper;
 	private final RequestConverter requestConverter;
 	private final ResponseConverter responseConverter;
 	private final ElasticsearchExceptionTranslator exceptionTranslator;
@@ -83,7 +85,8 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 		Assert.notNull(client, "client must not be null");
 
 		this.client = client;
-		requestConverter = new RequestConverter(elasticsearchConverter);
+		this.jsonpMapper = client._transport().jsonpMapper();
+		requestConverter = new RequestConverter(elasticsearchConverter, jsonpMapper);
 		responseConverter = new ResponseConverter();
 		exceptionTranslator = new ElasticsearchExceptionTranslator();
 	}
@@ -94,7 +97,8 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 		Assert.notNull(client, "client must not be null");
 
 		this.client = client;
-		requestConverter = new RequestConverter(elasticsearchConverter);
+		this.jsonpMapper = client._transport().jsonpMapper();
+		requestConverter = new RequestConverter(elasticsearchConverter, jsonpMapper);
 		responseConverter = new ResponseConverter();
 		exceptionTranslator = new ElasticsearchExceptionTranslator();
 	}
@@ -235,8 +239,6 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 
 		DeleteByQueryResponse response = execute(client -> client.deleteByQuery(request));
 
-		log.info("do delete response is {}", response.deleted());
-
 		return responseConverter.byQueryResponse(response);
 	}
 
@@ -245,9 +247,13 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 			IndexCoordinates index) {
 
 		BulkRequest bulkRequest = requestConverter.documentBulkRequest(queries, bulkOptions, index, refreshPolicy);
+
 		BulkResponse bulkResponse = execute(client -> client.bulk(bulkRequest));
+
 		List<IndexedObjectInformation> indexedObjectInformationList = checkForBulkOperationFailure(bulkResponse);
+
 		updateIndexedObjectsWithQueries(queries, indexedObjectInformationList);
+
 		return indexedObjectInformationList;
 	}
 
@@ -286,7 +292,7 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 		SearchDocumentResponse.EntityCreator<T> entityCreator = getEntityCreator(readDocumentCallback);
 		SearchDocumentResponseCallback<SearchHits<T>> callback = new ReadSearchDocumentResponseCallback<>(clazz, index);
 
-		return callback.doWith(SearchDocumentResponseBuilder.from(searchResponse, entityCreator));
+		return callback.doWith(SearchDocumentResponseBuilder.from(searchResponse, entityCreator, jsonpMapper));
 	}
 
 	@Override
@@ -336,7 +342,7 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 				index);
 
 		return callback
-				.doWith(SearchDocumentResponseBuilder.from(response, getEntityCreator(documentCallback)));
+				.doWith(SearchDocumentResponseBuilder.from(response, getEntityCreator(documentCallback), jsonpMapper));
 	}
 
 	@Override
@@ -455,7 +461,7 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 						queryParameter.getIndex());
 
 				SearchHits<?> searchHits = callback.doWith(
-						SearchDocumentResponseBuilder.from(responseItem.result(), getEntityCreator(documentCallback)));
+						SearchDocumentResponseBuilder.from(responseItem.result(), getEntityCreator(documentCallback), jsonpMapper));
 
 				searchHitsList.add(searchHits);
 			}

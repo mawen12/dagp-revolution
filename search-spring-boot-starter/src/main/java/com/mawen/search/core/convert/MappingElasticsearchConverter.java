@@ -15,14 +15,18 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.core.document.Document;
+import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.FetchSourceFilter;
+import com.mawen.search.core.domain.Field;
 import com.mawen.search.core.domain.SeqNoPrimaryTerm;
 import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.mapping.PropertyValueConverter;
 import com.mawen.search.core.query.BaseQuery;
+import com.mawen.search.core.query.CriteriaQuery;
 import com.mawen.search.core.query.Query;
 import lombok.extern.slf4j.Slf4j;
 
@@ -146,11 +150,25 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 
 		Assert.notNull(query, "query must not be null");
 
+		if (query instanceof BaseQuery) {
+			if (((BaseQuery) query).isQueryIsUpdatedByConverter()) {
+				return;
+			}
+		}
+
 		if (domainClass == null) {
 			return;
 		}
 
 		updatePropertiesInFieldsAndSourceFilter(query, domainClass);
+
+		if (query instanceof CriteriaQuery) {
+			updatePropertiesInCriteriaQuery((CriteriaQuery) query, domainClass);
+		}
+
+		if (query instanceof BaseQuery) {
+			((BaseQuery) query).setQueryIsUpdatedByConverter(true);
+		}
 	}
 
 	private void updatePropertiesInFieldsAndSourceFilter(Query query, Class<?> domainClass) {
@@ -223,6 +241,107 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 			return propertyPath;
 		}
 
+	}
+
+	private void updatePropertiesInCriteriaQuery(CriteriaQuery criteriaQuery, Class<?> domainClass) {
+
+		Assert.notNull(criteriaQuery, "criteriaQuery must not be null");
+		Assert.notNull(domainClass, "domainClass must not be null");
+
+		ElasticsearchPersistentEntity<?> persistentEntity = mappingContext.getPersistentEntity(domainClass);
+
+		if (persistentEntity != null) {
+			for (Criteria chainedCriteria : criteriaQuery.getCriteria().getCriteriaChain()) {
+				updatePropertiesInCriteria(chainedCriteria, persistentEntity);
+			}
+			for (Criteria subCriteria : criteriaQuery.getCriteria().getSubCriteria()) {
+				for (Criteria chainedCriteria : subCriteria.getCriteriaChain()) {
+					updatePropertiesInCriteria(chainedCriteria, persistentEntity);
+				}
+			}
+		}
+	}
+
+	private void updatePropertiesInCriteria(Criteria criteria, ElasticsearchPersistentEntity<?> persistentEntity) {
+
+		Field field = criteria.getField();
+
+		if (field == null) {
+			return;
+		}
+
+		String[] fieldNames = field.getName().split("\\.");
+
+		ElasticsearchPersistentEntity<?> currentEntity = persistentEntity;
+		ElasticsearchPersistentProperty persistentProperty = null;
+		int propertyCount = 0;
+		boolean isNested = false;
+
+		for (int i = 0; i < fieldNames.length; i++) {
+			persistentProperty = currentEntity.getPersistentProperty(fieldNames[i]);
+
+			if (persistentProperty != null) {
+				propertyCount++;
+				fieldNames[i] = persistentProperty.getFieldName();
+
+				com.mawen.search.core.annotation.Field fieldAnnotation = persistentProperty
+						.findAnnotation(com.mawen.search.core.annotation.Field.class);
+
+				if (fieldAnnotation != null && fieldAnnotation.type() == FieldType.Nested) {
+					isNested = true;
+				}
+
+				try {
+					currentEntity = mappingContext.getPersistentEntity(persistentProperty.getActualType());
+				} catch (Exception e) {
+					// using system types like UUIDs will lead to java.lang.reflect.InaccessibleObjectException in JDK 16
+					// so if we cannot get an entity here, bail out.
+					currentEntity = null;
+				}
+			}
+
+			if (currentEntity == null) {
+				break;
+			}
+		}
+
+		field.setName(String.join(".", fieldNames));
+
+		if (propertyCount > 1 && isNested) {
+			List<String> propertyNames = Arrays.asList(fieldNames);
+			field.setPath(String.join(".", propertyNames.subList(0, propertyCount - 1)));
+		}
+
+		if (persistentProperty != null) {
+
+			if (persistentProperty.hasPropertyValueConverter()) {
+				PropertyValueConverter propertyValueConverter = Objects
+						.requireNonNull(persistentProperty.getPropertyValueConverter());
+				criteria.getQueryCriteriaEntries().forEach(criteriaEntry -> {
+
+					if (criteriaEntry.getKey().hasValue()) {
+						Object value = criteriaEntry.getValue();
+
+						if (value.getClass().isArray()) {
+							Object[] objects = (Object[]) value;
+
+							for (int i = 0; i < objects.length; i++) {
+								objects[i] = propertyValueConverter.write(objects[i]);
+							}
+						} else {
+							criteriaEntry.setValue(propertyValueConverter.write(value));
+						}
+					}
+				});
+			}
+
+			com.mawen.search.core.annotation.Field fieldAnnotation = persistentProperty
+					.findAnnotation(com.mawen.search.core.annotation.Field.class);
+
+			if (fieldAnnotation != null) {
+				field.setFieldType(fieldAnnotation.type());
+			}
+		}
 	}
 
 	// endregion
