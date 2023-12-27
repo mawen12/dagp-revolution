@@ -16,7 +16,7 @@ import org.springframework.util.Assert;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 @Getter
 public class Criteria {
@@ -295,14 +295,6 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#MATCHES} entry to the {@link #queryCriteriaEntries}. This will build a match query with
-	 * the OR operator.
-	 *
-	 * @param value the value to match
-	 * @return this object
-	 * @since 4.1
-	 */
 	public Criteria matches(Object value) {
 
 		Assert.notNull(value, "value must not be null");
@@ -311,14 +303,6 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#MATCHES} entry to the {@link #queryCriteriaEntries}. This will build a match query with
-	 * the AND operator.
-	 *
-	 * @param value the value to match
-	 * @return this object
-	 * @since 4.1
-	 */
 	public Criteria matchesAll(Object value) {
 
 		Assert.notNull(value, "value must not be null");
@@ -327,24 +311,12 @@ public class Criteria {
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#EMPTY} entry to the {@link #queryCriteriaEntries}.
-	 *
-	 * @return this object
-	 * @since 4.3
-	 */
 	public Criteria empty() {
 
 		queryCriteriaEntries.add(new CriteriaEntry(OperationKey.EMPTY));
 		return this;
 	}
 
-	/**
-	 * Add a {@link OperationKey#NOT_EMPTY} entry to the {@link #queryCriteriaEntries}.
-	 *
-	 * @return this object
-	 * @since 4.3
-	 */
 	public Criteria notEmpty() {
 
 		queryCriteriaEntries.add(new CriteriaEntry(OperationKey.NOT_EMPTY));

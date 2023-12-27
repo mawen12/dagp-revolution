@@ -28,12 +28,12 @@ import com.mawen.search.repository.ElasticsearchRepository;
 import com.mawen.search.utils.IndexNameProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.Nullable;
+
 import static org.assertj.core.api.Assertions.*;
 
 @SpringIntegrationTest

@@ -68,7 +68,7 @@ import static com.mawen.search.client.util.TypeUtils.*;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 @Slf4j
 public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
@@ -266,6 +266,7 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 		Assert.notNull(query, "query must not be null");
 		Assert.notNull(index, "index must not be null");
 
+		// cannot use ExistsRequest， because ExistsRequest don't support filter
 		SearchRequest searchRequest = requestConverter.searchRequest(query, routingResolver.getRouting(), clazz, index, true);
 
 		SearchResponse<EntityAsMap> searchResponse = execute(client -> client.search(searchRequest, EntityAsMap.class));

@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/20
+ * @since 0.0.1
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -39,7 +39,7 @@ public @interface QueryField {
 	 */
 	Operator relation() default Operator.AND;
 
-	public static enum Type {
+	enum Type {
 
 		BETWEEN{
 			@Override

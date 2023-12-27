@@ -35,7 +35,6 @@ import co.elastic.clients.elasticsearch.core.bulk.UpdateOperation;
 import co.elastic.clients.elasticsearch.core.mget.MultiGetOperation;
 import co.elastic.clients.elasticsearch.core.msearch.MultisearchBody;
 import co.elastic.clients.elasticsearch.core.search.Highlight;
-import co.elastic.clients.elasticsearch.core.search.Rescore;
 import co.elastic.clients.elasticsearch.core.search.SourceConfig;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
@@ -77,12 +76,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import static com.mawen.search.client.util.TypeUtils.*;
-import static com.mawen.search.core.annotation.Document.VersionType.*;
 import static org.springframework.util.CollectionUtils.*;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 @Slf4j
 public class RequestConverter {

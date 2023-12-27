@@ -22,7 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Sort;
@@ -32,7 +31,6 @@ import org.springframework.lang.Nullable;
 
 import static com.mawen.search.utils.IdGenerator.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Rizwan Idrees
@@ -168,7 +166,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		assertThat(entityFromElasticSearch).isNotPresent();
 	}
 
-	@Test // DATAES-82, #2417
+	@Test
 	void shouldFindAllByIdQuery() {
 
 		// create more than 10 documents to see that the number of input ids is set as requested size
@@ -235,7 +233,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		assertThat(exist).isTrue();
 	}
 
-	@Test // DATAES-363
+	@Test
 	void shouldReturnFalseGivenDocumentWithIdDoesNotExist() {
 
 		// given
@@ -287,7 +285,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		assertThat(result).isEqualTo(1L);
 	}
 
-	@Test // DATAES-976
+	@Test
 	void shouldDeleteAllById() {
 
 		// given
@@ -534,7 +532,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		assertThat(sampleEntities).isNotNull();
 	}
 
-	@Test // DATAES-142
+	@Test
 	void shouldIndexNotEmptyList() {
 		// given
 		List<SampleEntity> list = new ArrayList<>();
@@ -555,14 +553,14 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		assertThat(savedEntities).containsExactlyElementsOf(list);
 	}
 
-	@Test // DATAES-142
+	@Test
 	void shouldNotFailOnIndexingEmptyList() {
 		Iterable<SampleEntity> savedEntities = repository.saveAll(Collections.emptyList());
 
 		assertThat(savedEntities).hasSize(0);
 	}
 
-	@Test // DATAES-832
+	@Test
 	void shouldNotReturnNullValuesInFindAllById() throws IOException {
 
 		// given

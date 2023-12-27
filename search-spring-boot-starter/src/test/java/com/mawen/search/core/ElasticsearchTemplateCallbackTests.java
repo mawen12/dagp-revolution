@@ -26,26 +26,21 @@ import com.mawen.search.core.document.Document;
 import com.mawen.search.core.domain.BulkOptions;
 import com.mawen.search.core.domain.SearchHit;
 import com.mawen.search.core.domain.SearchHits;
-import com.mawen.search.core.domain.SearchHitsIterator;
 import com.mawen.search.core.event.AfterConvertCallback;
 import com.mawen.search.core.event.AfterSaveCallback;
 import com.mawen.search.core.event.BeforeConvertCallback;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.MoreLikeThisQuery;
-import com.mawen.search.core.query.Query;
-import com.mawen.search.core.support.MultiGetItem;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Spy;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mapping.callback.EntityCallbacks;
-import org.springframework.data.util.CloseableIterator;
 import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 
-import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -68,7 +63,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		this.template = template;
 	}
 
-	@Test // DATAES-771
+	@Test
 	void saveOneShouldInvokeAfterSaveCallbacks() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterSaveCallback));
@@ -81,7 +76,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		assertThat(saved.firstname).isEqualTo("after-save");
 	}
 
-	@Test // DATAES-771
+	@Test
 	void saveWithIndexCoordinatesShouldInvokeAfterSaveCallbacks() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterSaveCallback));
@@ -94,7 +89,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		assertThat(saved.firstname).isEqualTo("after-save");
 	}
 
-	@Test // DATAES-771
+	@Test
 	void saveArrayShouldInvokeAfterSaveCallbacks() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterSaveCallback));
@@ -110,7 +105,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		assertThat(savedIterator.next().firstname).isEqualTo("after-save");
 	}
 
-	@Test // DATAES-771
+	@Test
 	void saveIterableShouldInvokeAfterSaveCallbacks() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterSaveCallback));
@@ -126,7 +121,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		assertThat(savedIterator.next().firstname).isEqualTo("after-save");
 	}
 
-	@Test // DATAES-771
+	@Test
 	void saveIterableWithIndexCoordinatesShouldInvokeAfterSaveCallbacks() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterSaveCallback));
@@ -142,7 +137,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		assertThat(savedIterator.next().firstname).isEqualTo("after-save");
 	}
 
-	@Test // DATAES-771
+	@Test
 	void indexShouldInvokeAfterSaveCallbacks() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterSaveCallback));
@@ -163,7 +158,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		return indexQuery;
 	}
 
-	@Test // DATAES-771
+	@Test
 	void bulkIndexShouldInvokeAfterSaveCallbacks() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterSaveCallback));
@@ -182,7 +177,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		assertThat(savedPerson2.firstname).isEqualTo("after-save");
 	}
 
-	@Test // DATAES-771
+	@Test
 	void bulkIndexWithOptionsShouldInvokeAfterSaveCallbacks() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterSaveCallback));
@@ -201,7 +196,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		assertThat(savedPerson2.firstname).isEqualTo("after-save");
 	}
 
-	@Test // DATAES-772
+	@Test
 	void getShouldInvokeAfterConvertCallback() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterConvertCallback));
@@ -228,7 +223,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 	}
 
 
-	@Test // DATAES-772
+	@Test
 	void moreLikeThisShouldInvokeAfterConvertCallback() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterConvertCallback));
@@ -261,7 +256,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		assertThat(hits.get(1).getContent().firstname).isEqualTo("after-convert");
 	}
 
-	@Test // DATAES-772
+	@Test
 	void searchViaMoreLikeThisWithIndexCoordinatesShouldInvokeAfterConvertCallback() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(afterConvertCallback));
@@ -288,7 +283,7 @@ abstract class ElasticsearchTemplateCallbackTests {
 		assertThat(saved.firstname).isEqualTo("before-convert");
 	}
 
-	@Test // DATAES-785
+	@Test
 	void saveAllShouldInvokeBeforeConvertCallbacks() {
 
 		template.setEntityCallbacks(EntityCallbacks.create(beforeConvertCallback));

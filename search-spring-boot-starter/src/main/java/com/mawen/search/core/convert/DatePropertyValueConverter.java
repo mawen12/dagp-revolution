@@ -3,14 +3,17 @@ package com.mawen.search.core.convert;
 import java.util.Date;
 import java.util.List;
 
+import com.mawen.search.core.mapping.PropertyValueConverter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentProperty;
 
 /**
+ * {@link Date 日期} 和 Elasticsearch 日期类型互相转换的 {@link PropertyValueConverter}
+ *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 @Slf4j
 public class DatePropertyValueConverter extends AbstractPropertyValueConverter {
@@ -39,8 +42,7 @@ public class DatePropertyValueConverter extends AbstractPropertyValueConverter {
 			}
 		}
 
-		throw new MappingException(String.format("Unable to convert value '%s' to %s for property '%s'", s,
-				getProperty().getActualType().getTypeName(), getProperty().getName()));
+		throw new MappingException(String.format(READ_EXCEPTION_MESSAGE, s, property.getActualType().getTypeName(), property.getName()));
 	}
 
 	@Override
@@ -54,8 +56,7 @@ public class DatePropertyValueConverter extends AbstractPropertyValueConverter {
 			return dateConverters.get(0).format((Date) value);
 		}
 		catch (Exception e) {
-			throw new MappingException(
-					String.format("Unable to convert value '%s' of property '%s'", value, getProperty().getName()), e);
+			throw new MappingException(String.format(WRITE_EXCEPTION_MESSAGE, value, property.getName()), e);
 		}
 	}
 }

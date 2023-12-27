@@ -40,7 +40,7 @@ abstract class CriteriaQueryIntegrationTests {
 		indexNameProvider.increment();
 	}
 
-	@Test // DATAES-706
+	@Test
 	public void shouldPerformAndOperationOnCriteriaEntries() {
 
 		SampleEntity sampleEntity1 = new SampleEntity();
@@ -60,7 +60,7 @@ abstract class CriteriaQueryIntegrationTests {
 		assertThat(searchHits.getSearchHit(0).getId()).isEqualTo(sampleEntity1.id);
 	}
 
-	@Test // DATAES-706
+	@Test
 	public void shouldPerformOrOperationOnCriteriaEntries() {
 
 		SampleEntity sampleEntity1 = new SampleEntity();
@@ -81,7 +81,7 @@ abstract class CriteriaQueryIntegrationTests {
 				sampleEntity2.id);
 	}
 
-	@Test // DATAES-706
+	@Test
 	public void shouldPerformAndOperationWithinCriteria() {
 
 		SampleEntity sampleEntity1 = new SampleEntity();
@@ -101,7 +101,7 @@ abstract class CriteriaQueryIntegrationTests {
 		assertThat(searchHits.getTotalHits()).isGreaterThanOrEqualTo(1);
 	}
 
-	@Test // DATAES-706
+	@Test
 	public void shouldPerformOrOperationWithinCriteria() {
 
 		SampleEntity sampleEntity1 = new SampleEntity();
@@ -664,7 +664,7 @@ abstract class CriteriaQueryIntegrationTests {
 		assertThat(searchHits.getSearchHit(0).getContent().getMessage()).isEqualTo("ab");
 	}
 
-	@Test // DATAES-213
+	@Test
 	public void shouldEscapeValue() {
 
 		String documentId = nextIdAsString();

@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.Nullable;
+
 import static com.mawen.search.utils.JsonUtils.*;
 import static org.skyscreamer.jsonassert.JSONAssert.*;
 
@@ -50,7 +51,7 @@ public class CriteriaQueryMappingUnitTests {
 	// endregion
 
 	// region tests
-	@Test // DATAES-716
+	@Test
 	void shouldMapNamesAndConvertValuesInCriteriaQuery() throws JSONException {
 
 		// use POJO properties and types in the query building
@@ -196,7 +197,7 @@ public class CriteriaQueryMappingUnitTests {
 		assertEquals(expected, queryString, false);
 	}
 
-	@Test // DATAES-706
+	@Test
 	void shouldMapNamesAndValuesInSubCriteriaQuery() throws JSONException {
 
 		CriteriaQuery criteriaQuery = new CriteriaQuery( //

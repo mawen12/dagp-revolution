@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Parameters;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 @Getter
 public class ElasticsearchParameters extends Parameters<ElasticsearchParameters, ElasticsearchParameter> {

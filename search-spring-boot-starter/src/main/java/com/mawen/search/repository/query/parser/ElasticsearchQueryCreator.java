@@ -18,19 +18,33 @@ import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.lang.Nullable;
 
 /**
+ * 特定于 Elasticsearch 的查询构造器，支持从 {@link PartTree} 构造 {@link CriteriaQuery}
+ *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 public class ElasticsearchQueryCreator extends AbstractQueryCreator<CriteriaQuery, CriteriaQuery> {
 
 	private final MappingContext<?, ElasticsearchPersistentProperty> context;
 
-	public ElasticsearchQueryCreator(PartTree tree, ParameterAccessor parameters,
-			MappingContext<?, ElasticsearchPersistentProperty> context) {
+	/**
+	 * 使用给定的 {@link PartTree}、{@link ParameterAccessor} 和 {@link MappingContext} 创建一个 {@link ElasticsearchQueryCreator}
+	 *
+	 * @param tree 不能为空
+	 * @param parameters 不能为空
+	 * @param context 映射上下文
+	 */
+	public ElasticsearchQueryCreator(PartTree tree, ParameterAccessor parameters, MappingContext<?, ElasticsearchPersistentProperty> context) {
 		super(tree, parameters);
 		this.context = context;
 	}
 
+	/**
+	 * 使用给定的 {@link PartTree} 和 {@link MappingContext} 创建一个 {@link ElasticsearchQueryCreator}
+	 *
+	 * @param tree 不能为空
+	 * @param context 映射上下文
+	 */
 	public ElasticsearchQueryCreator(PartTree tree, MappingContext<?, ElasticsearchPersistentProperty> context) {
 		super(tree);
 		this.context = context;
@@ -47,11 +61,7 @@ public class ElasticsearchQueryCreator extends AbstractQueryCreator<CriteriaQuer
 
 	@Override
 	protected CriteriaQuery and(Part part, CriteriaQuery base, Iterator<Object> iterator) {
-		if (base == null) {
-			return create(part, iterator);
-		}
-		PersistentPropertyPath<ElasticsearchPersistentProperty> path = context
-				.getPersistentPropertyPath(part.getProperty());
+		PersistentPropertyPath<ElasticsearchPersistentProperty> path = context.getPersistentPropertyPath(part.getProperty());
 		return base.addCriteria(from(part,
 				new Criteria(path.toDotPath(ElasticsearchPersistentProperty.QueryPropertyToFieldNameConverter.INSTANCE)),
 				iterator));
@@ -72,6 +82,14 @@ public class ElasticsearchQueryCreator extends AbstractQueryCreator<CriteriaQuer
 		return query.addSort(sort);
 	}
 
+	/**
+	 * 解析给定的 {@link Part}，并设置 {@link Criteria}
+	 *
+	 * @param part 不能为空
+	 * @param criteria 标准查询
+	 * @param parameters 参数迭代器
+	 * @return 修改后的 {@link Criteria}
+	 */
 	private Criteria from(Part part, Criteria criteria, Iterator<?> parameters) {
 
 		Part.Type type = part.getType();

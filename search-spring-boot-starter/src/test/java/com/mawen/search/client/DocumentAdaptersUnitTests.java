@@ -108,7 +108,7 @@ class DocumentAdaptersUnitTests {
 	}
 
 
-	@Test // DATAES-979 #1973
+	@Test
 	@DisplayName("should adapt returned matched queries")
 	void shouldAdaptReturnedMatchedQueries() {
 

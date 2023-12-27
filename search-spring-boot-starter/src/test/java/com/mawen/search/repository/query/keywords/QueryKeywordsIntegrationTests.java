@@ -18,7 +18,6 @@ package com.mawen.search.repository.query.keywords;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.mawen.search.core.ElasticsearchOperations;
 import com.mawen.search.core.annotation.Document;
@@ -120,7 +119,7 @@ abstract class QueryKeywordsIntegrationTests {
 		assertThat(repository.findByPriceNot(1.2f)).hasSize(6);
 	}
 
-	@Test // DATAES-171
+	@Test
 	public void shouldWorkWithNotIn() {
 
 		// given
@@ -158,7 +157,7 @@ abstract class QueryKeywordsIntegrationTests {
 	}
 
 	// TODO by mawen 自动生成的 mapping 中未使用 fielddata
-//	@Test // DATAES-615
+//	@Test
 //	public void shouldSupportSortOnStandardFieldWithCriteria() {
 //		List<String> sortedIds = repository.findAllByNameOrderByText("Salt").stream() //
 //				.map(it -> it.id).collect(Collectors.toList());
@@ -167,7 +166,7 @@ abstract class QueryKeywordsIntegrationTests {
 //	}
 
 	// TODO by mawen 自动生成的 mapping 中未使用 fielddata
-//	@Test // DATAES-615
+//	@Test
 //	public void shouldSupportSortOnFieldWithCustomFieldNameWithCriteria() {
 //
 //		List<String> sortedIds = repository.findAllByNameOrderBySortName("Sugar").stream() //
@@ -177,7 +176,7 @@ abstract class QueryKeywordsIntegrationTests {
 //	}
 
 	// TODO by mawen 自动生成的 mapping 中未使用 fielddata
-//	@Test // DATAES-615
+//	@Test
 //	public void shouldSupportSortOnStandardFieldWithoutCriteria() {
 //		List<String> sortedIds = repository.findAllByOrderByText().stream() //
 //				.map(it -> it.text).collect(Collectors.toList());
@@ -187,7 +186,7 @@ abstract class QueryKeywordsIntegrationTests {
 //	}
 
 	// TODO by mawen 自动生成的 mapping 中未使用 fielddata
-//	@Test // DATAES-615
+//	@Test
 //	public void shouldSupportSortOnFieldWithCustomFieldNameWithoutCriteria() {
 //
 //		List<String> sortedIds = repository.findAllByOrderBySortName().stream() //
@@ -196,7 +195,7 @@ abstract class QueryKeywordsIntegrationTests {
 //		assertThat(sortedIds).containsExactly("5", "4", "3", "2", "1", "6", "7");
 //	}
 
-	@Test // DATAES-178
+	@Test
 	public void shouldReturnOneWithFindFirst() {
 
 		Product product = repository.findFirstByName("Sugar");
@@ -204,7 +203,7 @@ abstract class QueryKeywordsIntegrationTests {
 		assertThat(product.name).isEqualTo("Sugar");
 	}
 
-	@Test // DATAES-178
+	@Test
 	public void shouldReturnOneWithFindTop() {
 
 		Product product = repository.findTopByName("Sugar");
@@ -212,7 +211,7 @@ abstract class QueryKeywordsIntegrationTests {
 		assertThat(product.name).isEqualTo("Sugar");
 	}
 
-	@Test // DATAES-178
+	@Test
 	public void shouldReturnTwoWithFindFirst2() {
 
 		List<Product> products = repository.findFirst2ByName("Sugar");
@@ -221,7 +220,7 @@ abstract class QueryKeywordsIntegrationTests {
 		products.forEach(product -> assertThat(product.name).isEqualTo("Sugar"));
 	}
 
-	@Test // DATAES-178
+	@Test
 	public void shouldReturnTwoWithFindTop2() {
 
 		List<Product> products = repository.findTop2ByName("Sugar");
@@ -248,7 +247,7 @@ abstract class QueryKeywordsIntegrationTests {
 		assertThat(count).isEqualTo(6);
 	}
 
-	@Test // DATAES-937
+	@Test
 	@DisplayName("should return empty list on findById with empty input list")
 	void shouldReturnEmptyListOnFindByIdWithEmptyInputList() {
 
@@ -257,7 +256,7 @@ abstract class QueryKeywordsIntegrationTests {
 		assertThat(products).isEmpty();
 	}
 
-	@Test // DATAES-937
+	@Test
 	@DisplayName("should return empty list on derived method with empty input list")
 	void shouldReturnEmptyListOnDerivedMethodWithEmptyInputList() {
 

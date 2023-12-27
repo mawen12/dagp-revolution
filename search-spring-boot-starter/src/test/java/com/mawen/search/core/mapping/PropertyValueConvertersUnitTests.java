@@ -38,9 +38,12 @@ import org.springframework.lang.Nullable;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.*;
 
+/**
+ * Unit tests for {@link PropertyValueConverter}
+ */
 public class PropertyValueConvertersUnitTests {
 
-	@ParameterizedTest(name = "{0}") // #2018
+	@ParameterizedTest(name = "{0}")
 	@MethodSource("propertyValueConverters")
 	@DisplayName("should return original object on write if it cannot be converted")
 	void shouldReturnOriginalObjectOnWriteIfItCannotBeConverted(PropertyValueConverter converter) {
@@ -76,7 +79,7 @@ public class PropertyValueConvertersUnitTests {
 	}
 
 	static class NoConverterForThisClass {
-		@SuppressWarnings("unused")
+
 		@Nullable Long property;
 	}
 }

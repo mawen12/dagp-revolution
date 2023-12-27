@@ -42,6 +42,7 @@ import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.support.DefaultRepositoryMetadata;
 import org.springframework.lang.Nullable;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -61,7 +62,7 @@ public class ElasticsearchStringQueryUnitTests extends ElasticsearchStringQueryU
 		when(operations.getElasticsearchConverter()).thenReturn(setupConverter());
 	}
 
-	@Test // DATAES-552
+	@Test
 	public void shouldReplaceParametersCorrectly() throws Exception {
 
 		com.mawen.search.core.query.Query query = createQuery("findByName", "Luke");
@@ -71,7 +72,7 @@ public class ElasticsearchStringQueryUnitTests extends ElasticsearchStringQueryU
 				.isEqualTo("{ 'bool' : { 'must' : { 'term' : { 'name' : 'Luke' } } } }");
 	}
 
-	@Test // DATAES-552
+	@Test
 	public void shouldReplaceRepeatedParametersCorrectly() throws Exception {
 
 		com.mawen.search.core.query.Query query = createQuery("findWithRepeatedPlaceholder", "zero",

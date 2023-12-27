@@ -6,7 +6,7 @@ import org.springframework.util.Assert;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/18
+ * @since 0.0.1
  */
 public interface StringObjectMap<M extends StringObjectMap<M>> extends Map<String, Object> {
 

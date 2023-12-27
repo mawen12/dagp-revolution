@@ -23,7 +23,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.time.LocalDate;
 
-import com.mawen.search.core.convert.MappingElasticsearchConverter;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.mapping.SimpleElasticsearchMappingContext;
@@ -45,7 +44,7 @@ class ComposableAnnotationUnitTests {
 	private static SimpleElasticsearchMappingContext mappingContext = new SimpleElasticsearchMappingContext();
 
 
-	@Test // DATAES-362
+	@Test
 	@DisplayName("Document annotation should be composable")
 	void documentAnnotationShouldBeComposable() {
 
@@ -55,7 +54,7 @@ class ComposableAnnotationUnitTests {
 		assertThat(entity.getIndexCoordinates()).isEqualTo(IndexCoordinates.of("test-no-create"));
 	}
 
-	@Test // DATAES-362
+	@Test
 	@DisplayName("Field annotation should be composable")
 	void fieldAnnotationShouldBeComposable() {
 		SimpleElasticsearchPersistentEntity<?> entity = mappingContext

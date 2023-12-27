@@ -1,30 +1,25 @@
 package com.mawen.search.repository.query;
 
-import java.util.Collections;
-
 import com.mawen.search.core.ElasticsearchOperations;
 import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.domain.SearchHitSupport;
 import com.mawen.search.core.domain.SearchHits;
-import com.mawen.search.core.domain.SearchHitsImpl;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.Query;
-import com.mawen.search.core.query.TotalHitsRelation;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.repository.query.ResultProcessor;
 import org.springframework.data.util.StreamUtils;
-import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 
 /**
+ * {@link RepositoryQuery} 的抽象实现，提供通过 {@link Query} 和 {@link ElasticsearchQueryMethod} 对 Elasticsearch 发起调用
+ *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 public abstract class AbstractElasticsearchRepositoryQuery implements RepositoryQuery {
 
@@ -33,8 +28,17 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 	protected final ElasticsearchConverter elasticsearchConverter;
 	protected ElasticsearchQueryMethod queryMethod;
 
-	protected AbstractElasticsearchRepositoryQuery(ElasticsearchQueryMethod queryMethod,
-			ElasticsearchOperations elasticsearchOperations) {
+	/**
+	 * 使用给定的 {@link QueryMethod} 和 {@link ElasticsearchOperations} 创建一个 {@link AbstractElasticsearchRepositoryQuery}
+	 *
+	 * @param queryMethod 不能为空
+	 * @param elasticsearchOperations 不能为空
+	 */
+	protected AbstractElasticsearchRepositoryQuery(ElasticsearchQueryMethod queryMethod, ElasticsearchOperations elasticsearchOperations) {
+
+		Assert.notNull(queryMethod, "ElasticsearchQueryMethod cannot be null");
+		Assert.notNull(elasticsearchOperations, "ElasticsearchOperations cannot be null");
+
 		this.queryMethod = queryMethod;
 		this.elasticsearchOperations = elasticsearchOperations;
 		this.elasticsearchConverter = elasticsearchOperations.getElasticsearchConverter();
@@ -45,10 +49,25 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 		return queryMethod;
 	}
 
+	/**
+	 * 判断当前查询方法是否支持 count
+	 *
+	 * @return 如果是 count，则返回 true，反之返回 false
+	 */
 	public abstract boolean isCountQuery();
 
+	/**
+	 * 判断当前查询方法是否支持 delete
+	 *
+	 * @return 如果是 delete，则返回 true，反之返回 false
+	 */
 	protected abstract boolean isDeleteQuery();
 
+	/**
+	 * 判断当前查询方法是否支持 exists
+	 *
+	 * @return 如果是 exists，则返回 true，反之返回 false
+	 */
 	protected abstract boolean isExistsQuery();
 
 	@Override
@@ -71,19 +90,22 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 			index = elasticsearchOperations.getIndexCoordinatesFor(clazz);
 		}
 
+		return doExecute(query, parameterAccessor, clazz, index);
+	}
+
+	private Object doExecute(Query query, ElasticsearchParametersParameterAccessor parameterAccessor, Class<?> clazz, IndexCoordinates index) {
 		Object result = null;
 
-		if (isDeleteQuery()) {
-			result = countOrGetDocumentsForDelete(query, parameterAccessor);
+		if (isDeleteQuery()) { // delete
 			elasticsearchOperations.delete(query, clazz, index);
 		}
-		else if (isCountQuery()) {
+		else if (isCountQuery()) { // count
 			result = elasticsearchOperations.count(query, clazz, index);
 		}
-		else if (isExistsQuery()) {
+		else if (isExistsQuery()) { // exists
 			result = elasticsearchOperations.count(query, clazz, index) > 0;
 		}
-		else if (queryMethod.isPageQuery()) {
+		else if (queryMethod.isPageQuery()) { // page Query
 			query.setPageable(parameterAccessor.getPageable());
 			SearchHits<?> searchHits = elasticsearchOperations.search(query, clazz, index);
 			if (queryMethod.isSearchPageMethod()) {
@@ -93,33 +115,24 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 				result = SearchHitSupport.unwrapSearchHits(SearchHitSupport.searchPageFor(searchHits, query.getPageable()));
 			}
 		}
-		else if (queryMethod.isStreamQuery()) {
+		else if (queryMethod.isStreamQuery()) { // stream query
 			query.setPageable(parameterAccessor.getPageable().isPaged() ? parameterAccessor.getPageable()
 					: PageRequest.of(0, DEFAULT_STREAM_BATCH_SIZE));
 			result = StreamUtils.createStreamFromIterator(elasticsearchOperations.searchForStream(query, clazz, index));
 		}
-		else if (queryMethod.isCollectionQuery()) {
-
+		else if (queryMethod.isCollectionQuery()) { // collection query
+			// 如果给定的分页中没有设置分页参数信息，则先执行 count 查询后，在执行 search
 			if (parameterAccessor.getPageable().isUnpaged()) {
 				int itemCount = (int) elasticsearchOperations.count(query, clazz, index);
-
-				if (itemCount == 0) {
-					result = new SearchHitsImpl<>(0, TotalHitsRelation.EQUAL_TO, Float.NaN, null, Collections.emptyList(), null);
-				}
-				else {
-					query.setPageable(PageRequest.of(0, Math.max(1, itemCount)));
-				}
+				query.setPageable(PageRequest.of(0, Math.max(1, itemCount)));
 			}
 			else {
 				query.setPageable(parameterAccessor.getPageable());
 			}
 
-			if (result == null) {
-				result = elasticsearchOperations.search(query, clazz, index);
-			}
-
+			result = elasticsearchOperations.search(query, clazz, index);
 		}
-		else {
+		else { // single query
 			result = elasticsearchOperations.searchOne(query, clazz, index);
 		}
 
@@ -128,6 +141,12 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 				: result;
 	}
 
+	/**
+	 * 使用给定参数信息创建一个 {@link Query}
+	 *
+	 * @param parameters {@link QueryMethod} 上的方法参数
+	 * @return {@link Query} 实例
+	 */
 	public Query createQuery(Object[] parameters) {
 
 		ElasticsearchParametersParameterAccessor parameterAccessor = getParameterAccessor(parameters);
@@ -135,7 +154,7 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 		BaseQuery query = createQuery(parameterAccessor);
 		Assert.notNull(query, "unsupported query");
 
-		queryMethod.addMethodParameter(query, parameterAccessor, elasticsearchOperations.getElasticsearchConverter());
+		queryMethod.addMethodParameter(query, parameterAccessor, elasticsearchConverter);
 
 		return query;
 	}
@@ -144,31 +163,11 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 		return new ElasticsearchParametersParameterAccessor(queryMethod, parameters);
 	}
 
-	@Nullable
-	private Object countOrGetDocumentsForDelete(Query query, ParametersParameterAccessor accessor) {
-
-		Object result = null;
-		Class<?> entityClass = queryMethod.getEntityInformation().getJavaType();
-		IndexCoordinates index = elasticsearchOperations.getIndexCoordinatesFor(entityClass);
-
-		if (queryMethod.isCollectionQuery()) {
-
-			if (accessor.getPageable().isUnpaged()) {
-				int itemCount = (int) elasticsearchOperations.count(query, entityClass, index);
-				query.setPageable(PageRequest.of(0, Math.max(1, itemCount)));
-			}
-			else {
-				query.setPageable(accessor.getPageable());
-			}
-			result = elasticsearchOperations.search(query, entityClass, index);
-		}
-
-		if (ClassUtils.isAssignable(Number.class, queryMethod.getReturnedObjectType())) {
-			result = elasticsearchOperations.count(query, entityClass, index);
-		}
-
-		return result;
-	}
-
+	/**
+	 * 使用给定的 {@link ElasticsearchParametersParameterAccessor} 创建一个 {@link Query}
+	 *
+	 * @param accessor Elasticsearch 方法参数访问器
+	 * @return {@link Query} 实例
+	 */
 	protected abstract BaseQuery createQuery(ElasticsearchParametersParameterAccessor accessor);
 }

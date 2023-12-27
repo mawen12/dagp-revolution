@@ -36,7 +36,6 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -96,7 +95,7 @@ abstract class CallbackIntegrationTests {
 		seqNoPrimaryTerm = operations.save(new SampleEntity("1", "initial")).getSeqNoPrimaryTerm();
 	}
 
-	@Test // DATAES-68
+	@Test
 	void shouldCallBeforeConvertCallback() {
 		SampleEntity entity = new SampleEntity("1", "test");
 
@@ -122,7 +121,7 @@ abstract class CallbackIntegrationTests {
 		assertThat(capturedIndexQuery.getPrimaryTerm()).isEqualTo(seqNoPrimaryTerm.getPrimaryTerm());
 	}
 
-	@Test // DATAES-972
+	@Test
 	@DisplayName("should apply conversion result to IndexQuery when not set ")
 	void shouldApplyConversionResultToIndexQueryWhenNotSet() {
 
@@ -167,7 +166,7 @@ abstract class CallbackIntegrationTests {
 		assertThat(capturedIndexQuery.getPrimaryTerm()).isEqualTo(seqNoPrimaryTermOriginal.getPrimaryTerm());
 	}
 
-	@Test // DATAES-972
+	@Test
 	@DisplayName("should apply conversion result to IndexQuery in bulkIndex")
 	void shouldApplyConversionResultToIndexQueryInBulkIndex() {
 

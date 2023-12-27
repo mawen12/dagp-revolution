@@ -217,7 +217,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(conversionService).isNotNull();
 	}
 
-	@Test // DATAES-530
+	@Test
 	public void shouldMapObjectToJsonString() {
 		Car car = new Car();
 		car.setModel(CAR_MODEL);
@@ -227,7 +227,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(jsonResult).isEqualTo(JSON_STRING);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void shouldReadJsonStringToObject() {
 		// Given
 
@@ -240,7 +240,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(result.getModel()).isEqualTo(CAR_MODEL);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void ignoresReadOnlyProperties() {
 
 		// given
@@ -261,7 +261,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(result).doesNotContain("annotatedTransientProperty");
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void writesNestedEntity() {
 
 		Person person = new Person();
@@ -274,7 +274,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(sink.get("address")).isEqualTo(gratiotAveAsMap);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void writesConcreteList() {
 
 		Person ginger = new Person();
@@ -287,7 +287,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat((List<Document>) target.get("coWorkers")).hasSize(2).contains(kyleAsMap);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void writesInterfaceList() {
 
 		Inventory gun = new Gun("Glock 19", 33);
@@ -299,7 +299,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat((List<Document>) target.get("inventoryList")).containsExactly(gunAsMap, grenadeAsMap);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void readTypeCorrectly() {
 
 		Person target = mappingElasticsearchConverter.read(Person.class, sarahAsMap);
@@ -307,7 +307,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(target).isEqualTo(sarahConnor);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void readListOfConcreteTypesCorrectly() {
 
 		sarahAsMap.put("coWorkers", Collections.singletonList(kyleAsMap));
@@ -317,7 +317,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(target.getCoWorkers()).contains(kyleReese);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void writeMapOfConcreteType() {
 
 		sarahConnor.shippingAddresses = new LinkedHashMap<>();
@@ -328,7 +328,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(target.get("shippingAddresses")).isEqualTo(Collections.singletonMap("home", gratiotAveAsMap));
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void writeMapOfInterfaceType() {
 
 		sarahConnor.inventoryMap = new LinkedHashMap<>();
@@ -341,7 +341,7 @@ public class MappingElasticsearchConverterUnitTests {
 				.containsEntry("40 mm grenade", grenadeAsMap);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void readConcreteMapCorrectly() {
 
 		sarahAsMap.put("shippingAddresses", Collections.singletonMap("home", gratiotAveAsMap));
@@ -351,7 +351,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(target.getShippingAddresses()).hasSize(1).containsEntry("home", observatoryRoad);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void genericWriteList() {
 
 		Skynet skynet = new Skynet();
@@ -364,7 +364,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat((List<Object>) target.get("objectList")).containsExactly(t800AsMap, gunAsMap);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void genericWriteListWithList() {
 
 		Skynet skynet = new Skynet();
@@ -377,7 +377,7 @@ public class MappingElasticsearchConverterUnitTests {
 	}
 
 
-	@Test // DATAES-530
+	@Test 
 	public void writeGenericMap() {
 
 		Skynet skynet = new Skynet();
@@ -391,7 +391,7 @@ public class MappingElasticsearchConverterUnitTests {
 				grenadeAsMap);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void writeGenericMapMap() {
 
 		Skynet skynet = new Skynet();
@@ -404,7 +404,7 @@ public class MappingElasticsearchConverterUnitTests {
 				Collections.singletonMap("glock19", gunAsMap));
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void readsNestedEntity() {
 
 		sarahAsMap.put("address", gratiotAveAsMap);
@@ -414,7 +414,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(target.getAddress()).isEqualTo(observatoryRoad);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void readsNestedObjectEntity() {
 
 		Document source = Document.create();
@@ -429,12 +429,12 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(document.get("gender")).isEqualTo(t800.gender.name());
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void writesAliased() {
 		assertThat(writeToMap(rifle)).doesNotContainValue(Rifle.class.getName());
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void writesNestedAliased() {
 
 		t800.inventoryList = Collections.singletonList(rifle);
@@ -443,12 +443,12 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat((List<Document>) target.get("inventoryList")).contains(rifleAsMap);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void appliesCustomConverterForWrite() {
 		assertThat(writeToMap(shotGun)).isEqualTo(shotGunAsMap);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void writeSubTypeCorrectly() {
 
 		sarahConnor.address = bigBunsCafe;
@@ -458,7 +458,7 @@ public class MappingElasticsearchConverterUnitTests {
 		assertThat(target.get("address")).isEqualTo(bigBunsCafeAsMap);
 	}
 
-	@Test // DATAES-530
+	@Test 
 	public void readSubTypeCorrectly() {
 
 		sarahAsMap.put("address", bigBunsCafeAsMap);

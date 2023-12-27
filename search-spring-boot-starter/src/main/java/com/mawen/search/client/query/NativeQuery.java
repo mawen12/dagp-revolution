@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
  * 使用新的 Elasticsearch 客户端库构建的查询
  *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 @Getter
 public class NativeQuery extends BaseQuery {

@@ -23,22 +23,14 @@ import java.util.List;
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
-import com.mawen.search.core.document.NestedMetaData;
-import com.mawen.search.core.domain.SearchHit;
-import com.mawen.search.core.domain.SearchHits;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.junit.jupiter.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.Nullable;
-
-import static org.assertj.core.api.Assertions.*;
 
 /**
  * Testing the querying and parsing of inner_hits.

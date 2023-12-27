@@ -1,11 +1,16 @@
 package com.mawen.search.core.convert;
 
+import com.mawen.search.core.domain.Range;
+import com.mawen.search.core.mapping.PropertyValueConverter;
+
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentProperty;
 
 /**
+ * {@link Range<Number> 数值范围} 与 Elasticsearch 互相转换的 {@link PropertyValueConverter}
+ *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 public class NumberRangePropertyValueConverter extends AbstractRangePropertyValueConverter<Number> {
 
@@ -35,7 +40,6 @@ public class NumberRangePropertyValueConverter extends AbstractRangePropertyValu
 			return Double.valueOf(value);
 		}
 
-		throw new MappingException(String.format("Unable to convert value '%s' to %s for property '%s'", value,
-				type.getTypeName(), getProperty().getName()));
+		throw new MappingException(String.format(PARSE_EXCEPTION_MESSAGE, value, type.getTypeName(), property.getName()));
 	}
 }

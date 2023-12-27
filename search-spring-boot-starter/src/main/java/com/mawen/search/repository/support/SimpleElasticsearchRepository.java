@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.mawen.search.client.IndicesTemplate;
 import com.mawen.search.core.AbstractElasticsearchTemplate;
 import com.mawen.search.core.ElasticsearchOperations;
 import com.mawen.search.core.IndexOperations;

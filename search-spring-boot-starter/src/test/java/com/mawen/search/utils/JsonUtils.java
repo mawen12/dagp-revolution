@@ -17,7 +17,6 @@ package com.mawen.search.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 
 import co.elastic.clients.json.JsonpMapper;
 import jakarta.json.stream.JsonGenerator;

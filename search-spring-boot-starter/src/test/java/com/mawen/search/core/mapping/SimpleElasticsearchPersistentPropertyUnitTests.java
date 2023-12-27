@@ -35,14 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentProperty;
-import org.springframework.data.mapping.model.FieldNamingStrategy;
-import org.springframework.data.mapping.model.Property;
-import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
-import org.springframework.data.mapping.model.SimpleTypeHolder;
-import org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy;
-import org.springframework.data.util.TypeInformation;
 import org.springframework.lang.Nullable;
-import org.springframework.util.ReflectionUtils;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -58,7 +51,7 @@ public class SimpleElasticsearchPersistentPropertyUnitTests {
 
 	private final SimpleElasticsearchMappingContext context = new SimpleElasticsearchMappingContext();
 
-	@Test // DATAES-562
+	@Test
 	public void fieldAnnotationWithNameSetsFieldname() {
 
 		SimpleElasticsearchPersistentEntity<?> persistentEntity = context
@@ -80,7 +73,7 @@ public class SimpleElasticsearchPersistentPropertyUnitTests {
 		assertThat(persistentProperty.getFieldName()).isEqualTo("by-value");
 	}
 
-	@Test // DATAES-716, DATAES-792, DATAES-924
+	@Test
 	void shouldSetPropertyConverters() {
 		SimpleElasticsearchPersistentEntity<?> persistentEntity = context.getRequiredPersistentEntity(DatesProperty.class);
 
@@ -112,7 +105,7 @@ public class SimpleElasticsearchPersistentPropertyUnitTests {
 		assertThat(converted).isEqualTo("27.12.2019");
 	}
 
-	@Test // DATAES-716
+	@Test
 	void shouldConvertToLocalDate() {
 		SimpleElasticsearchPersistentEntity<?> persistentEntity = context.getRequiredPersistentEntity(DatesProperty.class);
 		ElasticsearchPersistentProperty persistentProperty = persistentEntity.getRequiredPersistentProperty("localDate");
@@ -136,7 +129,7 @@ public class SimpleElasticsearchPersistentPropertyUnitTests {
 		assertThat(converted).isEqualTo("20200419T194400.000Z");
 	}
 
-	@Test // DATAES-792
+	@Test
 	void shouldConvertToLegacyDate() {
 		SimpleElasticsearchPersistentEntity<?> persistentEntity = context.getRequiredPersistentEntity(DatesProperty.class);
 		ElasticsearchPersistentProperty persistentProperty = persistentEntity.getRequiredPersistentProperty("legacyDate");
@@ -166,7 +159,7 @@ public class SimpleElasticsearchPersistentPropertyUnitTests {
 		assertThat(stringProperty.isSeqNoPrimaryTermProperty()).isFalse();
 	}
 
-	@Test // DATAES-799
+	@Test
 	void seqNoPrimaryTermPropertyShouldNotBeWritable() {
 		SimpleElasticsearchPersistentEntity<?> entity = context.getRequiredPersistentEntity(SeqNoPrimaryTermProperty.class);
 		ElasticsearchPersistentProperty seqNoProperty = entity.getRequiredPersistentProperty("seqNoPrimaryTerm");
@@ -174,7 +167,7 @@ public class SimpleElasticsearchPersistentPropertyUnitTests {
 		assertThat(seqNoProperty.isWritable()).isFalse();
 	}
 
-	@Test // DATAES-924
+	@Test
 	@DisplayName("should require pattern for custom date format")
 	void shouldRequirePatternForCustomDateFormat() {
 		assertThatExceptionOfType(MappingException.class) //

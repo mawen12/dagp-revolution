@@ -10,7 +10,6 @@ import co.elastic.clients.elasticsearch.core.DeleteByQueryResponse;
 import co.elastic.clients.elasticsearch.core.UpdateByQueryResponse;
 import co.elastic.clients.elasticsearch.core.mget.MultiGetError;
 import co.elastic.clients.elasticsearch.core.mget.MultiGetResponseItem;
-import co.elastic.clients.json.JsonpMapper;
 import com.mawen.search.ElasticsearchErrorCause;
 import com.mawen.search.client.EntityAsMap;
 import com.mawen.search.core.query.ByQueryResponse;
@@ -21,7 +20,7 @@ import org.springframework.lang.Nullable;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 @Slf4j
 public class ResponseConverter {

@@ -2,6 +2,7 @@ package com.mawen.search.core.mapping;
 
 /**
  * Interface defining methods to convert the value of an entity-property to a value in Elasticsearch and back.
+ * 定义了将实体属性值转换为 Elasticsearch 中的值，或反向转换方法的接口
  *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 0.0.1
@@ -9,19 +10,18 @@ package com.mawen.search.core.mapping;
 public interface PropertyValueConverter {
 
 	/**
-	 * Converts a property value to an elasticsearch value.
-	 * If the converter cannot convert the value, it must be return a string representation.
+	 * 将实体属性值转换为 Elasticsearch 中的值。如果转换器无法转换值，则返回值的字符串表示。
 	 *
-	 * @param value the property value to convert, must not be {@literal null}
-	 * @return The elasticsearch property value, must not be {@literal null}
+	 * @param value 待转换的值，不能为空
+	 * @return Elasticsearch 的值，不能为空
 	 */
 	Object write(Object value);
 
 	/**
-	 * Converts an elasticsearch value to a property value.
+	 * 将 Elasticsearch 中的值转换为实体属性值。
 	 *
-	 * @param value the elasticsearch value to convert, must not be {@literal null}
-	 * @return The converted value, must not be {@literal null}
+	 * @param value 待转换的 Elasticsearch 中的值，不能为空
+	 * @return 转换后的值，不能为空
 	 */
 	Object read(Object value);
 

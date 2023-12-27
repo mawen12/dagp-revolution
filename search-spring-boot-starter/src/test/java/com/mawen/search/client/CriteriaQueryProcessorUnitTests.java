@@ -38,7 +38,7 @@ class CriteriaQueryProcessorUnitTests {
 
 	private final CriteriaQueryProcessor queryProcessor = new CriteriaQueryProcessor();
 
-	@Test // DATAES-706
+	@Test
 	void shouldProcessTwoCriteriaWithAnd() throws JSONException {
 
 		String expected = "{\n" +
@@ -72,7 +72,7 @@ class CriteriaQueryProcessorUnitTests {
 		assertEquals(expected, queryString, false);
 	}
 
-	@Test // DATAES-706
+	@Test
 	void shouldProcessTwoCriteriaWithOr() throws JSONException {
 
 		String expected = "{\n" +
@@ -105,7 +105,7 @@ class CriteriaQueryProcessorUnitTests {
 		assertEquals(expected, queryString, false);
 	}
 
-	@Test // DATAES-706
+	@Test
 	void shouldProcessMixedCriteriaWithOrAnd() throws JSONException {
 
 		String expected = "{\n" +
@@ -159,7 +159,7 @@ class CriteriaQueryProcessorUnitTests {
 		assertEquals(expected, queryString, false);
 	}
 
-	@Test // DATAES-706
+	@Test
 	void shouldAddSubQuery() throws JSONException {
 
 		String expected = "{\n" +
@@ -207,7 +207,7 @@ class CriteriaQueryProcessorUnitTests {
 		assertEquals(expected, queryString, false);
 	}
 
-	@Test // DATAES-706
+	@Test
 	void shouldProcessNestedSubCriteria() throws JSONException {
 
 		String expected = "{\n" +
@@ -300,7 +300,7 @@ class CriteriaQueryProcessorUnitTests {
 		assertEquals(expected, queryString, false);
 	}
 
-	@Test // DATAES-706
+	@Test
 	void shouldBuildMatchQuery() throws JSONException {
 
 		String expected = " {\n" +
@@ -325,7 +325,7 @@ class CriteriaQueryProcessorUnitTests {
 		assertEquals(expected, queryString, false);
 	}
 
-	@Test // DATAES-706
+	@Test
 	void shouldBuildMatchAllQuery() throws JSONException {
 
 		String expected = "{\n" +

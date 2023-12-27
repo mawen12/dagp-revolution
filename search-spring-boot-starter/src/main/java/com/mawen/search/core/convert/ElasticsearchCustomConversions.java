@@ -18,7 +18,7 @@ import org.springframework.util.NumberUtils;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/20
+ * @since 0.0.1
  */
 public class ElasticsearchCustomConversions extends CustomConversions {
 
@@ -39,18 +39,10 @@ public class ElasticsearchCustomConversions extends CustomConversions {
 		STORE_CONVERSIONS = StoreConversions.of(ElasticsearchSimpleTypes.HOLDER, STORE_CONVERTERS);
 	}
 
-	/**
-	 * Creates a new {@link CustomConversions} instance registering the given converters.
-	 *
-	 * @param converters must not be {@literal null}.
-	 */
 	public ElasticsearchCustomConversions(Collection<?> converters) {
 		super(STORE_CONVERSIONS, converters);
 	}
 
-	/**
-	 * {@link Converter} to read a {@link UUID} from its {@link String} representation.
-	 */
 	@ReadingConverter
 	enum StringToUUIDConverter implements Converter<String, UUID> {
 
@@ -62,9 +54,6 @@ public class ElasticsearchCustomConversions extends CustomConversions {
 		}
 	}
 
-	/**
-	 * {@link Converter} to write a {@link UUID} to its {@link String} representation.
-	 */
 	@WritingConverter
 	enum UUIDToStringConverter implements Converter<UUID, String> {
 
@@ -76,9 +65,6 @@ public class ElasticsearchCustomConversions extends CustomConversions {
 		}
 	}
 
-	/**
-	 * {@link Converter} to read a {@link BigDecimal} from a {@link Double} value.
-	 */
 	@ReadingConverter
 	enum DoubleToBigDecimalConverter implements Converter<Double, BigDecimal> {
 
@@ -90,9 +76,6 @@ public class ElasticsearchCustomConversions extends CustomConversions {
 		}
 	}
 
-	/**
-	 * {@link Converter} to write a {@link BigDecimal} to a {@link Double} value.
-	 */
 	@WritingConverter
 	enum BigDecimalToDoubleConverter implements Converter<BigDecimal, Double> {
 
@@ -104,11 +87,6 @@ public class ElasticsearchCustomConversions extends CustomConversions {
 		}
 	}
 
-	/**
-	 * {@link Converter} to write a byte[] to a base64 encoded {@link String} value.
-	 *
-	 * @since 4.0
-	 */
 	@WritingConverter
 	enum ByteArrayToBase64Converter implements Converter<byte[], String> {
 
@@ -121,11 +99,6 @@ public class ElasticsearchCustomConversions extends CustomConversions {
 		}
 	}
 
-	/**
-	 * {@link Converter} to read a byte[] from a base64 encoded {@link String} value.
-	 *
-	 * @since 4.0
-	 */
 	@ReadingConverter
 	enum Base64ToByteArrayConverter implements Converter<String, byte[]> {
 

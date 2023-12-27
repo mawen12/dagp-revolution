@@ -34,7 +34,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.Nullable;
 
@@ -92,7 +91,7 @@ public abstract class LogEntityIntegrationTests {
 	 */
 	abstract Query rangeQueryForIp(String from, String to);
 
-	@Test // DATAES-66
+	@Test
 	public void shouldIndexGivenLogEntityWithIPFieldType() {
 
 		Query searchQuery = termQueryForIp("10.10.10.1");
@@ -114,7 +113,7 @@ public abstract class LogEntityIntegrationTests {
 //		}).isInstanceOf(DataAccessException.class);
 //	}
 
-	@Test // DATAES-66
+	@Test
 	public void shouldReturnLogsForGivenIPRanges() {
 
 		Query searchQuery = rangeQueryForIp("10.10.10.1", "10.10.10.3");

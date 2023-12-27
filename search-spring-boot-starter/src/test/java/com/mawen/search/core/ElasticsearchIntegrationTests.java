@@ -157,7 +157,7 @@ public abstract class ElasticsearchIntegrationTests {
 				.isInstanceOf(ResourceNotFoundException.class);
 	}
 
-	@Test // DATAES-106
+	@Test
 	public void shouldReturnCountForGivenCriteriaQuery() {
 
 		// given
@@ -195,7 +195,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(count).isEqualTo(1);
 	}
 
-	@Test // DATAES-722
+	@Test
 	public void shouldReturnObjectForGivenId() {
 
 		// given
@@ -213,7 +213,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(sampleEntity1).isEqualTo(sampleEntity);
 	}
 
-	@Test // DATAES-52, #1678
+	@Test
 	public void shouldReturnObjectsForGivenIdsUsingMultiGet() {
 
 		// given
@@ -242,7 +242,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(sampleEntities.get(1).getItem()).isEqualTo(sampleEntity2);
 	}
 
-	@Test // DATAES-791, #1678
+	@Test
 	public void shouldReturnNullObjectForNotExistingIdUsingMultiGet() {
 
 		// given
@@ -478,7 +478,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 	protected abstract Query getTermQuery(String field, String value);
 
-	@Test // DATAES-547
+	@Test
 	public void shouldDeleteAcrossIndexWhenNoMatchingDataPresent() {
 
 		// given
@@ -584,7 +584,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(searchHits.getSearchHit(1).getContent().getMessage()).isEqualTo(sampleEntity1.getMessage());
 	}
 
-	@Test // DATAES-312
+	@Test
 	public void shouldSortResultsGivenNullFirstSortCriteria() {
 
 		// given
@@ -622,7 +622,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(searchHits.getSearchHit(1).getContent().getMessage()).isEqualTo(sampleEntity1.getMessage());
 	}
 
-	@Test // DATAES-312
+	@Test
 	public void shouldSortResultsGivenNullLastSortCriteria() {
 
 		// given
@@ -660,7 +660,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(searchHits.getSearchHit(1).getContent().getMessage()).isEqualTo(sampleEntity2.getMessage());
 	}
 
-	@Test // DATAES-467, DATAES-657
+	@Test
 	public void shouldSortResultsByScore() {
 
 		// given
@@ -941,7 +941,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(ids).containsAll(returnedIds);
 	}
 
-	@Test // DATAES-167
+	@Test
 	public void shouldReturnResultsWithScanAndScrollForGivenCriteriaQuery() {
 
 		// given
@@ -992,7 +992,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(sampleEntities).hasSize(30);
 	}
 
-	@Test // DATAES-167
+	@Test
 	public void shouldReturnResultsWithScanAndScrollForSpecifiedFieldsForCriteriaQuery() {
 
 		// given
@@ -1020,7 +1020,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(sampleEntities).hasSize(30);
 	}
 
-	@Test // DATAES-84
+	@Test
 	public void shouldReturnResultsWithScanAndScrollForSpecifiedFieldsForSearchCriteria() {
 
 		// given
@@ -1046,7 +1046,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(sampleEntities).hasSize(30);
 	}
 
-	@Test // DATAES-167
+	@Test
 	public void shouldReturnResultsForScanAndScrollWithCustomResultMapperForGivenCriteriaQuery() {
 
 		// given
@@ -1099,7 +1099,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(sampleEntities).hasSize(30);
 	}
 
-	@Test // DATAES-217
+	@Test
 	public void shouldReturnResultsWithScanAndScrollForGivenCriteriaQueryAndClass() {
 
 		// given
@@ -1126,7 +1126,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(sampleEntities).hasSize(30);
 	}
 
-	@Test // DATAES-217
+	@Test
 	public void shouldReturnResultsWithScanAndScrollForGivenSearchQueryAndClass() {
 
 		// given
@@ -1152,7 +1152,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(sampleEntities).hasSize(30);
 	}
 
-	@Test // DATAES-167, DATAES-831
+	@Test
 	public void shouldReturnAllResultsWithStreamForGivenCriteriaQuery() {
 
 		operations.bulkIndex(createSampleEntitiesWithMessage("Test message", 30),
@@ -1374,7 +1374,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(indexedEntity.getMessage()).isEqualTo("test message");
 	}
 
-	@Test // DATAES-487
+	@Test
 	public void shouldReturnSameEntityForMultiSearch() {
 
 		List<IndexQuery> indexQueries = new ArrayList<>();
@@ -1468,7 +1468,7 @@ public abstract class ElasticsearchIntegrationTests {
 	protected abstract Query getBoolQueryWithWildcardsFirstMustSecondShouldAndMinScore(String firstField,
 			String firstValue, String secondField, String secondValue, float minScore);
 
-	@Test // DATAES-462
+	@Test
 	public void shouldReturnScores() {
 
 		List<IndexQuery> indexQueries = new ArrayList<>();
@@ -1649,7 +1649,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(searchHits.getTotalHits()).isGreaterThanOrEqualTo(1);
 	}
 
-	@Test // DATAES-106
+	@Test
 	public void shouldReturnCountForGivenCriteriaQueryWithGivenIndexUsingCriteriaQuery() {
 
 		// given
@@ -1690,7 +1690,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(count).isEqualTo(1);
 	}
 
-	@Test // DATAES-106
+	@Test
 	public void shouldReturnCountForGivenCriteriaQueryWithGivenIndexAndTypeUsingCriteriaQuery() {
 
 		// given
@@ -1730,7 +1730,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(count).isEqualTo(1);
 	}
 
-	@Test // DATAES-106
+	@Test
 	public void shouldReturnCountForGivenCriteriaQueryWithGivenMultiIndices() {
 
 		// given
@@ -1792,7 +1792,7 @@ public abstract class ElasticsearchIntegrationTests {
 	}
 
 
-	@Test // DATAES-106
+	@Test
 	public void shouldReturnCountForGivenCriteriaQueryWithGivenIndexNameForSpecificIndex() {
 
 		// given
@@ -1872,7 +1872,7 @@ public abstract class ElasticsearchIntegrationTests {
 				.isInstanceOf(IllegalArgumentException.class);
 	}
 
-	@Test // DATAES-67
+	@Test
 	public void shouldThrowAnExceptionForGivenSearchQueryWhenNoIndexSpecifiedForCountQuery() {
 
 		// given
@@ -1977,7 +1977,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(searchHits.getSearchHit(0).getContent().getId()).isEqualTo(remainingDocumentId);
 	}
 
-	@Test // DATAES-525
+	@Test
 	public void shouldDeleteOnlyDocumentsMatchedByCriteriaQuery() {
 
 		List<IndexQuery> indexQueries = new ArrayList<>();
@@ -2044,7 +2044,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(searchHits.getSearchHit(0).getContent().getId()).isEqualTo(remainingDocumentId);
 	}
 
-	@Test // DATAES-525
+	@Test
 	public void shouldApplyCriteriaQueryToScanAndScrollForGivenCriteriaQuery() {
 
 		// given
@@ -2117,7 +2117,7 @@ public abstract class ElasticsearchIntegrationTests {
 						.doesNotContain(notFindableMessage);
 	}
 
-	@Test // DATAES-565
+	@Test
 	public void shouldRespectSourceFilterWithScanAndScrollForGivenSearchQuery() {
 
 		// given
@@ -2196,7 +2196,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(sampleEntities.get(2).getContent().getMessage()).isEqualTo(sampleEntity1.getMessage());
 	}
 
-	@Test // DATAES-457
+	@Test
 	public void shouldSortResultsGivenSortCriteriaFromPageableWithScanAndScroll() {
 
 		// given
@@ -2358,7 +2358,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 
 
-	@Test // DATAES-714
+	@Test
 	void shouldReturnSortFieldsInSearchHits() {
 		IndexCoordinates index = IndexCoordinates.of(indexNameProvider.indexName());
 
@@ -2435,7 +2435,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(result).isEqualTo(entity);
 	}
 
-	@Test // DATAES-738
+	@Test
 	void shouldSaveEntityWithOutIndexCoordinates() {
 		String id = "42";
 		SampleEntity entity = new SampleEntity();
@@ -2472,7 +2472,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(result2).isEqualTo(entity2);
 	}
 
-	@Test // DATAES-738
+	@Test
 	void shouldSaveEntityIterableWithoutIndexCoordinates() {
 		String id1 = "42";
 		SampleEntity entity1 = new SampleEntity();
@@ -2507,7 +2507,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(operations.exists("42", SampleEntity.class)).isTrue();
 	}
 
-	@Test // DATAES-745
+	@Test
 	void shouldDoExistsWithIndexCoordinates() {
 		String id = "42";
 		SampleEntity entity = new SampleEntity();
@@ -2529,7 +2529,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThatSeqNoPrimaryTermIsFilled(saved);
 	}
 
-	@Test // DATAES-876
+	@Test
 	void shouldReturnSeqNoPrimaryTermOnBulkSave() {
 		OptimisticEntity original1 = new OptimisticEntity();
 		original1.setMessage("It's fine 1");
@@ -2560,7 +2560,7 @@ public abstract class ElasticsearchIntegrationTests {
 		assertThat(retrieved.seqNoPrimaryTerm.getPrimaryTerm()).isPositive();
 	}
 
-	@Test // DATAES-799
+	@Test
 	void multigetShouldReturnSeqNoPrimaryTerm() {
 		OptimisticEntity original = new OptimisticEntity();
 		original.setMessage("It's fine");

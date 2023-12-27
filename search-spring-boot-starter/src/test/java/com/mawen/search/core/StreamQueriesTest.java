@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class StreamQueriesTest {
 
-	@Test // DATAES-764
+	@Test
 	public void shouldCallClearScrollOnIteratorClose() {
 
 		// given
@@ -116,7 +116,7 @@ public class StreamQueriesTest {
 
 	}
 
-	@Test // DATAES-817
+	@Test
 	void shouldClearAllScrollIds() {
 
 		SearchScrollHits<String> searchHits1 = newSearchScrollHits(Collections.singletonList(getOneSearchHit()), "s-1");
@@ -164,7 +164,7 @@ public class StreamQueriesTest {
 		assertThat(count).isEqualTo(3);
 	}
 
-	@Test // DATAES-831
+	@Test
 	void shouldOnlyReturnRequestedCount() {
 
 		SearchScrollHits<String> searchHits1 = newSearchScrollHits(Collections.singletonList(getOneSearchHit()), "s-1");

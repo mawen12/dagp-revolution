@@ -45,7 +45,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 public class ElasticsearchQueryMethod extends QueryMethod {
 
@@ -62,7 +62,7 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 	@Nullable
 	private final SourceFilters sourceFilters;
 	@Nullable
-	private Boolean unwrappedReturnTypeFromSearchHit = null;
+	private Boolean unwrappedReturnTypeFromSearchHit;
 	@Nullable
 	private ElasticsearchEntityMetadata<?> metadata;
 
@@ -323,11 +323,6 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		SourceFilter sourceFilter = getSourceFilter(parameterAccessor, elasticsearchConverter);
 		if (sourceFilter != null) {
 			query.addSourceFilter(sourceFilter);
-		}
-
-		if (parameterAccessor.getElasticsearchParameters() instanceof ElasticsearchParameters) {
-			ElasticsearchParameters methodParameters = (ElasticsearchParameters) parameterAccessor.getElasticsearchParameters();
-
 		}
 	}
 	// endregion

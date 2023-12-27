@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
  */
 class SearchHitSupportTest {
 
-	@Test // DATAES-772
+	@Test
 	void unwrapsSearchHitsIteratorToCloseableIteratorOfEntities() {
 		TestStringSearchHitsIterator searchHitsIterator = new TestStringSearchHitsIterator();
 
@@ -62,7 +62,7 @@ class SearchHitSupportTest {
 		assertThat(searchHitsIterator.closed).isTrue();
 	}
 
-	@Test // DATAES-952
+	@Test
 	@DisplayName("should return the same list instance in SearchHits and getContent")
 	void shouldReturnTheSameListInstanceInSearchHitsAndGetContent() {
 

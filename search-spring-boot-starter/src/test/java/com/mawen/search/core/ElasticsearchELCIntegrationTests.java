@@ -17,14 +17,10 @@ package com.mawen.search.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.FunctionBoostMode;
-import co.elastic.clients.elasticsearch._types.query_dsl.FunctionScoreMode;
 import co.elastic.clients.elasticsearch.core.search.FieldCollapse;
-import co.elastic.clients.json.JsonData;
 import com.mawen.search.client.query.NativeQuery;
 import com.mawen.search.client.query.Queries;
 import com.mawen.search.client.query.builder.NativeQueryBuilder;
@@ -33,7 +29,6 @@ import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.core.query.builder.BaseQueryBuilder;
-import com.mawen.search.core.query.builder.FetchSourceFilterBuilder;
 import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
 import com.mawen.search.utils.IndexNameProvider;
 import org.junit.jupiter.api.DisplayName;

@@ -20,19 +20,32 @@ import org.springframework.data.mapping.MappingException;
 import org.springframework.util.Assert;
 
 /**
+ * 提供转换器实例，用于以 Elasticsearch 理解的不同日期和时间格式与日期进行转换
+ *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
-public class ElasticsearchDateConverter {
+public final class ElasticsearchDateConverter {
 
 	private static final ConcurrentHashMap<String, ElasticsearchDateConverter> converters = new ConcurrentHashMap<>();
 
 	private final DateFormatter dateFormatter;
 
+	/**
+	 * 使用给定 {@link DateFormatter} 创建一个 {@link ElasticsearchDateConverter}
+	 *
+	 * @param dateFormatter 不能为空
+	 */
 	private ElasticsearchDateConverter(DateFormatter dateFormatter) {
 		this.dateFormatter = dateFormatter;
 	}
 
+	/**
+	 * 使用给定 {@link DateFormat} 创建一个 {@link ElasticsearchDateConverter}
+	 *
+	 * @param dateFormat 不能为空
+	 * @return 转换器实例
+	 */
 	public static ElasticsearchDateConverter of(DateFormat dateFormat) {
 
 		Assert.notNull(dateFormat, "dateFormat must not be null");
@@ -41,10 +54,10 @@ public class ElasticsearchDateConverter {
 	}
 
 	/**
-	 * Creates an ElasticsearchDateConverter for the given pattern.
+	 * 使用给定的正则表达式创建一个 {@link ElasticsearchDateConverter}
 	 *
-	 * @param pattern must not be {@literal null}
-	 * @return converter
+	 * @param pattern 不能为空
+	 * @return 转换器实例
 	 */
 	public static ElasticsearchDateConverter of(String pattern) {
 
@@ -56,11 +69,10 @@ public class ElasticsearchDateConverter {
 	}
 
 	/**
-	 * Creates a {@link DateFormatter} for a given pattern. The pattern can be the name of a {@link DateFormat} enum value
-	 * or a literal pattern.
+	 * 使用正则表达式创建一个 {@link DateFormatter}。正则表达式可以是 {@link DateFormat} 枚举值的名称，或字符串
 	 *
-	 * @param pattern the pattern to use
-	 * @return DateFormatter
+	 * @param pattern 待使用的正则表达式
+	 * @return {@link DateFormatter} 实例
 	 */
 	private static DateFormatter forPattern(String pattern) {
 
@@ -74,7 +86,7 @@ public class ElasticsearchDateConverter {
 			return new EpochSecondDateFormatter();
 		}
 
-		// check the enum values
+		// 枚举值匹配
 		for (DateFormat dateFormat : DateFormat.values()) {
 
 			switch (dateFormat) {
@@ -94,10 +106,17 @@ public class ElasticsearchDateConverter {
 		return new PatternDateFormatter(dateTimeFormatter);
 	}
 
+	/**
+	 * 将时间类型转换为通用的 {@link TemporalQuery}
+	 *
+	 * @param type 待转换的类型
+	 * @param <T> {@link TemporalAccessor} 的实现
+	 * @return {@link TemporalQuery} 的实现
+	 */
 	@SuppressWarnings("unchecked")
 	private static <T extends TemporalAccessor> TemporalQuery<T> getTemporalQuery(Class<T> type) {
+
 		return temporal -> {
-			// no reflection for java.time classes (GraalVM native)
 			if (type == java.time.chrono.HijrahDate.class) {
 				return (T) java.time.chrono.HijrahDate.from(temporal);
 			}
@@ -159,8 +178,7 @@ public class ElasticsearchDateConverter {
 				return (T) java.time.YearMonth.from(temporal);
 			}
 
-			// for implementations not covered until here use reflection to check for the existence of a static
-			// from(TemporalAccessor) method
+			// 对于上述未涉及的实现，通过反射静态的 from(TemporalAccessor) 方法来检查其实例
 			try {
 				Method method = type.getMethod("from", TemporalAccessor.class);
 				Object o = method.invoke(null, temporal);
@@ -176,10 +194,10 @@ public class ElasticsearchDateConverter {
 	}
 
 	/**
-	 * Formats the given {@link TemporalAccessor} into a String.
+	 * 将 {@link TemporalAccessor} 格式化为字符串
 	 *
-	 * @param accessor must not be {@literal null}
-	 * @return the formatted object
+	 * @param accessor 不能为空
+	 * @return 格式化后的字符串
 	 */
 	public String format(TemporalAccessor accessor) {
 
@@ -194,10 +212,10 @@ public class ElasticsearchDateConverter {
 	}
 
 	/**
-	 * Formats the given {@link TemporalAccessor} int a String
+	 * 将 {@link Date} 格式化为字符串
 	 *
-	 * @param date must not be {@literal null}
-	 * @return the formatted object
+	 * @param date 不能为空
+	 * @return 格式化后的字符串
 	 */
 	public String format(Date date) {
 
@@ -207,22 +225,22 @@ public class ElasticsearchDateConverter {
 	}
 
 	/**
-	 * Parses a String into a TemporalAccessor.
+	 * 将字符串解析为 {@link TemporalAccessor}
 	 *
-	 * @param input the String to parse, must not be {@literal null}.
-	 * @param type  the class to return
-	 * @param <T>   the class of type
-	 * @return the new created object
+	 * @param input 待解析的字符串，不能为空
+	 * @param type T 的类型
+	 * @param <T> {@link TemporalAccessor} 的实现
+	 * @return 解析后的实例
 	 */
 	public <T extends TemporalAccessor> T parse(String input, Class<T> type) {
 		return dateFormatter.parse(input, type);
 	}
 
 	/**
-	 * Parses a String into a Date.
+	 * 将字符串解析为 {@link Date}
 	 *
-	 * @param input the String to parse, must not be {@literal null}.
-	 * @return the new created object
+	 * @param input 待解析的字符串，不能为空
+	 * @return 解析后的实例
 	 */
 	public Date parse(String input) {
 		return new Date(dateFormatter.parse(input, Instant.class).toEpochMilli());
@@ -230,7 +248,7 @@ public class ElasticsearchDateConverter {
 	// endregion
 
 	/**
-	 * a DateFormatter to convert epoch milliseconds
+	 * Unix 时间戳毫秒的字符串与 {@link TemporalAccessor} 相互转换的 {@link DateFormatter} 实现
 	 */
 	static class EpochMillisDateFormatter implements DateFormatter {
 
@@ -255,7 +273,7 @@ public class ElasticsearchDateConverter {
 	}
 
 	/**
-	 * a DateFormatter to convert epoch seconds. Elasticsearch's formatter uses double values, so do we
+	 * Unix 时间戳秒的字符串与 {@link TemporalAccessor} 相互转换的 {@link DateFormatter} 实现
 	 */
 	static class EpochSecondDateFormatter implements DateFormatter {
 
@@ -288,11 +306,17 @@ public class ElasticsearchDateConverter {
 		}
 	}
 
+	/**
+	 * 正则表达式与 {@link TemporalAccessor} 相互转换的 {@link DateFormatter} 实现
+	 */
 	static class PatternDateFormatter implements DateFormatter {
 
 		private final DateTimeFormatter dateTimeFormatter;
 
 		PatternDateFormatter(DateTimeFormatter dateTimeFormatter) {
+
+			Assert.notNull(dateTimeFormatter, "dateTimeFormatter must not be null");
+
 			this.dateTimeFormatter = dateTimeFormatter;
 		}
 
@@ -306,7 +330,7 @@ public class ElasticsearchDateConverter {
 			}
 			catch (Exception e) {
 				if (accessor instanceof Instant) {
-					// as alternatives try to format a ZonedDateTime or LocalDateTime
+					// 后备方案，解析 ZonedDateTime 或 LocalDateTime
 					return dateTimeFormatter.format(ZonedDateTime.ofInstant((Instant) accessor, ZoneId.of("UTC")));
 				}
 				else {
@@ -327,7 +351,7 @@ public class ElasticsearchDateConverter {
 			catch (Exception e) {
 
 				if (type.equals(Instant.class)) {
-					// as alternatives try to parse a ZonedDateTime or LocalDateTime
+					// 后备方案，解析 ZonedDateTime 或 LocalDateTime
 					try {
 						ZonedDateTime zonedDateTime = dateTimeFormatter.parse(input, getTemporalQuery(ZonedDateTime.class));
 						// noinspection unchecked

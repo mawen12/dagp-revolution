@@ -9,7 +9,6 @@ import com.mawen.search.core.annotation.Routing;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PropertyHandler;
 import org.springframework.data.mapping.model.BasicPersistentEntity;
@@ -17,7 +16,6 @@ import org.springframework.data.spel.ExpressionDependencies;
 import org.springframework.data.util.Lazy;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.LiteralExpression;
@@ -28,7 +26,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 @Slf4j
 public class SimpleElasticsearchPersistentEntity<T>

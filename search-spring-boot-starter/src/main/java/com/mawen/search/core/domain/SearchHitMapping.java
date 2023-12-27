@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 public class SearchHitMapping<T> {
 	private final Class<T> type;
@@ -196,14 +196,6 @@ public class SearchHitMapping<T> {
 		return searchHits;
 	}
 
-	/**
-	 * find a {@link ElasticsearchPersistentEntity} following the property chain defined by the nested metadata
-	 *
-	 * @param persistentEntity base entity
-	 * @param nestedMetaData   nested metadata
-	 * @return A {@link ElasticsearchPersistentEntityWithNestedMetaData} containing the found entity or null together with
-	 * the {@link NestedMetaData} that has mapped field names.
-	 */
 	private ElasticsearchPersistentEntityWithNestedMetaData getPersistentEntity(
 			@Nullable ElasticsearchPersistentEntity<?> persistentEntity, @Nullable NestedMetaData nestedMetaData) {
 

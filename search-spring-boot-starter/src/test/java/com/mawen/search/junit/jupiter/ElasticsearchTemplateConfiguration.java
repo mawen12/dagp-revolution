@@ -20,8 +20,6 @@ import java.time.Duration;
 import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.junit.jupiter.client.ClientConfiguration;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static org.springframework.util.StringUtils.*;

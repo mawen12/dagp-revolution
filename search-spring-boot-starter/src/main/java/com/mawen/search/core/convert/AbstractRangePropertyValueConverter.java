@@ -4,16 +4,21 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.mawen.search.core.domain.Range;
+import com.mawen.search.core.mapping.PropertyValueConverter;
 
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.util.Assert;
 
 /**
+ * {@link PropertyValueConverter} 的抽象实现，支持 {@link Range 范围} 类型的转换
+ *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 public abstract class AbstractRangePropertyValueConverter<T> extends AbstractPropertyValueConverter {
+
+	protected static final String PARSE_EXCEPTION_MESSAGE = READ_EXCEPTION_MESSAGE;
 
 	protected static final String LT_FIELD = "lt";
 	protected static final String LTE_FIELD = "lte";
@@ -35,12 +40,12 @@ public abstract class AbstractRangePropertyValueConverter<T> extends AbstractPro
 		try {
 			// noinspection unchecked
 			Range<T> range = (Range<T>) value;
-			Range.Bound lowerBound = range.getLowerBound();
-			Range.Bound upperBound = range.getUpperBound();
+			Range.Bound<T> lowerBound = range.getLowerBound();
+			Range.Bound<T> upperBound = range.getUpperBound();
 			Map<String, Object> target = new LinkedHashMap<>();
 
 			if (lowerBound.getValue().isPresent()) {
-				String lowerBoundValue = format((T) lowerBound.getValue().get());
+				String lowerBoundValue = format(lowerBound.getValue().get());
 				if (lowerBound.isInclusive()) {
 					target.put(GTE_FIELD, lowerBoundValue);
 				}
@@ -50,7 +55,7 @@ public abstract class AbstractRangePropertyValueConverter<T> extends AbstractPro
 			}
 
 			if (upperBound.getValue().isPresent()) {
-				String upperBoundValue = format((T) upperBound.getValue().get());
+				String upperBoundValue = format(upperBound.getValue().get());
 				if (upperBound.isInclusive()) {
 					target.put(LTE_FIELD, upperBoundValue);
 				}
@@ -63,8 +68,7 @@ public abstract class AbstractRangePropertyValueConverter<T> extends AbstractPro
 
 		}
 		catch (Exception e) {
-			throw new MappingException(
-					String.format("Unable to convert value '%s' of property '%s'", value, getProperty().getName()), e);
+			throw new MappingException(String.format(WRITE_EXCEPTION_MESSAGE, value, property.getName()), e);
 		}
 	}
 
@@ -77,8 +81,8 @@ public abstract class AbstractRangePropertyValueConverter<T> extends AbstractPro
 		try {
 			// noinspection unchecked
 			Map<String, Object> source = (Map<String, Object>) value;
-			Range.Bound lowerBound;
-			Range.Bound upperBound;
+			Range.Bound<T> lowerBound;
+			Range.Bound<T> upperBound;
 
 			if (source.containsKey(GTE_FIELD)) {
 				lowerBound = Range.Bound.inclusive(parse((String) source.get(GTE_FIELD)));
@@ -104,13 +108,12 @@ public abstract class AbstractRangePropertyValueConverter<T> extends AbstractPro
 
 		}
 		catch (Exception e) {
-			throw new MappingException(
-					String.format("Unable to convert value '%s' of property '%s'", value, getProperty().getName()), e);
+			throw new MappingException(String.format(READ_EXCEPTION_MESSAGE, value, property.getActualType().getName(), property.getName()), e);
 		}
 	}
 
 	protected Class<?> getGenericType() {
-		return getProperty().getTypeInformation().getTypeArguments().get(0).getType();
+		return property.getTypeInformation().getTypeArguments().get(0).getType();
 	}
 
 	protected abstract String format(T value);

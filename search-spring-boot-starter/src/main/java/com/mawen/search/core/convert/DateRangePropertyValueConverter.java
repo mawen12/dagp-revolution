@@ -3,14 +3,19 @@ package com.mawen.search.core.convert;
 import java.util.Date;
 import java.util.List;
 
+import com.mawen.search.core.domain.Range;
+import com.mawen.search.core.mapping.PropertyValueConverter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.util.Assert;
 
 /**
+ * {@link Range<Date> 日期范围} 与 Elasticsearch 互相转换的 {@link PropertyValueConverter}
+ *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 @Slf4j
 public class DateRangePropertyValueConverter extends AbstractRangePropertyValueConverter<Date> {
@@ -20,6 +25,8 @@ public class DateRangePropertyValueConverter extends AbstractRangePropertyValueC
 	public DateRangePropertyValueConverter(PersistentProperty<?> property, List<ElasticsearchDateConverter> dateConverters) {
 
 		super(property);
+
+		Assert.notEmpty(dateConverters, "dateConverters must not be empty.");
 
 		this.dateConverters = dateConverters;
 	}
@@ -43,7 +50,6 @@ public class DateRangePropertyValueConverter extends AbstractRangePropertyValueC
 			}
 		}
 
-		throw new MappingException(String.format("Unable to convert value '%s' to %s for property '%s'", value,
-				getGenericType().getTypeName(), getProperty().getName()));
+		throw new MappingException(String.format(PARSE_EXCEPTION_MESSAGE, value, getGenericType().getTypeName(), property.getName()));
 	}
 }

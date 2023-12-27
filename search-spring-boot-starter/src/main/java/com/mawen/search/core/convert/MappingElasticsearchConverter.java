@@ -66,7 +66,7 @@ import org.springframework.util.ObjectUtils;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
- * @since 2023/12/19
+ * @since 0.0.1
  */
 @Slf4j
 public class MappingElasticsearchConverter implements ElasticsearchConverter, ApplicationContextAware, InitializingBean {
@@ -451,13 +451,6 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 		}
 
 		@SuppressWarnings("unchecked")
-		/**
-		 * Reads the given source into the given type.
-		 *
-		 * @param type they type to convert the given source to.
-		 * @param source the source to create an object of the given type from.
-		 * @return the object that was read
-		 */
 		<R> R read(Class<R> type, Document source) {
 
 			TypeInformation<R> typeInformation = ClassTypeInformation.from((Class<R>) ClassUtils.getUserClass(type));
