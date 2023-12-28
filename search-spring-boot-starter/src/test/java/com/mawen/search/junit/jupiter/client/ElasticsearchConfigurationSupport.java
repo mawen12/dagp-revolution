@@ -39,11 +39,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
-/**
- * @author Christoph Strobl
- * @author Peter-Josef Meisch
- * @since 3.2
- */
 @Configuration(proxyBeanMethods = false)
 public class ElasticsearchConfigurationSupport {
 
@@ -57,13 +52,6 @@ public class ElasticsearchConfigurationSupport {
 		return elasticsearchConverter;
 	}
 
-	/**
-	 * Creates a {@link SimpleElasticsearchMappingContext} equipped with entity classes scanned from the mapping base
-	 * package.
-	 *
-	 * @see #getMappingBasePackages()
-	 * @return never {@literal null}.
-	 */
 	@Bean
 	public SimpleElasticsearchMappingContext elasticsearchMappingContext(
 			ElasticsearchCustomConversions elasticsearchCustomConversions) {
@@ -75,11 +63,6 @@ public class ElasticsearchConfigurationSupport {
 		return mappingContext;
 	}
 
-	/**
-	 * Register custom {@link Converter}s in a {@link ElasticsearchCustomConversions} object if required.
-	 *
-	 * @return never {@literal null}.
-	 */
 	@Bean
 	public ElasticsearchCustomConversions elasticsearchCustomConversions() {
 		return new ElasticsearchCustomConversions(Collections.emptyList());
@@ -102,12 +85,6 @@ public class ElasticsearchConfigurationSupport {
 		return initialEntitySet;
 	}
 
-	/**
-	 * Scans the given base package for entities, i.e. Elasticsearch specific types annotated with {@link Document}.
-	 *
-	 * @param basePackage must not be {@literal null}.
-	 * @return never {@literal null}.
-	 */
 	protected Set<Class<?>> scanForEntities(String basePackage) {
 
 		if (!StringUtils.hasText(basePackage)) {

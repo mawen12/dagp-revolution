@@ -484,11 +484,6 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 		return elasticsearchConverter;
 	}
 
-	/**
-	 * @param clazz the entity class
-	 * @return the IndexCoordinates defined on the entity.
-	 * @since 4.0
-	 */
 	@Override
 	public IndexCoordinates getIndexCoordinatesFor(Class<?> clazz) {
 		return getRequiredPersistentEntity(clazz).getIndexCoordinates();

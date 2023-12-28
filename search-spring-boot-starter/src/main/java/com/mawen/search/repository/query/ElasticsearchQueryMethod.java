@@ -266,7 +266,10 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		for (String s : source) {
 
 			if (StringUtils.hasText(s)) {
-				String fieldName = stringQueryUtil.replacePlaceholders(s, parameterAccessor);
+				String fieldName = s;
+				if (hasAnnotatedQuery()) {
+					 fieldName = stringQueryUtil.replacePlaceholders(s, parameterAccessor);
+				}
 				// this could be "[\"foo\",\"bar\"]", must be split
 				if (fieldName.startsWith("[") && fieldName.endsWith("]")) {
 					// noinspection RegExpRedundantEscape

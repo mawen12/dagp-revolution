@@ -52,17 +52,10 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-/**
- * Utility class to create the different Elasticsearch clients
- *
- * @author Peter-Josef Meisch
- * @since 4.4
- */
+
 @SuppressWarnings("unused")
 public final class ElasticsearchClients {
-	/**
-	 * Name of whose value can be used to correlate log messages for this request.
-	 */
+
 	private static final String X_SPRING_DATA_ELASTICSEARCH_CLIENT = "X-SpringDataElasticsearch-Client";
 	public static final String IMPERATIVE_CLIENT = "imperative";
 	public static final String REACTIVE_CLIENT = "reactive";
@@ -72,46 +65,19 @@ public final class ElasticsearchClients {
 
 	// region imperative client
 
-	/**
-	 * Creates a new imperative {@link ElasticsearchClient}
-	 *
-	 * @param clientConfiguration configuration options, must not be {@literal null}.
-	 * @return the {@link ElasticsearchClient}
-	 */
 	public static ElasticsearchClient createImperative(ClientConfiguration clientConfiguration) {
 		return createImperative(getRestClient(clientConfiguration), null, DEFAULT_JSONP_MAPPER);
 	}
 
-	/**
-	 * Creates a new imperative {@link ElasticsearchClient}
-	 *
-	 * @param clientConfiguration configuration options, must not be {@literal null}.
-	 * @param transportOptions    options to be added to each request.
-	 * @return the {@link ElasticsearchClient}
-	 */
 	public static ElasticsearchClient createImperative(ClientConfiguration clientConfiguration,
 			TransportOptions transportOptions) {
 		return createImperative(getRestClient(clientConfiguration), transportOptions, DEFAULT_JSONP_MAPPER);
 	}
 
-	/**
-	 * Creates a new imperative {@link ElasticsearchClient}
-	 *
-	 * @param restClient the RestClient to use
-	 * @return the {@link ElasticsearchClient}
-	 */
 	public static ElasticsearchClient createImperative(RestClient restClient) {
 		return createImperative(restClient, null, DEFAULT_JSONP_MAPPER);
 	}
 
-	/**
-	 * Creates a new imperative {@link ElasticsearchClient}
-	 *
-	 * @param restClient       the RestClient to use
-	 * @param transportOptions options to be added to each request.
-	 * @param jsonpMapper      the mapper for the transport to use
-	 * @return the {@link ElasticsearchClient}
-	 */
 	public static ElasticsearchClient createImperative(RestClient restClient, @Nullable TransportOptions transportOptions,
 			JsonpMapper jsonpMapper) {
 
@@ -123,12 +89,6 @@ public final class ElasticsearchClients {
 		return createImperative(transport);
 	}
 
-	/**
-	 * Creates a new {@link ElasticsearchClient} that uses the given {@link ElasticsearchTransport}.
-	 *
-	 * @param transport the transport to use
-	 * @return the {@link ElasticsearchClient
-	 */
 	public static AutoCloseableElasticsearchClient createImperative(ElasticsearchTransport transport) {
 
 		Assert.notNull(transport, "transport must not be null");
@@ -156,12 +116,6 @@ public final class ElasticsearchClients {
 		return builder;
 	}
 
-	/**
-	 * Creates a low level {@link RestClient} for the given configuration.
-	 *
-	 * @param clientConfiguration must not be {@literal null}
-	 * @return the {@link RestClient}
-	 */
 	public static RestClient getRestClient(ClientConfiguration clientConfiguration) {
 		return getRestClientBuilder(clientConfiguration).build();
 	}
@@ -232,16 +186,6 @@ public final class ElasticsearchClients {
 
 	// region Elasticsearch transport
 
-	/**
-	 * Creates an {@link ElasticsearchTransport} that will use the given client that additionally is customized with a
-	 * header to contain the clientType
-	 *
-	 * @param restClient       the client to use
-	 * @param clientType       the client type to pass in each request as header
-	 * @param transportOptions options for the transport
-	 * @param jsonpMapper      mapper for the transport
-	 * @return ElasticsearchTransport
-	 */
 	public static ElasticsearchTransport getElasticsearchTransport(RestClient restClient, String clientType,
 			@Nullable TransportOptions transportOptions, JsonpMapper jsonpMapper) {
 

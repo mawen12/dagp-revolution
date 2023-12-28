@@ -33,17 +33,6 @@ import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.ContextCustomizerFactory;
 import org.springframework.test.context.MergedContextConfiguration;
 
-/**
- * This extension class check in the {@link #beforeAll(ExtensionContext)} call if there is already an Elasticsearch
- * cluster connection defined in the root store. If no, the connection to the cluster is defined according to the
- * configuration, starting a local node if necessary. The connection is stored and will be closed when the store is
- * shutdown at the end of all tests.
- * <p/>
- * A ParameterResolver is implemented which enables resolving the ClusterConnectionInfo to test methods, and if a Spring
- * context is used, the ClusterConnectionInfo can be autowired.
- *
- * @author Peter-Josef Meisch
- */
 public class SpringDataElasticsearchExtension
 		implements BeforeAllCallback, ParameterResolver, ContextCustomizerFactory {
 

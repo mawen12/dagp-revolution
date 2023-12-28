@@ -28,15 +28,7 @@ import com.mawen.search.junit.jupiter.client.support.HttpHeaders;
 
 import org.springframework.lang.Nullable;
 
-/**
- * Default {@link ClientConfiguration} implementation.
- *
- * @author Mark Paluch
- * @author Christoph Strobl
- * @author Huw Ayling-Miller
- * @author Peter-Josef Meisch
- * @since 3.2
- */
+
 class DefaultClientConfiguration implements ClientConfiguration {
 
 	private final List<InetSocketAddress> hosts;

@@ -1,11 +1,13 @@
 package com.mawen.search.repository.query;
 
 import com.mawen.search.core.ElasticsearchOperations;
+import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.CriteriaQuery;
 import com.mawen.search.repository.query.parser.ElasticsearchParamQueryCreator;
 import com.mawen.search.repository.query.parser.ParamSubject;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.RepositoryQuery;
 
 /**
@@ -50,6 +52,19 @@ public class ElasticsearchParamQuery extends AbstractElasticsearchRepositoryQuer
 	@Override
 	protected BaseQuery createQuery(ElasticsearchParametersParameterAccessor accessor) {
 
-		return new ElasticsearchParamQueryCreator(new ParamQuery(accessor.getParamQuery())).createQuery();
+		ParamQuery paramQuery = new ParamQuery(accessor.getParamQuery());
+		CriteriaQuery query = new ElasticsearchParamQueryCreator(paramQuery).createQuery();
+
+		Sort sort = paramQuery.getSort();
+		if (sort != null) {
+			query.setSort(sort);
+		}
+
+		SourceFilter sourceFilter = this.queryMethod.getSourceFilter(accessor, this.elasticsearchConverter);
+		if (sourceFilter != null) {
+			query.addSourceFilter(sourceFilter);
+		}
+
+		return query;
 	}
 }

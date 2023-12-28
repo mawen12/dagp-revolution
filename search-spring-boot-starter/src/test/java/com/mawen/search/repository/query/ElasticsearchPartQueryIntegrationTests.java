@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mawen.search.core.query;
+package com.mawen.search.repository.query;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import java.util.List;
 import com.mawen.search.core.ElasticsearchOperations;
 import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
+import com.mawen.search.core.query.Query;
 import com.mawen.search.junit.jupiter.SpringIntegrationTest;
 import com.mawen.search.repository.ElasticsearchRepository;
 import com.mawen.search.repository.query.ElasticsearchPartQuery;
@@ -45,7 +46,8 @@ public abstract class ElasticsearchPartQueryIntegrationTests {
 	public static final String BOOK_TITLE = "Title";
 	public static final int BOOK_PRICE = 42;
 
-	@Autowired protected ElasticsearchOperations operations;
+	@Autowired
+	protected ElasticsearchOperations operations;
 
 	@BeforeEach
 	public void setUp() {}

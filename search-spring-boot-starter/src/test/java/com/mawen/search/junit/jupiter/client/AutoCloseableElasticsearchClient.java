@@ -22,13 +22,6 @@ import org.elasticsearch.client.RestClient;
 
 import org.springframework.util.Assert;
 
-/**
- * Extension of the {@link ElasticsearchClient} class that implements {@link AutoCloseable}. As the underlying
- * {@link RestClient} must be closed properly this is handled in the {@link #close()} method.
- *
- * @author Peter-Josef Meisch
- * @since 4.4
- */
 public class AutoCloseableElasticsearchClient extends ElasticsearchClient implements AutoCloseable {
 
 	public AutoCloseableElasticsearchClient(ElasticsearchTransport transport) {

@@ -31,14 +31,6 @@ import org.springframework.util.LinkedCaseInsensitiveMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.MultiValueMapAdapter;
 
-/**
- * A simple class implementing HTTP headers as a MultiValueMap. This own implementation is necessary to remove the
- * dependency to the class with the same name from org.springframework:spring-web. Under the hood is uses a
- * {@link LinkedCaseInsensitiveMap}.
- *
- * @author Peter-Josef Meisch
- * @since 5.0
- */
 public class HttpHeaders implements MultiValueMap<String, String> {
 
 	public static final String AUTHORIZATION = "Authorization";
@@ -173,27 +165,10 @@ public class HttpHeaders implements MultiValueMap<String, String> {
 		set(AUTHORIZATION, "Basic " + encodeBasicAuth(username, password));
 	}
 
-	/**
-	 * Encode a username and password to be used in basic authorization. Code copied from the spring-web HttpHeaders
-	 * class.
-	 *
-	 * @param username the username, must not contain a colon
-	 * @param password the password
-	 * @return the encoded value
-	 */
 	public static String encodeBasicAuth(String username, String password) {
 		return encodeBasicAuth(username, password, null);
 	}
 
-	/**
-	 * Encode a username and password to be used in basic authorization. Code copied from the spring-web HttpHeaders
-	 * class.
-	 *
-	 * @param username the username, must not contain a colon
-	 * @param password the password
-	 * @param charset charset for the encoding, if {@literal null} StandardCharsets.ISO_8859_1 is used
-	 * @return the encoded value
-	 */
 	public static String encodeBasicAuth(String username, String password, @Nullable Charset charset) {
 		Assert.notNull(username, "Username must not be null");
 		Assert.doesNotContain(username, ":", "Username must not contain a colon");

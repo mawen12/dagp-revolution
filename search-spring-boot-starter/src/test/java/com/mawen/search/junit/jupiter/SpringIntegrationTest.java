@@ -27,13 +27,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-/**
- * Combines the {@link SpringDataElasticsearchExtension} and the {@link SpringExtension}. Tests are executed in
- * accordance to the {@link org.junit.jupiter.api.Order} annotation, to be able to have an explicit last test method for
- * cleanup (since 4.3)
- *
- * @author Peter-Josef Meisch
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ExtendWith(SpringDataElasticsearchExtension.class)

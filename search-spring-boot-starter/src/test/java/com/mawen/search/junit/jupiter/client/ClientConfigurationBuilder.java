@@ -34,16 +34,7 @@ import com.mawen.search.junit.jupiter.client.support.HttpHeaders;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-/**
- * Default builder implementation for {@link ClientConfiguration}.
- *
- * @author Christoph Strobl
- * @author Mark Paluch
- * @author Peter-Josef Meisch
- * @author Huw Ayling-Miller
- * @author Henrique Amaral
- * @since 3.2
- */
+
 class ClientConfigurationBuilder
 		implements ClientConfigurationBuilderWithRequiredEndpoint, MaybeSecureClientConfigurationBuilder {
 

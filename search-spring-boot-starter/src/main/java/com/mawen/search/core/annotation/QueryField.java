@@ -11,6 +11,7 @@ import java.util.Collection;
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.Criteria.Operator;
 import com.mawen.search.core.domain.Range;
+import org.apache.commons.lang3.ArrayUtils;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -124,13 +125,19 @@ public @interface QueryField {
 		NOT_IN{
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
-				criteria.notIn(asArray(value));
+				Object[] array = asArray(value);
+				if (ArrayUtils.isNotEmpty(array)) {
+					criteria.notIn(array);
+				}
 			}
 		},
 		IN{
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
-				criteria.in(asArray(value));
+				Object[] array = asArray(value);
+				if (ArrayUtils.isNotEmpty(array)) {
+					criteria.in(array);
+				}
 			}
 		},
 		REGEX{
@@ -149,15 +156,6 @@ public @interface QueryField {
 					} else {
 						criteria.exists().not();
 					}
-				}
-			}
-		},
-		BOOLEAN{
-			@Override
-			public void doFrom(Criteria criteria, Object value) {
-				if (value instanceof Boolean) {
-					boolean val = (boolean) value;
-					criteria.is(val);
 				}
 			}
 		},

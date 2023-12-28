@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
  * @author Niklas Herder
  */
 @ExtendWith(MockitoExtension.class)
-public class ElasticsearchStringQueryUnitTests extends ElasticsearchStringQueryUnitTestBase {
+public class ElasticsearchStringQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 
 	@Mock
 	ElasticsearchOperations operations;

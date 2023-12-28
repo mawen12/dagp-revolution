@@ -19,7 +19,7 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import com.mawen.search.client.request.RequestConverter;
 import com.mawen.search.core.mapping.IndexCoordinates;
-import com.mawen.search.core.query.ElasticsearchPartQueryIntegrationTests;
+import com.mawen.search.repository.query.ElasticsearchPartQueryIntegrationTests;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
 import com.mawen.search.utils.JsonUtils;

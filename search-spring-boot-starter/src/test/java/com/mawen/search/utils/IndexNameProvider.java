@@ -42,9 +42,6 @@ public class IndexNameProvider {
 		return indexName;
 	}
 
-	/**
-	 * @since 4.4
-	 */
 	public String getPrefix() {
 		return prefix;
 	}

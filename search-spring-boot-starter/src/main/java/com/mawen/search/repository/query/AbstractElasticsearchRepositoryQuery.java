@@ -97,7 +97,7 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 		Object result = null;
 
 		if (isDeleteQuery()) { // delete
-			elasticsearchOperations.delete(query, clazz, index);
+			result = elasticsearchOperations.delete(query, clazz, index).getDeleted();
 		}
 		else if (isCountQuery()) { // count
 			result = elasticsearchOperations.count(query, clazz, index);

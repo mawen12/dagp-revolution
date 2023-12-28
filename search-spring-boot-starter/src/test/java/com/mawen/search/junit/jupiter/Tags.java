@@ -15,9 +15,6 @@
  */
 package com.mawen.search.junit.jupiter;
 
-/**
- * @author Peter-Josef Meisch
- */
 public interface Tags {
 	String INTEGRATION_TEST = "integration-test";
 }

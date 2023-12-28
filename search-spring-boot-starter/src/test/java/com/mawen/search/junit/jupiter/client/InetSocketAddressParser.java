@@ -20,22 +20,8 @@ import java.net.InetSocketAddress;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-/**
- * Utility to parse endpoints in {@code host:port} format into {@link InetSocketAddress}.
- *
- * @author Mark Paluch
- * @since 3.2
- */
 public class InetSocketAddressParser {
 
-	/**
-	 * Parse a host and port string into a {@link InetSocketAddress}.
-	 *
-	 * @param hostPortString Hostname/IP address and port formatted as {@code host:port} or {@code host}.
-	 * @param defaultPort default port to apply if {@code hostPostString} does not contain a port.
-	 * @return a {@link InetSocketAddress} that is unresolved to avoid DNS lookups.
-	 * @see InetSocketAddress#createUnresolved(String, int)
-	 */
 	public static InetSocketAddress parse(String hostPortString, int defaultPort) {
 
 		Assert.notNull(hostPortString, "HostPortString must not be null");
@@ -74,13 +60,6 @@ public class InetSocketAddressParser {
 		return InetSocketAddress.createUnresolved(host, port);
 	}
 
-	/**
-	 * Parses a bracketed host-port string, throwing IllegalArgumentException if parsing fails.
-	 *
-	 * @param hostPortString the full bracketed host-port specification. Post might not be specified.
-	 * @return an array with 2 strings: host and port, in that order.
-	 * @throws IllegalArgumentException if parsing the bracketed host-port string fails.
-	 */
 	private static String[] getHostAndPortFromBracketedHost(String hostPortString) {
 
 		Assert.isTrue(hostPortString.charAt(0) == '[',
@@ -107,10 +86,6 @@ public class InetSocketAddressParser {
 		}
 	}
 
-	/**
-	 * @param port the port number
-	 * @return {@literal true} for valid port numbers.
-	 */
 	private static boolean isValidPort(int port) {
 		return port >= 0 && port <= 65535;
 	}

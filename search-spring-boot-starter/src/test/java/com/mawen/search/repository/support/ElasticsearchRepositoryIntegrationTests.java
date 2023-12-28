@@ -1,23 +1,41 @@
 package com.mawen.search.repository.support;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.mapping.Property;
+import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
+import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
+import co.elastic.clients.elasticsearch.indices.ElasticsearchIndicesClient;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mawen.search.UncategorizedElasticsearchException;
-import com.mawen.search.core.ElasticsearchOperations;
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.junit.jupiter.SpringIntegrationTest;
 import com.mawen.search.repository.ElasticsearchRepository;
+import com.mawen.search.repository.support.ElasticsearchRepositoryIntegrationTests.ComplexEntity.ModifyType;
 import com.mawen.search.utils.IndexNameProvider;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.assertj.core.api.Assertions;
+import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +46,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.util.StreamUtils;
 import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
 import static com.mawen.search.utils.IdGenerator.*;
 import static org.assertj.core.api.Assertions.*;
@@ -45,7 +64,8 @@ import static org.assertj.core.api.Assertions.*;
 abstract class ElasticsearchRepositoryIntegrationTests {
 
 	@Autowired private SampleElasticsearchRepository repository;
-	@Autowired private ElasticsearchOperations operations;
+	@Autowired private ComplexElasticsearchRepository complexRepository;
+	@Autowired private ElasticsearchClient client;
 	@Autowired private IndexNameProvider indexNameProvider;
 
 	@BeforeEach
@@ -349,10 +369,9 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		repository.saveAll(Arrays.asList(sampleEntity1, sampleEntity2, sampleEntity3));
 
 		// when
-		List<SampleEntity> result = repository.deleteByAvailable(true);
+		repository.deleteByAvailable(true);
 
 		// then
-		assertThat(result).hasSize(2);
 		Iterable<SampleEntity> sampleEntities = repository.findAll();
 		assertThat(sampleEntities).hasSize(1);
 	}
@@ -381,10 +400,9 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		repository.saveAll(Arrays.asList(sampleEntity1, sampleEntity2, sampleEntity3));
 
 		// when
-		List<SampleEntity> result = repository.deleteByMessage("hello world 3");
+		repository.deleteByMessage("hello world 3");
 
 		// then
-		assertThat(result).hasSize(1);
 		Iterable<SampleEntity> sampleEntities = repository.findAll();
 		assertThat(sampleEntities).hasSize(2);
 	}
@@ -586,6 +604,86 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 				.containsExactlyInAnyOrder("id-one", "id-two", "id-three");
 	}
 
+	@Test
+	void shouldSaveComplexDocument() throws IOException {
+
+		ElasticsearchIndicesClient indices = client.indices();
+
+		Map<String, Property> properties = new TreeMap<>();
+		properties.put("id", new Property("keyword", null));
+
+		@Language("JSON")
+		String propertyJson = "{\n" +
+				"  \"properties\": {\n" +
+				"    \"id\": {\n" +
+				"      \"type\": \"keyword\"\n" +
+				"    },\n" +
+				"    \"isDeleted\": {\n" +
+				"      \"type\": \"boolean\"\n" +
+				"    },\n" +
+				"    \"modifyType\": {\n" +
+				"      \"properties\": {\n" +
+				"        \"label\": {\n" +
+				"          \"type\": \"keyword\"\n" +
+				"        },\n" +
+				"        \"value\": {\n" +
+				"          \"type\": \"keyword\"\n" +
+				"        }\n" +
+				"      }\n" +
+				"    },\n" +
+				"    \"publishBatchList\": {\n" +
+				"      \"type\": \"nested\",\n" +
+				"      \"properties\": {\n" +
+				"        \"id\": {\n" +
+				"          \"type\": \"keyword\"\n" +
+				"        },\n" +
+				"        \"batchName\": {\n" +
+				"          \"type\": \"keyword\"\n" +
+				"        },\n" +
+				"        \"createTime\": {\n" +
+				"          \"type\": \"date\",\n" +
+				"          \"format\": \"epoch_millis||yyyy-MM-dd HH:mm:ss.SSS\"\n" +
+				"        }\n" +
+				"      }\n" +
+				"    },\n" +
+				"    \"hot\": {\n" +
+				"      \"type\": \"integer\"\n" +
+				"    }\n" +
+				"  }\n" +
+				"}";
+		TypeMapping mapping = TypeMapping.of(b -> b.withJson(new StringReader(propertyJson)));
+
+		CreateIndexRequest request = new CreateIndexRequest.Builder()
+				.index("test-complex-1")
+				.mappings(mapping)
+				.build();
+		indices.create(request);
+
+		assertThat(complexRepository.count()).isEqualTo(0L);
+
+		List<ComplexEntity.PublishBatch> publishBatchList = new ArrayList<>();
+		publishBatchList.add(new ComplexEntity.PublishBatch("1", "mawen_batch", new Date()));
+		publishBatchList.add(new ComplexEntity.PublishBatch("2", "jack_batch", new Date()));
+		ComplexEntity complexEntity = new ComplexEntity("1", true, ModifyType.DELETE, publishBatchList, 1);
+
+		complexRepository.save(complexEntity);
+
+		Optional<ComplexEntity> result = complexRepository.findById(complexEntity.getId());
+		assertThat(result).isPresent();
+		assertThat(result.get()).satisfies(it -> {
+			assertThat(it.getId()).isEqualTo("1");
+			assertThat(it.getHot()).isEqualTo(1);
+			assertThat(it.getModifyType()).isEqualTo(ModifyType.DELETE);
+			assertThat(it.getDeleted()).isTrue();
+			assertThat(it.getPublishBatchList()).hasSize(2);
+			IntStream.range(0, 2).forEach(i -> {
+				assertThat(it.getPublishBatchList().get(i).getId()).isEqualTo(complexEntity.getPublishBatchList().get(i).getId());
+				assertThat(it.getPublishBatchList().get(i).getBatchName()).isEqualTo(complexEntity.getPublishBatchList().get(i).getBatchName());
+				assertThat(it.getPublishBatchList().get(i).getCreateTime()).isEqualTo(complexEntity.getPublishBatchList().get(i).getCreateTime());
+			});
+		});
+	}
+
 	private static List<SampleEntity> createSampleEntitiesWithMessage(String message, int numberOfEntities) {
 
 		List<SampleEntity> sampleEntities = new ArrayList<>();
@@ -604,6 +702,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		return sampleEntities;
 	}
 
+	@Data
 	@Document(indexName = "#{@indexNameProvider.indexName()}")
 	static class SampleEntity {
 		@Nullable
@@ -616,58 +715,6 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		@Nullable private boolean available;
 		@Nullable
 		@Version private Long version;
-
-		@Nullable
-		public String getId() {
-			return id;
-		}
-
-		public void setId(@Nullable String id) {
-			this.id = id;
-		}
-
-		@Nullable
-		public String getType() {
-			return type;
-		}
-
-		public void setType(@Nullable String type) {
-			this.type = type;
-		}
-
-		@Nullable
-		public String getMessage() {
-			return message;
-		}
-
-		public void setMessage(@Nullable String message) {
-			this.message = message;
-		}
-
-		public int getRate() {
-			return rate;
-		}
-
-		public void setRate(int rate) {
-			this.rate = rate;
-		}
-
-		public boolean isAvailable() {
-			return available;
-		}
-
-		public void setAvailable(boolean available) {
-			this.available = available;
-		}
-
-		@Nullable
-		public Long getVersion() {
-			return version;
-		}
-
-		public void setVersion(@Nullable Long version) {
-			this.version = version;
-		}
 
 		@Override
 		public boolean equals(Object o) {
@@ -707,13 +754,127 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 
 		long deleteSampleEntityById(String id);
 
-		List<SampleEntity> deleteByAvailable(boolean available);
+		long deleteByAvailable(boolean available);
 
-		List<SampleEntity> deleteByMessage(String message);
+		/**
+		 * 删除方法仅支持返回数量
+		 */
+		long deleteByMessage(String message);
 
 		void deleteByType(String type);
 
 		Iterable<SampleEntity> searchById(String id);
 	}
 
+	@Document(indexName = "test-complex-1")
+	static class ComplexEntity{
+
+		@Id
+		private String id;
+
+		@Field(value = "isDeleted", type = FieldType.Boolean)
+		private Boolean isDeleted;
+
+		@Field(value = "modifyType", type = FieldType.Object)
+		private ModifyType modifyType;
+
+		@Field(value = "publishBatchList", type = FieldType.Nested)
+		private List<PublishBatch> publishBatchList;
+
+		@Field(value = "hot", type = FieldType.Integer)
+		private Integer hot;
+
+		public ComplexEntity() {
+		}
+
+		public ComplexEntity(String id, Boolean isDeleted, ModifyType modifyType, List<PublishBatch> publishBatchList, Integer hot) {
+			this.id = id;
+			this.isDeleted = isDeleted;
+			this.modifyType = modifyType;
+			this.publishBatchList = publishBatchList;
+			this.hot = hot;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public Boolean getDeleted() {
+			return isDeleted;
+		}
+
+		public void setDeleted(Boolean deleted) {
+			isDeleted = deleted;
+		}
+
+		public ModifyType getModifyType() {
+			return modifyType;
+		}
+
+		public void setModifyType(ModifyType modifyType) {
+			this.modifyType = modifyType;
+		}
+
+		public List<PublishBatch> getPublishBatchList() {
+			return publishBatchList;
+		}
+
+		public void setPublishBatchList(List<PublishBatch> publishBatchList) {
+			this.publishBatchList = publishBatchList;
+		}
+
+		public Integer getHot() {
+			return hot;
+		}
+
+		public void setHot(Integer hot) {
+			this.hot = hot;
+		}
+
+		@JsonFormat(shape = Shape.OBJECT)
+		enum ModifyType {
+
+			INSERT("新增"),
+			UPDATE("修改"),
+			DELETE("删除");
+
+			private String label;
+
+			ModifyType(String label) {
+				this.label = label;
+			}
+
+			public String getValue() {
+				return this.name();
+			}
+
+			@JsonCreator
+			public static ModifyType value(@JsonProperty("value") String value) {
+				return StringUtils.hasLength(value) ? Enum.valueOf(ModifyType.class, value) : null;
+			}
+		}
+
+		@Data
+		@NoArgsConstructor
+		@AllArgsConstructor
+		static class PublishBatch {
+
+			@Id
+			private String id;
+
+			@Field(value = "batchName", type = FieldType.Keyword)
+			private String batchName;
+
+			@Field(value = "createTime", type = FieldType.Date)
+			private Date createTime;
+		}
+	}
+
+	interface ComplexElasticsearchRepository extends ElasticsearchRepository<ComplexEntity, String> {
+
+	}
 }
