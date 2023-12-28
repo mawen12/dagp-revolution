@@ -65,6 +65,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * 基于域类型的 {@link ElasticsearchPersistentEntity}，特定 Elasticsearch 的 {@link org.springframework.data.convert.EntityConverter} 实现。
+ *
+ *
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 0.0.1
  */
@@ -72,7 +75,6 @@ import org.springframework.util.ObjectUtils;
 public class MappingElasticsearchConverter implements ElasticsearchConverter, ApplicationContextAware, InitializingBean {
 	private static final String INCOMPATIBLE_TYPES = "Cannot convert %1$s of type %2$s into an instance of %3$s! Implement a custom Converter<%2$s, %3$s> and register it with the CustomConversions.";
 	private static final String INVALID_TYPE_TO_READ = "Expected to read Document %s into type %s but didn't find a PersistentEntity for the latter!";
-
 
 	private final MappingContext<? extends ElasticsearchPersistentEntity<?>, ElasticsearchPersistentProperty> mappingContext;
 	private final GenericConversionService conversionService;
@@ -346,6 +348,9 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 
 	// endregion
 
+	/**
+	 * 简化 {@link ElasticsearchPersistentProperty} 存取值的对象
+	 */
 	static class MapValueAccessor {
 
 		final Map<String, Object> target;
@@ -404,8 +409,7 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 				if (property.isIdProperty()) {
 					((Document) target).setId(value.toString());
 				}
-
-				if (property.isVersionProperty()) {
+				else if (property.isVersionProperty()) {
 					((Document) target).setVersion((Long) value);
 				}
 			}
@@ -425,6 +429,9 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 	}
 
 
+	/**
+	 * 进行实际读操作的类。方法调用源头位于 {@link MappingElasticsearchConverter#read(Class, Document)}，该类用于在对象转换期间保存状态。
+	 */
 	@Slf4j
 	private static class Reader extends Base {
 
@@ -932,6 +939,9 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 	}
 
 
+	/**
+	 * 进行实际写操作的类，方法调用源头位于 {@link MappingElasticsearchConverter#write(Object, Document)}，该类用于在对象转换期间保存状态。
+	 */
 	@Slf4j
 	private static class Writer extends Base {
 
@@ -966,13 +976,11 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 				sink.putAll((Map<String, Object>) source);
 				return;
 			}
-			Class<?> entityType = ClassUtils.getUserClass(source.getClass());
-			TypeInformation<?> typeInformation = ClassTypeInformation.from(entityType);
-			writeInternal(source, sink, typeInformation);
+
+			writeInternal(source, sink);
 		}
 
-		private void writeInternal(@Nullable Object source, Map<String, Object> sink,
-				@Nullable TypeInformation<?> typeInformation) {
+		private void writeInternal(@Nullable Object source, Map<String, Object> sink) {
 
 			if (null == source) {
 				return;
@@ -1019,12 +1027,6 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 			writeProperties(entity, accessor, new MapValueAccessor(sink));
 		}
 
-		private boolean requiresTypeHint(Class<?> type) {
-
-			return !isSimpleType(type) && !ClassUtils.isAssignable(Collection.class, type)
-					&& !conversions.hasCustomWriteTarget(type, Document.class);
-		}
-
 		private boolean isSimpleType(Object value) {
 			return isSimpleType(value.getClass());
 		}
@@ -1033,13 +1035,7 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 			return !Map.class.isAssignableFrom(type) && conversions.isSimpleType(type);
 		}
 
-		/**
-		 * Writes the given {@link Map} to the given {@link Document} considering the given {@link TypeInformation}.
-		 *
-		 * @param source       must not be {@literal null}.
-		 * @param sink         must not be {@literal null}.
-		 * @param propertyType must not be {@literal null}.
-		 */
+
 		private Map<String, Object> writeMapInternal(Map<?, ?> source, Map<String, Object> sink,
 				TypeInformation<?> propertyType) {
 
@@ -1060,10 +1056,8 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 					}
 					else {
 						Map<String, Object> document = Document.create();
-						TypeInformation<?> valueTypeInfo = propertyType.isMap() ? propertyType.getMapValueType()
-								: ClassTypeInformation.OBJECT;
-						writeInternal(value, document, valueTypeInfo);
 
+						writeInternal(value, document);
 						sink.put(simpleKey, document);
 					}
 				}
@@ -1075,13 +1069,7 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 			return sink;
 		}
 
-		/**
-		 * Populates the given {@link Collection sink} with converted values from the given {@link Collection source}.
-		 *
-		 * @param source the collection to create a {@link Collection} for, must not be {@literal null}.
-		 * @param type   the {@link TypeInformation} to consider or {@literal null} if unknown.
-		 * @param sink   the {@link Collection} to write to.
-		 */
+
 		@SuppressWarnings("unchecked")
 		private List<Object> writeCollectionInternal(Collection<?> source, @Nullable TypeInformation<?> type,
 				Collection<?> sink) {
@@ -1107,7 +1095,7 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 				}
 				else {
 					Map<String, Object> document = Document.create();
-					writeInternal(element, document, componentType);
+					writeInternal(element, document);
 					collection.add(document);
 				}
 			}
@@ -1295,7 +1283,9 @@ public class MappingElasticsearchConverter implements ElasticsearchConverter, Ap
 		}
 	}
 
-
+	/**
+	 * {@link Reader} 和 {@link Writer} 的基类，用于保存通用属性
+	 */
 	private static class Base {
 		protected final MappingContext<? extends ElasticsearchPersistentEntity<?>, ElasticsearchPersistentProperty> mappingContext;
 		protected final GenericConversionService conversionService;

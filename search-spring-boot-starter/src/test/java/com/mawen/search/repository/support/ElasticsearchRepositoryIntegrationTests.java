@@ -23,16 +23,22 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mawen.search.UncategorizedElasticsearchException;
+import com.mawen.search.core.annotation.DateFormat;
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
+import com.mawen.search.core.annotation.ValueConverter;
+import com.mawen.search.core.mapping.PropertyValueConverter;
 import com.mawen.search.junit.jupiter.SpringIntegrationTest;
 import com.mawen.search.repository.ElasticsearchRepository;
 import com.mawen.search.repository.support.ElasticsearchRepositoryIntegrationTests.ComplexEntity.ModifyType;
 import com.mawen.search.utils.IndexNameProvider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.intellij.lang.annotations.Language;
@@ -63,10 +69,14 @@ import static org.assertj.core.api.Assertions.*;
 @SpringIntegrationTest
 abstract class ElasticsearchRepositoryIntegrationTests {
 
-	@Autowired private SampleElasticsearchRepository repository;
-	@Autowired private ComplexElasticsearchRepository complexRepository;
-	@Autowired private ElasticsearchClient client;
-	@Autowired private IndexNameProvider indexNameProvider;
+	@Autowired
+	private SampleElasticsearchRepository repository;
+	@Autowired
+	private ComplexElasticsearchRepository complexRepository;
+	@Autowired
+	private ElasticsearchClient client;
+	@Autowired
+	private IndexNameProvider indexNameProvider;
 
 	@BeforeEach
 	void before() {
@@ -609,9 +619,6 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 
 		ElasticsearchIndicesClient indices = client.indices();
 
-		Map<String, Property> properties = new TreeMap<>();
-		properties.put("id", new Property("keyword", null));
-
 		@Language("JSON")
 		String propertyJson = "{\n" +
 				"  \"properties\": {\n" +
@@ -706,15 +713,21 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 	@Document(indexName = "#{@indexNameProvider.indexName()}")
 	static class SampleEntity {
 		@Nullable
-		@Id private String id;
+		@Id
+		private String id;
 		@Nullable
-		@Field(type = FieldType.Text) private String type;
+		@Field(type = FieldType.Text)
+		private String type;
 		@Nullable
-		@Field(type = FieldType.Text) private String message;
-		@Nullable private int rate;
-		@Nullable private boolean available;
+		@Field(type = FieldType.Text)
+		private String message;
 		@Nullable
-		@Version private Long version;
+		private int rate;
+		@Nullable
+		private boolean available;
+		@Nullable
+		@Version
+		private Long version;
 
 		@Override
 		public boolean equals(Object o) {
@@ -767,7 +780,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 	}
 
 	@Document(indexName = "test-complex-1")
-	static class ComplexEntity{
+	static class ComplexEntity {
 
 		@Id
 		private String id;
@@ -776,6 +789,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		private Boolean isDeleted;
 
 		@Field(value = "modifyType", type = FieldType.Object)
+		@ValueConverter(ModifyTypeConverter.class)
 		private ModifyType modifyType;
 
 		@Field(value = "publishBatchList", type = FieldType.Nested)
@@ -835,6 +849,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 			this.hot = hot;
 		}
 
+		@Getter
 		@JsonFormat(shape = Shape.OBJECT)
 		enum ModifyType {
 
@@ -869,8 +884,27 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 			@Field(value = "batchName", type = FieldType.Keyword)
 			private String batchName;
 
-			@Field(value = "createTime", type = FieldType.Date)
+			@Field(value = "createTime", type = FieldType.Date, format = DateFormat.epoch_millis)
 			private Date createTime;
+		}
+	}
+
+
+	enum ModifyTypeConverter implements PropertyValueConverter {
+
+		INSTANCE;
+
+		@Override
+		public Object write(Object value) {
+			return value;
+		}
+
+		@Override
+		public Object read(Object value) {
+			if (value instanceof Map) {
+				return ModifyType.value(((Map<String, String>) value).get("value"));
+			}
+			return value;
 		}
 	}
 
