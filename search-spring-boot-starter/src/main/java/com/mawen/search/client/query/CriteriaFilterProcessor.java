@@ -34,6 +34,10 @@ public class CriteriaFilterProcessor {
 
 		for (Criteria chainedCriteria : criteria.getCriteriaChain()) {
 
+			if (chainedCriteria.getFilterCriteriaEntries().isEmpty()) {
+				continue;
+			}
+
 			if (chainedCriteria.isOr()) {
 				BoolQuery.Builder boolQueryBuilder = QueryBuilders.bool();
 				queriesForEntries(chainedCriteria).forEach(boolQueryBuilder::should);

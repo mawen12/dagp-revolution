@@ -21,6 +21,8 @@ import com.mawen.search.core.annotation.ParamQuery;
 import com.mawen.search.core.annotation.QueryField;
 import com.mawen.search.core.annotation.QueryField.Type;
 import com.mawen.search.core.annotation.ValueConverter;
+import com.mawen.search.core.domain.Criteria;
+import com.mawen.search.core.domain.Criteria.Operator;
 import com.mawen.search.core.domain.Range;
 import com.mawen.search.core.mapping.PropertyValueConverter;
 import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
@@ -79,8 +81,6 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 				.withJson(new StringReader(sampleIndex))
 				.index(indexNameProvider.indexName()));
 		indices.create(request);
-
-
 	}
 
 	@Test
@@ -133,7 +133,24 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 	@Test
 	void shouldQueryKeyWordCorrectly() {
 
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "发证机关国家或地区", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
 
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setKeyword("地区");
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(2);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1, entity2));
 	}
 
 
@@ -177,7 +194,7 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		private List<PublishBatch> publishBatchList;
 
 		@Field(value = "publishState", type = FieldType.Object)
-		@ValueConverter(PublishState.class)
+		@ValueConverter(PublishStateConverter.class)
 		private PublishState publishState;
 
 		@Field(value = "timestamp", type = FieldType.Date, format = DateFormat.epoch_millis)
@@ -234,7 +251,7 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 
 		@Getter
 		@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-		enum PublishState implements PropertyValueConverter {
+		enum PublishState {
 
 			UNPUBLISHED("未发布"),
 			PROCESSING("流转中"),
@@ -254,20 +271,23 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 			public static PublishState value(@JsonProperty("value") String value) {
 				return StringUtils.hasLength(value) ? Enum.valueOf(PublishState.class, value) : null;
 			}
-
-			@Override
-			public Object write(Object value) {
-				return value;
-			}
-
-			@Override
-			public Object read(Object value) {
-				if (value instanceof Map) {
-					return value(((Map<String, String>) value).get("value"));
-				}
-				return value;
-			}
 		}
+
+	 	static class PublishStateConverter implements PropertyValueConverter {
+
+		    @Override
+		    public Object write(Object value) {
+			    return value;
+		    }
+
+		    @Override
+		    public Object read(Object value) {
+			    if (value instanceof Map) {
+				    return PublishState.value(((Map<String, String>) value).get("value"));
+			    }
+			    return value;
+		    }
+	    }
 	}
 
 	@Data
@@ -278,10 +298,10 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		@QueryField(value = "id")
 		private String id;
 
-		@QueryField(value = "ids", type = Type.IN)
+		@QueryField(value = "id", type = Type.IN)
 		private List<String> ids;
 
-		@QueryField(value = {"chineseName", "englishName"})
+		@QueryField(value = {"chineseName", "englishName"}, relation = Operator.OR)
 		private String keyword;
 
 		@QueryField(value = "chineseName")

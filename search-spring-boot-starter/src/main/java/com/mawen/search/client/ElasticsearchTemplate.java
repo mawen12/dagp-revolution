@@ -285,7 +285,9 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 	}
 
 	protected <T> SearchHits<T> doSearch(Query query, Class<T> clazz, IndexCoordinates index) {
+
 		SearchRequest searchRequest = requestConverter.searchRequest(query, routingResolver.getRouting(), clazz, index, false);
+
 		SearchResponse<EntityAsMap> searchResponse = execute(client -> client.search(searchRequest, EntityAsMap.class));
 
 		// noinspection DuplicatedCode

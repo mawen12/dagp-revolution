@@ -46,17 +46,17 @@ public class ElasticsearchParamQueryCreator extends AbstractParamQueryCreator<Cr
 
 	private Criteria from(Object value, QueryField annotation) {
 
-		Criteria current = null;
+		Criteria current = new Criteria();
+		Criteria.Operator relation = annotation.relation();
 		for (String field : annotation.value()) {
 
-			Criteria newCriteria = new Criteria(field);
-			annotation.type().from(newCriteria, value);
-
-			if (current != null) {
-				current.and(newCriteria);
+			if (relation == Criteria.Operator.OR) {
+				current = current.or(field);
+			} else {
+				current = current.and(field);
 			}
 
-			current = newCriteria;
+			annotation.type().from(current, value);
 		}
 
 		return current;

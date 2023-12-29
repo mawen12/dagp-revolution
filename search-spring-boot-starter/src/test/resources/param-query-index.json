@@ -15,8 +15,7 @@
             "type": "keyword",
             "ignore_above": 256
           }
-        },
-        "analyzer": "ik_max_word"
+        }
       },
       "assetType": {
         "properties": {
@@ -30,8 +29,7 @@
                 "type": "keyword",
                 "ignore_above": 256
               }
-            },
-            "analyzer": "ik_max_word"
+            }
           }
         }
       },

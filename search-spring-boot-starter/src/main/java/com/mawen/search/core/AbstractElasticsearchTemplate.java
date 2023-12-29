@@ -163,7 +163,13 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 
 		Assert.notNull(entities, "entities must not be null");
 
-		return save(entities, getIndexCoordinatesFor(null));
+		Iterator<T> iterator = entities.iterator();
+		IndexCoordinates index = null;
+		if (iterator.hasNext()) {
+			index = getIndexCoordinatesFor(iterator.next().getClass());
+		}
+
+		return save(entities, index);
 	}
 
 	@Override
