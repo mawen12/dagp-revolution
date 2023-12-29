@@ -698,7 +698,6 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 	}
 
 	private interface SampleRepository extends Repository<Person, String> {
-		List<Person> listByQuery(IgnoreQuery query);
 		List<Person> listByQuery(@ParamQuery NullQuery query);
 		List<Person> listByQuery(@ParamQuery NonQueryFieldQuery query);
 		List<Person> listByQuery(@ParamQuery SingleFieldQuery query);

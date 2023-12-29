@@ -1,5 +1,7 @@
 package com.mawen.search;
 
+import org.springframework.lang.Nullable;
+
 /**
  * represent {@code response=404}
  *
@@ -10,5 +12,9 @@ public class ResourceNotFoundException extends SearchException {
 
 	public ResourceNotFoundException(String message) {
 		super(message);
+	}
+
+	public ResourceNotFoundException(@Nullable String message, @Nullable Throwable cause) {
+		super(message, cause);
 	}
 }

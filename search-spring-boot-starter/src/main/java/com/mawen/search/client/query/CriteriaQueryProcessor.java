@@ -269,7 +269,6 @@ public class CriteriaQueryProcessor {
 				break;
 			case MATCHES_ALL:
 				queryBuilder.match(matchQuery(fieldName, value.toString(), Operator.And, boost));
-
 				break;
 			case IN:
 				if (value instanceof Iterable<?>) {

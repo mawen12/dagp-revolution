@@ -1,0 +1,43 @@
+{
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "isDeleted": {
+        "type": "boolean"
+      },
+      "modifyType": {
+        "properties": {
+          "label": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "keyword"
+          }
+        }
+      },
+      "publishBatchList": {
+        "type": "nested",
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "batchName": {
+            "type": "keyword"
+          },
+          "createTime": {
+            "type": "date",
+            "format": "epoch_millis||yyyy-MM-dd HH:mm:ss.SSS"
+          }
+        }
+      },
+      "hot": {
+        "type": "integer"
+      }
+    }
+  }
+}

@@ -33,7 +33,6 @@ public class ElasticsearchParameters extends Parameters<ElasticsearchParameters,
 			}
 			if (parameter.isIndexCoordinatesParameter()) {
 				indexCoordinatesIndex = i;
-				continue;
 			}
 		}
 

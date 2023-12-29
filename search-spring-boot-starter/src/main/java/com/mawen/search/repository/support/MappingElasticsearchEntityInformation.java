@@ -22,7 +22,7 @@ public class MappingElasticsearchEntityInformation<T, ID> extends PersistentEnti
 
 	@Override
 	public boolean isDynamicIndex() {
-		return false;
+		return persistentEntity.isDynamicIndex();
 	}
 
 	@Override

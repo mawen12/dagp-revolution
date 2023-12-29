@@ -15,6 +15,8 @@
  */
 package com.mawen.search.utils;
 
+import com.mawen.search.core.mapping.IndexCoordinates;
+
 /**
  * Class providing an index name with a prefix and a index number
  *
@@ -40,6 +42,10 @@ public class IndexNameProvider {
 
 	public String indexName() {
 		return indexName;
+	}
+
+	public IndexCoordinates index() {
+		return IndexCoordinates.of(indexName());
 	}
 
 	public String getPrefix() {

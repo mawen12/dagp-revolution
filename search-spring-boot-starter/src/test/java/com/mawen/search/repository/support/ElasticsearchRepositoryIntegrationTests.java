@@ -674,6 +674,7 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		ComplexEntity complexEntity = new ComplexEntity("1", true, ModifyType.DELETE, publishBatchList, 1);
 
 		complexRepository.save(complexEntity);
+		assertThat(complexRepository.count()).isEqualTo(1L);
 
 		Optional<ComplexEntity> result = complexRepository.findById(complexEntity.getId());
 		assertThat(result).isPresent();

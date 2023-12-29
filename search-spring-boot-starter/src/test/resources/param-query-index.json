@@ -1,0 +1,132 @@
+{
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "assetCode": {
+        "type": "keyword"
+      },
+      "assetMean": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        },
+        "analyzer": "ik_max_word"
+      },
+      "assetType": {
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            },
+            "analyzer": "ik_max_word"
+          }
+        }
+      },
+      "chineseName": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "englishName": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "extendedAttrs": {
+        "type": "nested",
+        "properties": {
+          "keyCode": {
+            "type": "keyword"
+          },
+          "keyLabel": {
+            "type": "keyword"
+          },
+          "pathIds": {
+            "type": "keyword"
+          },
+          "pathLabels": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "valueId": {
+            "type": "keyword"
+          },
+          "valueLabel": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "id": {
+        "type": "keyword"
+      },
+      "isDeleted": {
+        "type": "boolean"
+      },
+      "publishBatchList": {
+        "type": "nested",
+        "properties": {
+          "batchName": {
+            "type": "keyword"
+          },
+          "createTime": {
+            "type": "date",
+            "format": "epoch_millis||yyyy-MM-dd HH:mm:ss.SSS"
+          },
+          "id": {
+            "type": "keyword"
+          }
+        }
+      },
+      "publishState": {
+        "properties": {
+          "label": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "keyword"
+          }
+        }
+      },
+      "timestamp": {
+        "type": "date",
+        "format": "epoch_millis||yyyy-MM-dd HH:mm:ss.SSS"
+      },
+      "viewCount": {
+        "type": "integer",
+        "index": false
+      }
+    }
+  }
+}

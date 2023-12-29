@@ -163,12 +163,7 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 
 		Assert.notNull(entities, "entities must not be null");
 
-		Iterator<T> iterator = entities.iterator();
-		if (iterator.hasNext()) {
-			return save(entities, getIndexCoordinatesFor(iterator.next().getClass()));
-		}
-
-		return entities;
+		return save(entities, getIndexCoordinatesFor(null));
 	}
 
 	@Override
@@ -176,6 +171,11 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 
 		Assert.notNull(entities, "entities must not be null");
 		Assert.notNull(index, "index must not be null");
+
+		Iterator<T> it = entities.iterator();
+		if (!it.hasNext()) {
+			return entities;
+		}
 
 		List<IndexQuery> indexQueries = Streamable.of(entities).stream().map(this::getIndexQuery)
 				.collect(Collectors.toList());
@@ -204,7 +204,6 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 				.collect(Collectors.toList()); //
 	}
 
-	@SafeVarargs
 	@Override
 	public final <T> Iterable<T> save(T... entities) {
 		return save(Arrays.asList(entities));

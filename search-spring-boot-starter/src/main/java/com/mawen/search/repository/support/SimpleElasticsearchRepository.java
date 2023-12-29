@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ import org.springframework.util.Assert;
 @Slf4j
 public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchRepository<T, ID> {
 
-	private static final Function<Class<?>, String> messageFunction = clazz -> String.format("The Entity %s is dynamic index, should use count(IndexCoordinates index) replace it.", clazz);
+	private static final BiFunction<Class<?>, String, String> messageFunction = (clazz, methodInfo) -> String.format("The Entity %s is dynamic index, should use %s replace it.", clazz, methodInfo);
 
 	protected ElasticsearchOperations operations;
 	protected IndexOperations indexOperations;
@@ -63,7 +64,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 
 	@Override
 	public Optional<T> findById(ID id) {
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "findById(ID id, IndexCoordinates index)"));
 
 		return findById(id, getIndexCoordinates(null));
 	}
@@ -75,7 +76,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 
 	@Override
 	public Iterable<T> findAll() {
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "findAll(Sort sort, IndexCoordinates index)"));
 
 		int itemCount = (int) this.count();
 
@@ -88,7 +89,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	@Override
 	public Page<T> findAll(Pageable pageable) {
 
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "findAll(Pageable pageable, IndexCoordinates index)"));
 		return findAll(pageable, getIndexCoordinates(null));
 	}
 
@@ -108,7 +109,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	@Override
 	public Iterable<T> findAll(Sort sort) {
 
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "findAll(Sort sort, IndexCoordinates index)"));
 
 		return findAll(sort, getIndexCoordinates(null));
 	}
@@ -118,7 +119,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 
 		Assert.notNull(sort, "sort must not be null");
 
-		int itemCount = (int) this.count();
+		int itemCount = (int) this.count(index);
 
 		if (itemCount == 0) {
 			return new PageImpl<>(Collections.emptyList());
@@ -134,7 +135,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	@Override
 	public Iterable<T> findAllById(Iterable<ID> ids) {
 
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "findAllById(Iterable<? extends ID> ids, IndexCoordinates index)"));
 
 		return findAllById(ids, getIndexCoordinates(null));
 	}
@@ -156,7 +157,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	@Override
 	public long count() {
 
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "count(IndexCoordinates index)"));
 		return count(getIndexCoordinates(null));
 	}
 
@@ -193,7 +194,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	@Override
 	public <S extends T> Iterable<S> saveAll(Iterable<S> entities) {
 
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "saveAll(Iterable<S> entities, IndexCoordinates index)"));
 		Assert.notNull(entities, "Cannot insert 'null' as a List.");
 
 		executeAndRefresh(operations -> operations.save(entities));
@@ -206,14 +207,14 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 
 		Assert.notNull(entities, "Cannot insert 'null' as a List.");
 
-		executeAndRefresh(operations -> operations.save(entities, getIndexCoordinates(null)));
+		executeAndRefresh(operations -> operations.save(entities, index));
 		return entities;
 	}
 
 	@Override
 	public boolean existsById(ID id) {
 
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "existsById(ID id, IndexCoordinates index)"));
 
 		return existsById(id, getIndexCoordinates(null));
 	}
@@ -227,7 +228,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	@Override
 	public void deleteById(ID id) {
 
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "deleteById(ID id, IndexCoordinates index)"));
 		Assert.notNull(id, "Cannot delete entity with id 'null'.");
 
 		doDelete(id, getIndexCoordinates(null));
@@ -260,7 +261,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	@Override
 	public void deleteAllById(Iterable<? extends ID> ids) {
 
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "deleteAllById(Iterable<? extends ID> ids, IndexCoordinates index)"));
 		Assert.notNull(ids, "Cannot delete 'null' list.");
 
 		List<String> idStrings = new ArrayList<>();
@@ -307,7 +308,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	@Override
 	public void deleteAll() {
 
-		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass));
+		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "deleteAll(IndexCoordinates index)"));
 
 		deleteAll(getIndexCoordinates(null));
 	}
@@ -315,7 +316,7 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 	@Override
 	public void deleteAll(IndexCoordinates index) {
 
-		executeAndRefresh(operations -> operations.delete(Query.findAll(), entityClass, getIndexCoordinates(null)));
+		executeAndRefresh(operations -> operations.delete(Query.findAll(), entityClass, index));
 	}
 
 	private List<ID> getEntityIds(Iterable<? extends T> entities) {
