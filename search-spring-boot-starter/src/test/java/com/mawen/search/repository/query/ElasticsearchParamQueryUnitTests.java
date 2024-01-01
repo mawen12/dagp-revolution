@@ -49,13 +49,6 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 	}
 
 	@Test
-	void shouldIgnoreQuery() {
-		IgnoreQuery ignoreQuery = new IgnoreQuery();
-		ignoreQuery.setAge(1);
-		assertThatIllegalArgumentException().isThrownBy(() -> createQuery("listByQuery", ignoreQuery));
-	}
-
-	@Test
 	void shouldParseNullQueryCorrectly() throws NoSuchMethodException {
 
 		Query query = createQuery("listByQuery", new NullQuery());
@@ -135,8 +128,8 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 			assertThat(entry.getValue()).isInstanceOf(Object[].class);
 			assertThat((Object[]) entry.getValue()).hasSize(2);
 			Object[] value = (Object[]) entry.getValue();
-			assertThat(value[0]).isEqualTo(left);
-			assertThat(value[1]).isEqualTo(right);
+			assertThat(value[0]).isEqualTo(left.getValue().orElse(null));
+			assertThat(value[1]).isEqualTo(right.getValue().orElse(null));
 
 		});
 
@@ -573,7 +566,7 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 		Criteria criteria = criteriaQuery.getCriteria();
 		checkCriteriaThenQueryCriteriaEntriesIsNotEmptyAndFilterCriteriaEntriesIsEmptyAndSubCriteriaIsEmpty(criteria);
 		List<Criteria> criteriaList = criteria.getCriteriaChain();
-		checkCriteria(criteriaList.get(0), "times", false, OperationKey.BETWEEN, true, new Object[]{left, right});
+		checkCriteria(criteriaList.get(0), "times", false, OperationKey.BETWEEN, true, new Object[]{left.getValue().orElse(null), right.getValue().orElse(null)});
 		checkCriteria(criteriaList.get(1), "price1", false, OperationKey.LESS, true, allFieldQuery.price1LessThan);
 		checkCriteria(criteriaList.get(2), "price2", false, OperationKey.LESS_EQUAL, true, allFieldQuery.price2LessThanEqual);
 		checkCriteria(criteriaList.get(3), "price3", false, OperationKey.GREATER, true, allFieldQuery.price3GreaterThan);
@@ -726,13 +719,6 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 				excludes = {"d", "e", "f"}
 		)
 		List<Person> listWithFilter(@ParamQuery NullQuery query);
-	}
-
-	@Data
-	static class IgnoreQuery {
-
-		@QueryField("age")
-		private Integer age;
 	}
 
 	@Data

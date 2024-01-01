@@ -46,7 +46,7 @@ public @interface QueryField {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				Range<Object> range = asRange(value);
-				criteria.between(range.getLowerBound(), range.getUpperBound());
+				criteria.between(range.getLowerBound().getValue().orElse(null), range.getUpperBound().getValue().orElse(null));
 			}
 		},
 		LESS_THAN{

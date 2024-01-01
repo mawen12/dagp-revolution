@@ -2,6 +2,7 @@ package com.mawen.search.repository.support;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -197,7 +198,11 @@ public class SimpleElasticsearchRepository<T, ID> implements ElasticsearchReposi
 		Assert.isTrue(!isDynamicIndex, () -> messageFunction.apply(entityClass, "saveAll(Iterable<S> entities, IndexCoordinates index)"));
 		Assert.notNull(entities, "Cannot insert 'null' as a List.");
 
-		executeAndRefresh(operations -> operations.save(entities));
+		Iterator<S> iterator = entities.iterator();
+		if (iterator.hasNext()) {
+			S next = iterator.next();
+			executeAndRefresh(operations -> operations.save(entities, getIndexCoordinates(next)));
+		}
 
 		return entities;
 	}

@@ -13,7 +13,9 @@ import java.util.stream.StreamSupport;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
+import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
 import co.elastic.clients.elasticsearch.indices.ElasticsearchIndicesClient;
+import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
@@ -55,6 +57,11 @@ class ElasticsearchRepositoryDynamicIntegrationTest {
 		indexNameProvider.increment();
 
 		ElasticsearchIndicesClient indices = client.indices();
+		ExistsRequest existsRequest = ExistsRequest.of(f -> f.index(Arrays.asList(indexNameProvider.indexName())));
+		if (indices.exists(existsRequest).value()) {
+			indices.delete(DeleteIndexRequest.of(f -> f.index(indexNameProvider.indexName())));
+		}
+
 		String sampleIndex = ResourceUtil.readFileFromClasspath("sample-dynamic-index.json");
 		CreateIndexRequest request = CreateIndexRequest.of(c -> c//
 				.withJson(new StringReader(sampleIndex))

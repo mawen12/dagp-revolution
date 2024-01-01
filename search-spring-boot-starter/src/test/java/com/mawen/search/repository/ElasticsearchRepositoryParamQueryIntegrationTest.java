@@ -2,14 +2,21 @@ package com.mawen.search.repository;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
+import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
 import co.elastic.clients.elasticsearch.indices.ElasticsearchIndicesClient;
+import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,6 +31,7 @@ import com.mawen.search.core.annotation.ValueConverter;
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.Criteria.Operator;
 import com.mawen.search.core.domain.Range;
+import com.mawen.search.core.domain.Range.Bound;
 import com.mawen.search.core.mapping.PropertyValueConverter;
 import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
 import com.mawen.search.junit.jupiter.SpringIntegrationTest;
@@ -76,6 +84,12 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		indexNameProvider.increment();
 
 		ElasticsearchIndicesClient indices = client.indices();
+
+		ExistsRequest existsRequest = ExistsRequest.of(f -> f.index(Arrays.asList(indexNameProvider.indexName())));
+		if (indices.exists(existsRequest).value()) {
+			indices.delete(DeleteIndexRequest.of(f -> f.index(indexNameProvider.indexName())));
+		}
+
 		String sampleIndex = ResourceUtil.readFileFromClasspath("param-query-index.json");
 		CreateIndexRequest request = CreateIndexRequest.of(c -> c//
 				.withJson(new StringReader(sampleIndex))
@@ -84,7 +98,7 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 	}
 
 	@Test
-	void shouldQueryIdCorrectly() {
+	void shouldQueryByIdCorrectly() {
 
 		// given
 		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
@@ -105,7 +119,7 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 	}
 
 	@Test
-	void shouldQueryIdsCorrectly() {
+	void shouldQueryByIdsCorrectly() {
 
 		// given
 		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
@@ -131,7 +145,7 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 	}
 
 	@Test
-	void shouldQueryKeyWordCorrectly() {
+	void shouldQueryByKeyWordCorrectly() {
 
 		// given
 		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
@@ -153,6 +167,559 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1, entity2));
 	}
 
+	@Test
+	void shouldQueryByChineseNameCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setChineseName("发证机关国家或地区");
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1));
+	}
+
+	@Test
+	void shouldQueryByChineseNamePrefixCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setChineseNamePrefix("发证");
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Collections.singletonList(entity1));
+	}
+
+	@Test
+	void shouldQueryByChineseNameSuffixCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setChineseNameSuffix("代码");
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Collections.singletonList(entity2));
+	}
+
+	@Test
+	void shouldQueryByChineseNameLikeCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setChineseNameLike("国家");
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Collections.singletonList(entity1));
+	}
+
+	@Test
+	void shouldQueryByEnglishNameCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setEnglishName("Job Sequence Code");
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Collections.singletonList(entity2));
+	}
+
+	@Test
+	void shouldQueryByEnglishNamePrefixCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setEnglishNamePrefix("Job");
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Collections.singletonList(entity2));
+	}
+
+	@Test
+	void shouldQueryByEnglishNameSuffixCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setEnglishNameSuffix("Code");
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Collections.singletonList(entity2));
+	}
+
+	@Test
+	void shouldQueryByEnglishNameLike() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setEnglishNameLike("Sequence");
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Collections.singletonList(entity2));
+	}
+
+	@Test
+	void shouldQueryByAssetCodeCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setAssetCode("TEC_00000000000448");
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Collections.singletonList(entity1));
+	}
+
+	@Test
+	void shouldQueryByAssetCodesCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setAssetCodes(Arrays.asList("TEC_00000000000448", "TEC_00000000000522"));
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(2);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1, entity2));
+	}
+
+	@Test
+	void shouldQueryByIsDeletedCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setIsDeleted(true);
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+		entityQuery.setIsDeleted(false);
+		List<ParamQueryEntity> entities1 = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Collections.singletonList(entity1));
+
+		assertThat(entities1).isNotNull();
+		assertThat(entities1).hasSize(1);
+		assertThat(entities1).containsExactlyInAnyOrderElementsOf(Collections.singletonList(entity2));
+	}
+
+	@Test
+	void shouldQueryByAssetTypeIdCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setAssetTypeId(1L);
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(2);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1, entity2));
+	}
+
+	@Test
+	void shouldQueryByAssetTypeIdsCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(2L, "技术标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setAssetTypeIds(Arrays.asList(1L, 2L));
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(2);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1, entity2));
+	}
+
+	@Test
+	void shouldQueryByAssetTypeIdExcludeCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(2L, "技术标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setAssetTypeIdExclude(1L);
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity2));
+	}
+
+	@Test
+	void shouldQueryByAssetTypeExistsCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, null, null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setAssetTypeExists(true);
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+		entityQuery.setAssetTypeExists(false);
+		List<ParamQueryEntity> entities1 = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1));
+		assertThat(entities1).hasSize(1);
+		assertThat(entities1).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity2));
+	}
+
+	@Test
+	void shouldQueryByPublishBatchIdCorrectly() {
+
+		// given
+		List<ParamQueryEntity.PublishBatch> publishBatches = new ArrayList<>();
+		publishBatches.add(new ParamQueryEntity.PublishBatch("1", "T00001", new Date()));
+
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, publishBatches,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, publishBatches,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setPublishBatchId(1L);
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(2);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1, entity2));
+	}
+
+	@Test
+	void shouldQueryByPublishBatchIdsCorrectly() {
+
+		// given
+		List<ParamQueryEntity.PublishBatch> publishBatches = new ArrayList<>();
+		publishBatches.add(new ParamQueryEntity.PublishBatch("1", "T00001", new Date()));
+
+		List<ParamQueryEntity.PublishBatch> publishBatches1 = new ArrayList<>();
+		publishBatches1.add(new ParamQueryEntity.PublishBatch("2", "T00002", new Date()));
+
+
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, publishBatches,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, publishBatches1,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setPublishBatchIds(Arrays.asList(1L, 2L));
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(2);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1, entity2));
+	}
+
+	@Test
+	void shouldQueryByPublishStateCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setPublishState(ParamQueryEntity.PublishState.UNPUBLISHED);
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1));
+	}
+
+	@Test
+	void shouldQueryByTimestampRangeCorrectly() {
+
+		// given
+		LocalDateTime start = LocalDateTime.of(2023, 1, 1, 01, 01);
+		Date startDate = Date.from(start.atZone(ZoneId.systemDefault()).toInstant());
+		LocalDateTime end = LocalDateTime.of(2023, 2, 1, 01, 01);
+		Date endDate = Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
+
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, startDate, 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, endDate, 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setTimestampRange(Range.of(Bound.inclusive(startDate), Bound.inclusive(startDate)));
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1));
+	}
+
+	@Test
+	void shouldQueryByViewCountLessThanCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setViewCountLessThan(5);
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity2));
+	}
+
+	@Test
+	void shouldQueryByViewCountLessThanEqualCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setViewCountLessThanEqual(10);
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(2);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1, entity2));
+	}
+
+	@Test
+	void shouldQueryByViewCountGreaterThanCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setViewCountGreaterThan(9);
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1));
+	}
+
+	@Test
+	void shouldQueryByViewCountGreaterThanEqualCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, true, null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "岗位序列代码", "Job Sequence Code", "TEC_00000000000522",
+				null, new ParamQueryEntity.AssetType(1L, "数据标准"), null, false, null,
+				ParamQueryEntity.PublishState.PUBLISHED, new Date(), 0);
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setViewCountGreaterThanEqual(10);
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities).hasSize(1);
+		assertThat(entities).containsExactlyInAnyOrderElementsOf(Arrays.asList(entity1));
+	}
 
 	interface ParamQueryRepository extends ElasticsearchRepository<ParamQueryEntity, String> {
 
@@ -273,21 +840,21 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 			}
 		}
 
-	 	static class PublishStateConverter implements PropertyValueConverter {
+		static class PublishStateConverter implements PropertyValueConverter {
 
-		    @Override
-		    public Object write(Object value) {
-			    return value;
-		    }
+			@Override
+			public Object write(Object value) {
+				return value;
+			}
 
-		    @Override
-		    public Object read(Object value) {
-			    if (value instanceof Map) {
-				    return PublishState.value(((Map<String, String>) value).get("value"));
-			    }
-			    return value;
-		    }
-	    }
+			@Override
+			public Object read(Object value) {
+				if (value instanceof Map) {
+					return PublishState.value(((Map<String, String>) value).get("value"));
+				}
+				return value;
+			}
+		}
 	}
 
 	@Data
@@ -304,28 +871,28 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		@QueryField(value = {"chineseName", "englishName"}, relation = Operator.OR)
 		private String keyword;
 
-		@QueryField(value = "chineseName")
+		@QueryField(value = "chineseName.keyword")
 		private String chineseName;
 
-		@QueryField(value = "chineseName", type = Type.STARTING_WITH)
+		@QueryField(value = "chineseName.keyword", type = Type.STARTING_WITH)
 		private String chineseNamePrefix;
 
-		@QueryField(value = "chineseName", type = Type.ENDING_WITH)
+		@QueryField(value = "chineseName.keyword", type = Type.ENDING_WITH)
 		private String chineseNameSuffix;
 
-		@QueryField(value = "chineseName", type = Type.LIKE)
+		@QueryField(value = "chineseName.keyword", type = Type.LIKE)
 		private String chineseNameLike;
 
-		@QueryField(value = "englishName")
+		@QueryField(value = "englishName.keyword")
 		private String englishName;
 
-		@QueryField(value = "englishName", type = Type.STARTING_WITH)
+		@QueryField(value = "englishName.keyword", type = Type.STARTING_WITH)
 		private String englishNamePrefix;
 
-		@QueryField(value = "englishName", type = Type.ENDING_WITH)
+		@QueryField(value = "englishName.keyword", type = Type.ENDING_WITH)
 		private String englishNameSuffix;
 
-		@QueryField(value = "englishName", type = Type.LIKE)
+		@QueryField(value = "englishName.keyword", type = Type.LIKE)
 		private String englishNameLike;
 
 		@QueryField(value = "assetCode")
@@ -353,9 +920,9 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		private Long publishBatchId;
 
 		@QueryField(value = "publishBatchList.id", type = Type.IN)
-		private Long publishBatchIds;
+		private List<Long> publishBatchIds;
 
-		@QueryField(value = "publishState")
+		@QueryField(value = "publishState.value")
 		private ParamQueryEntity.PublishState publishState;
 
 		@QueryField(value = "timestamp", type = Type.BETWEEN)
