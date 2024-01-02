@@ -35,10 +35,6 @@ import org.springframework.data.util.StreamUtils;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Sascha Woo
- * @author Peter-Josef Meisch
- */
 public class StreamQueriesTest {
 
 	@Test

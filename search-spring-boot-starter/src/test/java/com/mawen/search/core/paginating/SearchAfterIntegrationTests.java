@@ -42,9 +42,6 @@ import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Peter-Josef Meisch
- */
 @SpringIntegrationTest
 public abstract class SearchAfterIntegrationTests {
 
@@ -81,7 +78,7 @@ public abstract class SearchAfterIntegrationTests {
 				break;
 			}
 			foundEntities.addAll(searchHits.stream().map(SearchHit::getContent).collect(Collectors.toList()));
-			searchAfter = searchHits.getSearchHit((int) (searchHits.getSearchHits().size() - 1)).getSortValues();
+			searchAfter = searchHits.getSearchHit(searchHits.getSearchHits().size() - 1).getSortValues();
 
 			if (++loop > 10) {
 				fail("loop not terminating");

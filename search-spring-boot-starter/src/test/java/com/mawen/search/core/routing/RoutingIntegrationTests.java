@@ -44,10 +44,6 @@ import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Peter-Josef Meisch
- * @author Anton Naydenov
- */
 @SuppressWarnings("ConstantConditions")
 @SpringIntegrationTest
 public abstract class RoutingIntegrationTests {

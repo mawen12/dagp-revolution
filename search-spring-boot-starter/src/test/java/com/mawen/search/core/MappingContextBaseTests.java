@@ -22,9 +22,6 @@ import com.mawen.search.junit.jupiter.client.ElasticsearchConfigurationSupport;
 
 import org.springframework.data.util.Lazy;
 
-/**
- * @author Peter-Josef Meisch
- */
 public abstract class MappingContextBaseTests {
 
 	protected final Lazy<ElasticsearchConverter> elasticsearchConverter = Lazy.of(this::setupElasticsearchConverter);

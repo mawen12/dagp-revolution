@@ -38,10 +38,6 @@ import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * @author Roman Puchkovskiy
- * @author Peter-Josef Meisch
- */
 class SearchHitSupportTest {
 
 	@Test

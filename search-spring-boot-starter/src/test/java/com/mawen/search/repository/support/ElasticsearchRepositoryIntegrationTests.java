@@ -10,12 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
 import co.elastic.clients.elasticsearch.indices.ElasticsearchIndicesClient;
@@ -23,8 +21,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mawen.search.UncategorizedElasticsearchException;
 import com.mawen.search.core.annotation.DateFormat;
 import com.mawen.search.core.annotation.Document;
@@ -57,15 +53,6 @@ import org.springframework.util.StringUtils;
 import static com.mawen.search.utils.IdGenerator.*;
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Rizwan Idrees
- * @author Mohsin Husen
- * @author Mark Paluch
- * @author Christoph Strobl
- * @author Michael Wirth
- * @author Peter-Josef Meisch
- * @author Murali Chevuri
- */
 @SpringIntegrationTest
 abstract class ElasticsearchRepositoryIntegrationTests {
 

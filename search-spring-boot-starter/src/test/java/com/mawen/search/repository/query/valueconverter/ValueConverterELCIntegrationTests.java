@@ -24,12 +24,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * {@link ValueConverterIntegrationTests} using a Repository backed by an ElasticsearchTemplate.
- *
- * @author Peter-Josef Meisch
- * @since 5.0
- */
 @ContextConfiguration(classes = { ValueConverterELCIntegrationTests.Config.class })
 public class ValueConverterELCIntegrationTests extends ValueConverterIntegrationTests {
 

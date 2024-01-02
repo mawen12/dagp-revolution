@@ -42,10 +42,6 @@ import org.springframework.stereotype.Component;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * @author Peter-Josef Meisch
- * @author Roman Puchkovskiy
- */
 @SpringIntegrationTest
 abstract class CallbackIntegrationTests {
 

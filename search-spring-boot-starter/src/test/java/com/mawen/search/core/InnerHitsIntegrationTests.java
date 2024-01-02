@@ -32,12 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.Nullable;
 
-/**
- * Testing the querying and parsing of inner_hits.
- *
- * @author Peter-Josef Meisch
- * @author Jakob Hoeper
- */
 @SpringIntegrationTest
 public abstract class InnerHitsIntegrationTests {
 

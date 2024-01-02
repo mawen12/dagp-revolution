@@ -18,7 +18,6 @@ package com.mawen.search.junit.jupiter.client;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.cluster.ElasticsearchClusterClient;
 import co.elastic.clients.transport.ElasticsearchTransport;
-import org.elasticsearch.client.RestClient;
 
 import org.springframework.util.Assert;
 

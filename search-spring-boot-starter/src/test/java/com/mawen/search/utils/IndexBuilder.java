@@ -7,11 +7,7 @@ import com.mawen.search.core.query.IndexQuery;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.annotation.Id;
 
-/**
- * Created by akonczak on 02/12/2015.
- *
- * @author Peter-Josef Meisch
- */
+
 public class IndexBuilder {
 
 	public static IndexQuery buildIndex(Object object) {

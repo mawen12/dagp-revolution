@@ -27,10 +27,6 @@ import static com.mawen.search.utils.JsonUtils.*;
 import static org.skyscreamer.jsonassert.JSONAssert.*;
 
 
-/**
- * @author Peter-Josef Meisch
- * @author Ezequiel Antúnez Camacho
- */
 @SuppressWarnings("ConstantConditions")
 class CriteriaQueryProcessorUnitTests {
 

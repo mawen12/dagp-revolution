@@ -39,13 +39,6 @@ import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * LogEntityIntegrationTests
- *
- * @author Artur Konczak
- * @author Mohsin Husen
- * @author Peter-Josef Meisch
- */
 @SpringIntegrationTest
 public abstract class LogEntityIntegrationTests {
 

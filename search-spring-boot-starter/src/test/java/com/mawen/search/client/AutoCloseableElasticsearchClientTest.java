@@ -28,10 +28,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 
-/**
- * @author Peter-Josef Meisch
- * @since 4.4
- */
 @ExtendWith(MockitoExtension.class)
 class AutoCloseableElasticsearchClientTest {
 

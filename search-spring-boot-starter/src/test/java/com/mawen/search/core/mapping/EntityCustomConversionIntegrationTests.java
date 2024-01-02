@@ -39,11 +39,6 @@ import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * Test that a whole entity can be converted using custom conversions
- *
- * @author Peter-Josef Meisch
- */
 @SpringIntegrationTest
 public abstract class EntityCustomConversionIntegrationTests {
 

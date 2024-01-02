@@ -26,8 +26,6 @@ import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.junit.jupiter.SpringIntegrationTest;
 import com.mawen.search.repository.ElasticsearchRepository;
-import com.mawen.search.repository.query.ElasticsearchPartQuery;
-import com.mawen.search.repository.query.ElasticsearchQueryMethod;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -34,9 +34,6 @@ import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Peter-Josef Meisch
- */
 @SpringIntegrationTest
 public abstract class NativeQueryIntegrationTests {
 	@Autowired private ElasticsearchOperations operations;

@@ -24,10 +24,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * @author Peter-Josef Meisch
- * @since 4.4
- */
 @ContextConfiguration(classes = {ElasticsearchRepositoryELCIntegrationTests.Config.class })
 public class ElasticsearchRepositoryELCIntegrationTests extends ElasticsearchRepositoryIntegrationTests {
 

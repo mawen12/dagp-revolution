@@ -46,11 +46,6 @@ import org.springframework.lang.Nullable;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * @author Christoph Strobl
- * @author Peter-Josef Meisch
- * @author Niklas Herder
- */
 @ExtendWith(MockitoExtension.class)
 public class ElasticsearchStringQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 
@@ -201,12 +196,6 @@ public class ElasticsearchStringQueryUnitTests extends ElasticsearchQueryUnitTes
 		Person findByCar(Car car);
 	}
 
-	/**
-	 * @author Rizwan Idrees
-	 * @author Mohsin Husen
-	 * @author Artur Konczak
-	 * @author Niklas Herder
-	 */
 
 	@Document(indexName = "test-index-person-query-unittest")
 	static class Person {

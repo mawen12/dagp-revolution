@@ -21,9 +21,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Peter-Josef Meisch
- */
 class ElasticsearchCustomConversionsUnitTests {
 
 	private byte[] bytes = new byte[] { 0x01, 0x02, 0x03, 0x04 };

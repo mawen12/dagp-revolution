@@ -30,13 +30,6 @@ import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Young Gu
- * @author Oliver Gierke
- * @author Mark Paluch
- * @author Christoph Strobl
- * @author Peter-Josef Meisch
- */
 @SpringIntegrationTest
 public abstract class ImmutableRepositoryIntegrationTests {
 

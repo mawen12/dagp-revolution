@@ -37,14 +37,6 @@ import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * base class for query keyword tests. Implemented by subclasses using ElasticsearchClient and ElasticsearchRestClient
- * based repositories.
- *
- * @author Artur Konczak
- * @author Christoph Strobl
- * @author Peter-Josef Meisch
- */
 @SpringIntegrationTest
 abstract class QueryKeywordsIntegrationTests {
 

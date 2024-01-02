@@ -36,9 +36,6 @@ import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Peter-Josef Meisch
- */
 class ComposableAnnotationUnitTests {
 
 	private static SimpleElasticsearchMappingContext mappingContext = new SimpleElasticsearchMappingContext();

@@ -24,12 +24,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * {@link QueryKeywordsIntegrationTests} using a Repository backed by an ElasticsearchTemplate.
- *
- * @author Peter-Josef Meisch
- * @since 4.4
- */
 @ContextConfiguration(classes = { QueryKeywordsELCIntegrationTests.Config.class })
 public class QueryKeywordsELCIntegrationTests extends QueryKeywordsIntegrationTests {
 

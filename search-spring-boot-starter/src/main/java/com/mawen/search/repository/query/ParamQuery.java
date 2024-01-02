@@ -2,12 +2,10 @@ package com.mawen.search.repository.query;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.mawen.search.core.annotation.QueryField;
 import lombok.Getter;

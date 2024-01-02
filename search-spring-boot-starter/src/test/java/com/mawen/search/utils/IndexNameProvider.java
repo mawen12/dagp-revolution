@@ -17,11 +17,7 @@ package com.mawen.search.utils;
 
 import com.mawen.search.core.mapping.IndexCoordinates;
 
-/**
- * Class providing an index name with a prefix and a index number
- *
- * @author Peter-Josef Meisch
- */
+
 public class IndexNameProvider {
 	private final String prefix;
 	private int idx = -1;

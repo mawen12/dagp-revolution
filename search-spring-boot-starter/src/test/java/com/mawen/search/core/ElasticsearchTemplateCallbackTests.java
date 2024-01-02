@@ -44,9 +44,6 @@ import org.springframework.util.CollectionUtils;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * @author Roman Puchkovskiy
- */
 abstract class ElasticsearchTemplateCallbackTests {
 
 	protected AbstractElasticsearchTemplate template;

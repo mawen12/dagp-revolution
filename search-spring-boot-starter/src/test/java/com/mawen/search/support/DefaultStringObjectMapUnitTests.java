@@ -8,9 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Peter-Josef Meisch
- */
 class DefaultStringObjectMapUnitTests {
 
 	private final SOM stringObjectMap = new SOM();

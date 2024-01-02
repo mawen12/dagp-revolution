@@ -44,11 +44,6 @@ import static com.mawen.search.client.query.Queries.*;
 import static com.mawen.search.utils.IndexBuilder.*;
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Farid Faoudi
- * @author Sascha Woo
- * @since 4.4
- */
 @ContextConfiguration(classes = { ElasticsearchELCIntegrationTests.Config.class })
 @DisplayName("Using Elasticsearch Client")
 public class ElasticsearchELCIntegrationTests extends ElasticsearchIntegrationTests {

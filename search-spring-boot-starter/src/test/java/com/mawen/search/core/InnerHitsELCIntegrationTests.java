@@ -28,9 +28,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * @author Peter-Josef Meisch
- */
 @ContextConfiguration(classes = { InnerHitsELCIntegrationTests.Config.class })
 public class InnerHitsELCIntegrationTests extends InnerHitsIntegrationTests {
 

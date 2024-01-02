@@ -23,9 +23,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * @author Peter-Josef Meisch
- */
 @ContextConfiguration(classes = { CallbackELCIntegrationTests.Config.class })
 class CallbackELCIntegrationTests extends CallbackIntegrationTests {
 

@@ -25,10 +25,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.lang.Nullable;
 
-/**
- * @author Peter-Josef Meisch
- * @since 4.4
- */
 public final class JsonUtils {
 
 	private static final Log LOGGER = LogFactory.getLog(JsonUtils.class);

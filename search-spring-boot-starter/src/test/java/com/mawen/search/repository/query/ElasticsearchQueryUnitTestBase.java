@@ -27,9 +27,6 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.CustomConversions;
 import org.springframework.lang.Nullable;
 
-/**
- * @author Peter-Josef Meisch
- */
 public class ElasticsearchQueryUnitTestBase {
 
 	protected ElasticsearchConverter setupConverter() {

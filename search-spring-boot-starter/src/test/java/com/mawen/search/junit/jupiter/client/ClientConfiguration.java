@@ -16,7 +16,6 @@
 package com.mawen.search.junit.jupiter.client;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;

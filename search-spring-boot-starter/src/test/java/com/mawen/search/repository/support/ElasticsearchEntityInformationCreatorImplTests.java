@@ -27,10 +27,6 @@ import org.springframework.data.mapping.MappingException;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Florian Hopf
- * @author Mark Paluch
- */
 public class ElasticsearchEntityInformationCreatorImplTests {
 
 	ElasticsearchEntityInformationCreatorImpl entityInfoCreator;

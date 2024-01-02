@@ -17,11 +17,6 @@ package com.mawen.search.utils;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Class to provide sequential IDs. Uses an integer, 2^31 -1 values should be enough for the test runs.
- *
- * @author Peter-Josef Meisch
- */
 public final class IdGenerator {
 
 	private static final AtomicInteger NEXT = new AtomicInteger();

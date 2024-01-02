@@ -27,10 +27,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * @author Peter-Josef Meisch
- * @since 4.4
- */
 @ContextConfiguration(classes = { LogEntityELCIntegrationTests.Config.class })
 public class LogEntityELCIntegrationTests extends LogEntityIntegrationTests {
 	@Configuration

@@ -36,14 +36,6 @@ import org.springframework.util.ReflectionUtils;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * @author Rizwan Idrees
- * @author Mohsin Husen
- * @author Mark Paluch
- * @author Oliver Gierke
- * @author Peter-Josef Meisch
- * @author Roman Puchkovskiy
- */
 public class SimpleElasticsearchPersistentEntityTests extends MappingContextBaseTests {
 
 	@Nested

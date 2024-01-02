@@ -39,14 +39,6 @@ import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * Unit tests for {@link SimpleElasticsearchPersistentProperty}.
- *
- * @author Oliver Gierke
- * @author Peter-Josef Meisch
- * @author Roman Puchkovskiy
- * @author Sascha Woo
- */
 public class SimpleElasticsearchPersistentPropertyUnitTests {
 
 	private final SimpleElasticsearchMappingContext context = new SimpleElasticsearchMappingContext();

@@ -28,10 +28,6 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Peter-Josef Meisch
- * @since 4.4
- */
 class DocumentAdaptersUnitTests {
 
 	private final JsonpMapper jsonpMapper = new JacksonJsonpMapper();
