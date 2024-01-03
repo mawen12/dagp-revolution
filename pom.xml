@@ -12,8 +12,9 @@
     <name>DAGP 功能优化</name>
 
     <modules>
-        <module>search-spring-boot-starter</module>
+        <module>dagp-data-search</module>
         <module>search-sample</module>
+        <module>search-spring-boot-starter</module>
     </modules>
 
     <profiles>

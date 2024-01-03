@@ -40,7 +40,7 @@ public class ElasticsearchRestClientConfigurations {
 
 		@Bean
 		RestClientBuilderCustomizer defaultRestClientBuilderCustomizer() {
-			return new ElasticsearchRestClientConfigurations.DefaultRestClientBuilderCustomizer(this.properties);
+			return new DefaultRestClientBuilderCustomizer(this.properties);
 		}
 
 		@Bean
@@ -113,7 +113,7 @@ public class ElasticsearchRestClientConfigurations {
 
 		@Override
 		public void customize(HttpAsyncClientBuilder builder) {
-			builder.setDefaultCredentialsProvider(new ElasticsearchRestClientConfigurations.PropertiesCredentialsProvider(this.properties));
+			builder.setDefaultCredentialsProvider(new PropertiesCredentialsProvider(this.properties));
 			map.from(this.properties::isSocketKeepAlive).to((keepAlive) -> builder
 					.setDefaultIOReactorConfig(IOReactorConfig.custom().setSoKeepAlive(keepAlive).build()));
 		}

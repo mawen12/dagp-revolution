@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package com.mawen.search.autoconfigure;
+package com.mawen.search.autoconfigure.data;
 
-import com.mawen.search.repository.ElasticsearchRepository;
-import com.mawen.search.repository.support.ElasticsearchRepositoryFactoryBean;
+import com.mawen.search.autoconfigure.ElasticsearchClientAutoConfiguration;
+import com.mawen.search.autoconfigure.data.ElasticsearchDataConfiguration.BaseConfiguration;
+import com.mawen.search.autoconfigure.data.ElasticsearchDataConfiguration.JavaClientConfiguration;
+import com.mawen.search.client.ElasticsearchTemplate;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Import;
 
-@AutoConfiguration
-@ConditionalOnClass(ElasticsearchRepository.class)
-@ConditionalOnProperty(prefix = "spring.data.elasticsearch.repositories", name = "enabled", havingValue = "true", matchIfMissing = true)
-@ConditionalOnMissingBean(ElasticsearchRepositoryFactoryBean.class)
-@Import(ElasticsearchRepositoriesRegistrar.class)
-public class ElasticsearchRepositoriesAutoConfiguration {
+@AutoConfiguration(after = {ElasticsearchClientAutoConfiguration.class})
+@ConditionalOnClass({ElasticsearchTemplate.class})
+@Import({BaseConfiguration.class, JavaClientConfiguration.class})
+public class ElasticsearchDataAutoConfiguration {
 
 }

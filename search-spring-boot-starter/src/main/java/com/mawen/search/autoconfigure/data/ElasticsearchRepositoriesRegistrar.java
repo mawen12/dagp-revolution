@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mawen.search.autoconfigure;
+package com.mawen.search.autoconfigure.data;
 
 import java.lang.annotation.Annotation;
 
