@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
 
+import lombok.Getter;
+
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
@@ -11,15 +13,16 @@ import org.springframework.util.ObjectUtils;
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 0.0.1
  */
+@Getter
 public final class Range<T> {
 
-	private static final Range<?> UNBOUNDED = Range.of(Range.Bound.unbounded(), Range.Bound.unbounded());
+	private static final Range<?> UNBOUNDED = Range.of(Bound.unbounded(), Bound.unbounded());
 
 	private final Bound<T> lowerBound;
 
-	private final Range.Bound<T> upperBound;
+	private final Bound<T> upperBound;
 
-	private Range(Range.Bound<T> lowerBound, Range.Bound<T> upperBound) {
+	private Range(Bound<T> lowerBound, Bound<T> upperBound) {
 
 		Assert.notNull(lowerBound, "Lower bound must not be null");
 		Assert.notNull(upperBound, "Upper bound must not be null");
@@ -34,36 +37,36 @@ public final class Range<T> {
 	}
 
 	public static <T> Range<T> closed(T from, T to) {
-		return new Range<>(Range.Bound.inclusive(from), Range.Bound.inclusive(to));
+		return new Range<>(Bound.inclusive(from), Bound.inclusive(to));
 	}
 
 	public static <T> Range<T> open(T from, T to) {
-		return new Range<>(Range.Bound.exclusive(from), Range.Bound.exclusive(to));
+		return new Range<>(Bound.exclusive(from), Bound.exclusive(to));
 	}
 
 	public static <T> Range<T> leftOpen(T from, T to) {
-		return new Range<>(Range.Bound.exclusive(from), Range.Bound.inclusive(to));
+		return new Range<>(Bound.exclusive(from), Bound.inclusive(to));
 	}
 
 	public static <T> Range<T> rightOpen(T from, T to) {
-		return new Range<>(Range.Bound.inclusive(from), Range.Bound.exclusive(to));
+		return new Range<>(Bound.inclusive(from), Bound.exclusive(to));
 	}
 
-	public static <T> Range<T> leftUnbounded(Range.Bound<T> to) {
-		return new Range<>(Range.Bound.unbounded(), to);
+	public static <T> Range<T> leftUnbounded(Bound<T> to) {
+		return new Range<>(Bound.unbounded(), to);
 	}
 
-	public static <T> Range<T> rightUnbounded(Range.Bound<T> from) {
-		return new Range<>(from, Range.Bound.unbounded());
+	public static <T> Range<T> rightUnbounded(Bound<T> from) {
+		return new Range<>(from, Bound.unbounded());
 	}
 
-	public static <T> Range.RangeBuilder<T> from(Range.Bound<T> lower) {
+	public static <T> RangeBuilder<T> from(Bound<T> lower) {
 
 		Assert.notNull(lower, "Lower bound must not be null");
-		return new Range.RangeBuilder<>(lower);
+		return new RangeBuilder<>(lower);
 	}
 
-	public static <T> Range<T> of(Range.Bound<T> lowerBound, Range.Bound<T> upperBound) {
+	public static <T> Range<T> of(Bound<T> lowerBound, Bound<T> upperBound) {
 		return new Range<>(lowerBound, upperBound);
 	}
 
@@ -108,14 +111,6 @@ public final class Range<T> {
 		return String.format("%s-%s", lowerBound.toPrefixString(), upperBound.toSuffixString());
 	}
 
-	public Range.Bound<T> getLowerBound() {
-		return this.lowerBound;
-	}
-
-	public Range.Bound<T> getUpperBound() {
-		return this.upperBound;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 
@@ -145,7 +140,7 @@ public final class Range<T> {
 
 	public static final class Bound<T> {
 
-		private static final Range.Bound<?> UNBOUNDED = new Range.Bound<>(Optional.empty(), true);
+		private static final Bound<?> UNBOUNDED = new Bound<>(Optional.empty(), true);
 
 		private final Optional<T> value;
 		private final boolean inclusive;
@@ -156,58 +151,58 @@ public final class Range<T> {
 		}
 
 		@SuppressWarnings("unchecked")
-		public static <T> Range.Bound<T> unbounded() {
-			return (Range.Bound<T>) UNBOUNDED;
+		public static <T> Bound<T> unbounded() {
+			return (Bound<T>) UNBOUNDED;
 		}
 
-		public static <T> Range.Bound<T> inclusive(T value) {
+		public static <T> Bound<T> inclusive(T value) {
 
 			Assert.notNull(value, "Value must not be null");
-			return Range.Bound.of(Optional.of(value), true);
+			return Bound.of(Optional.of(value), true);
 		}
 
-		public static Range.Bound<Integer> inclusive(int value) {
+		public static Bound<Integer> inclusive(int value) {
 			return inclusive((Integer) value);
 		}
 
-		public static Range.Bound<Long> inclusive(long value) {
+		public static Bound<Long> inclusive(long value) {
 			return inclusive((Long) value);
 		}
 
-		public static Range.Bound<Float> inclusive(float value) {
+		public static Bound<Float> inclusive(float value) {
 			return inclusive((Float) value);
 		}
 
-		public static Range.Bound<Double> inclusive(double value) {
+		public static Bound<Double> inclusive(double value) {
 			return inclusive((Double) value);
 		}
 
-		public static <T> Range.Bound<T> exclusive(T value) {
+		public static <T> Bound<T> exclusive(T value) {
 
 			Assert.notNull(value, "Value must not be null");
-			return Range.Bound.of(Optional.of(value), false);
+			return Bound.of(Optional.of(value), false);
 		}
 
-		public static Range.Bound<Integer> exclusive(int value) {
+		public static Bound<Integer> exclusive(int value) {
 			return exclusive((Integer) value);
 		}
 
-		public static Range.Bound<Long> exclusive(long value) {
+		public static Bound<Long> exclusive(long value) {
 			return exclusive((Long) value);
 		}
 
-		public static Range.Bound<Float> exclusive(float value) {
+		public static Bound<Float> exclusive(float value) {
 			return exclusive((Float) value);
 		}
 
-		public static Range.Bound<Double> exclusive(double value) {
+		public static Bound<Double> exclusive(double value) {
 			return exclusive((Double) value);
 		}
 
-		private static <R> Range.Bound<R> of(Optional<R> value, boolean inclusive) {
+		private static <R> Bound<R> of(Optional<R> value, boolean inclusive) {
 
 			if (value.isPresent()) {
-				return new Range.Bound<>(value, inclusive);
+				return new Bound<>(value, inclusive);
 			}
 
 			return unbounded();
@@ -253,7 +248,7 @@ public final class Range<T> {
 				return true;
 			}
 
-			if (!(o instanceof Range.Bound<?>)) {
+			if (!(o instanceof Bound<?>)) {
 				return false;
 			}
 
@@ -280,25 +275,24 @@ public final class Range<T> {
 			return result;
 		}
 
-		public <R> Range.Bound<R> map(Function<? super T, ? extends R> mapper) {
+		public <R> Bound<R> map(Function<? super T, ? extends R> mapper) {
 
 			Assert.notNull(mapper, "Mapping function must not be null");
 
-			return Range.Bound.of(value.map(mapper), inclusive);
+			return Bound.of(value.map(mapper), inclusive);
 		}
 
 	}
-
-
+	
 	public static class RangeBuilder<T> {
 
-		private final Range.Bound<T> lower;
+		private final Bound<T> lower;
 
-		RangeBuilder(Range.Bound<T> lower) {
+		RangeBuilder(Bound<T> lower) {
 			this.lower = lower;
 		}
 
-		public Range<T> to(Range.Bound<T> upper) {
+		public Range<T> to(Bound<T> upper) {
 
 			Assert.notNull(upper, "Upper bound must not be null");
 			return new Range<>(lower, upper);

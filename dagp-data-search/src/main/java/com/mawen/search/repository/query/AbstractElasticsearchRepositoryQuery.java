@@ -45,32 +45,6 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 	}
 
 	@Override
-	public QueryMethod getQueryMethod() {
-		return queryMethod;
-	}
-
-	/**
-	 * 判断当前查询方法是否支持 count
-	 *
-	 * @return 如果是 count，则返回 true，反之返回 false
-	 */
-	public abstract boolean isCountQuery();
-
-	/**
-	 * 判断当前查询方法是否支持 delete
-	 *
-	 * @return 如果是 delete，则返回 true，反之返回 false
-	 */
-	protected abstract boolean isDeleteQuery();
-
-	/**
-	 * 判断当前查询方法是否支持 exists
-	 *
-	 * @return 如果是 exists，则返回 true，反之返回 false
-	 */
-	protected abstract boolean isExistsQuery();
-
-	@Override
 	public Object execute(Object[] parameters) {
 
 		ElasticsearchParametersParameterAccessor parameterAccessor = getParameterAccessor(parameters);
@@ -170,4 +144,30 @@ public abstract class AbstractElasticsearchRepositoryQuery implements Repository
 	 * @return {@link Query} 实例
 	 */
 	protected abstract BaseQuery createQuery(ElasticsearchParametersParameterAccessor accessor);
+
+	@Override
+	public QueryMethod getQueryMethod() {
+		return queryMethod;
+	}
+
+	/**
+	 * 判断当前查询方法是否支持 count
+	 *
+	 * @return 如果是 count，则返回 true，反之返回 false
+	 */
+	public abstract boolean isCountQuery();
+
+	/**
+	 * 判断当前查询方法是否支持 delete
+	 *
+	 * @return 如果是 delete，则返回 true，反之返回 false
+	 */
+	protected abstract boolean isDeleteQuery();
+
+	/**
+	 * 判断当前查询方法是否支持 exists
+	 *
+	 * @return 如果是 exists，则返回 true，反之返回 false
+	 */
+	protected abstract boolean isExistsQuery();
 }

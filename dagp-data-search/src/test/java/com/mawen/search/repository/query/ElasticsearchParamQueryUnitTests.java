@@ -1,11 +1,13 @@
 package com.mawen.search.repository.query;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.mawen.search.core.ElasticsearchOperations;
 import com.mawen.search.core.annotation.Document;
@@ -16,6 +18,7 @@ import com.mawen.search.core.annotation.SourceFilters;
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.Criteria.OperationKey;
 import com.mawen.search.core.domain.Range;
+import com.mawen.search.core.domain.Range.Bound;
 import com.mawen.search.core.query.CriteriaQuery;
 import com.mawen.search.core.query.Query;
 import lombok.Data;
@@ -108,11 +111,11 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 
 	@Test
 	void shouldParseRangeFieldQueryCorrectly() throws NoSuchMethodException {
-
+		// left inclusive and right inclusive
 		RangeFieldQuery rangeFieldQuery = new RangeFieldQuery();
-		Range.Bound<Integer> left = Range.Bound.inclusive(1);
-		Range.Bound<Integer> right = Range.Bound.inclusive(2);
-		rangeFieldQuery.setAges(Range.of(left, right));
+		Bound<Integer> left1 = Bound.inclusive(1);
+		Bound<Integer> right1 = Bound.inclusive(2);
+		rangeFieldQuery.setAges(Range.of(left1, right1));
 		Query query = createQuery("listByQuery", rangeFieldQuery);
 
 		checkQueryThenUnSortAndUnpagedAndHighlightQueryIsNullAndSourceFilterIsNull(query);
@@ -128,11 +131,121 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 			assertThat(entry.getValue()).isInstanceOf(Object[].class);
 			assertThat((Object[]) entry.getValue()).hasSize(2);
 			Object[] value = (Object[]) entry.getValue();
-			assertThat(value[0]).isEqualTo(left.getValue().orElse(null));
-			assertThat(value[1]).isEqualTo(right.getValue().orElse(null));
-
+			assertThat(value[0]).isEqualTo(left1.getValue().orElse(null));
+			assertThat(value[1]).isEqualTo(right1.getValue().orElse(null));
 		});
 
+		// left inclusive and right is null
+		rangeFieldQuery = new RangeFieldQuery();
+		Bound<Integer> left2 = Bound.inclusive(1);
+		rangeFieldQuery.setAges(Range.of(left2, Bound.unbounded()));
+		 query = createQuery("listByQuery", rangeFieldQuery);
+
+		checkQueryThenUnSortAndUnpagedAndHighlightQueryIsNullAndSourceFilterIsNull(query);
+
+		 criteriaQuery = (CriteriaQuery) query;
+		 criteria = criteriaQuery.getCriteria();
+		checkCriteriaThenQueryCriteriaEntriesIsNotEmptyAndFilterCriteriaEntriesIsEmptyAndSubCriteriaIsEmpty(criteria);
+		assertThat(Objects.requireNonNull(criteria.getField()).getName()).isEqualTo("age");
+		assertThat(criteria.getQueryCriteriaEntries()).satisfies(it -> {
+			assertThat(it).hasSize(1);
+			Criteria.CriteriaEntry entry = it.iterator().next();
+			assertThat(entry.getKey()).isEqualTo(OperationKey.BETWEEN);
+			assertThat(entry.getValue()).isInstanceOf(Object[].class);
+			assertThat((Object[]) entry.getValue()).hasSize(2);
+			Object[] value = (Object[]) entry.getValue();
+			assertThat(value[0]).isEqualTo(left2.getValue().orElse(null));
+			assertThat(value[1]).isNull();
+		});
+
+		// left is null and right inclusive
+		rangeFieldQuery = new RangeFieldQuery();
+		Bound<Integer> right3 = Bound.inclusive(1);
+		rangeFieldQuery.setAges(Range.of(Bound.unbounded(), right3));
+		query = createQuery("listByQuery", rangeFieldQuery);
+
+		checkQueryThenUnSortAndUnpagedAndHighlightQueryIsNullAndSourceFilterIsNull(query);
+
+		criteriaQuery = (CriteriaQuery) query;
+		criteria = criteriaQuery.getCriteria();
+		checkCriteriaThenQueryCriteriaEntriesIsNotEmptyAndFilterCriteriaEntriesIsEmptyAndSubCriteriaIsEmpty(criteria);
+		assertThat(Objects.requireNonNull(criteria.getField()).getName()).isEqualTo("age");
+		assertThat(criteria.getQueryCriteriaEntries()).satisfies(it -> {
+			assertThat(it).hasSize(1);
+			Criteria.CriteriaEntry entry = it.iterator().next();
+			assertThat(entry.getKey()).isEqualTo(OperationKey.BETWEEN);
+			assertThat(entry.getValue()).isInstanceOf(Object[].class);
+			assertThat((Object[]) entry.getValue()).hasSize(2);
+			Object[] value = (Object[]) entry.getValue();
+			assertThat(value[0]).isNull();
+			assertThat(value[1]).isEqualTo(right3.getValue().orElse(null));
+		});
+
+		// left is exclusive and right is exclusive
+		rangeFieldQuery = new RangeFieldQuery();
+		Bound<Integer> left4 = Bound.exclusive(1);
+		Bound<Integer> right4 = Bound.exclusive(3);
+		rangeFieldQuery.setAges(Range.of(left4, right4));
+		query = createQuery("listByQuery", rangeFieldQuery);
+
+		checkQueryThenUnSortAndUnpagedAndHighlightQueryIsNullAndSourceFilterIsNull(query);
+
+		criteriaQuery = (CriteriaQuery) query;
+		criteria = criteriaQuery.getCriteria();
+		checkCriteriaThenQueryCriteriaEntriesIsNotEmptyAndFilterCriteriaEntriesIsEmptyAndSubCriteriaIsEmpty(criteria);
+		assertThat(Objects.requireNonNull(criteria.getField()).getName()).isEqualTo("age");
+		assertThat(criteria.getQueryCriteriaEntries()).satisfies(it -> {
+			assertThat(it).hasSize(2);
+			List<? extends Criteria.CriteriaEntry> entries = it.stream().collect(Collectors.toList());
+			assertThat(entries.get(0).getKey()).isEqualTo(OperationKey.GREATER);
+			assertThat(entries.get(0).getValue()).isEqualTo(left4.getValue().orElse(null));
+			assertThat(entries.get(1).getKey()).isEqualTo(OperationKey.LESS);
+			assertThat(entries.get(1).getValue()).isEqualTo(right4.getValue().orElse(null));
+		});
+
+		// left is exclusive and right is inclusive
+		rangeFieldQuery = new RangeFieldQuery();
+		Bound<Integer> left5 = Bound.exclusive(1);
+		Bound<Integer> right5 = Bound.inclusive(3);
+		rangeFieldQuery.setAges(Range.of(left5, right5));
+		query = createQuery("listByQuery", rangeFieldQuery);
+
+		checkQueryThenUnSortAndUnpagedAndHighlightQueryIsNullAndSourceFilterIsNull(query);
+
+		criteriaQuery = (CriteriaQuery) query;
+		criteria = criteriaQuery.getCriteria();
+		checkCriteriaThenQueryCriteriaEntriesIsNotEmptyAndFilterCriteriaEntriesIsEmptyAndSubCriteriaIsEmpty(criteria);
+		assertThat(Objects.requireNonNull(criteria.getField()).getName()).isEqualTo("age");
+		assertThat(criteria.getQueryCriteriaEntries()).satisfies(it -> {
+			assertThat(it).hasSize(2);
+			List<? extends Criteria.CriteriaEntry> entries = it.stream().collect(Collectors.toList());
+			assertThat(entries.get(0).getKey()).isEqualTo(OperationKey.GREATER);
+			assertThat(entries.get(0).getValue()).isEqualTo(left5.getValue().orElse(null));
+			assertThat(entries.get(1).getKey()).isEqualTo(OperationKey.LESS_EQUAL);
+			assertThat(entries.get(1).getValue()).isEqualTo(right5.getValue().orElse(null));
+		});
+
+		// left is inclusive and right is exclusive
+		rangeFieldQuery = new RangeFieldQuery();
+		Bound<Integer> left6 = Bound.inclusive(1);
+		Bound<Integer> right6 = Bound.exclusive(3);
+		rangeFieldQuery.setAges(Range.of(left6, right6));
+		query = createQuery("listByQuery", rangeFieldQuery);
+
+		checkQueryThenUnSortAndUnpagedAndHighlightQueryIsNullAndSourceFilterIsNull(query);
+
+		criteriaQuery = (CriteriaQuery) query;
+		criteria = criteriaQuery.getCriteria();
+		checkCriteriaThenQueryCriteriaEntriesIsNotEmptyAndFilterCriteriaEntriesIsEmptyAndSubCriteriaIsEmpty(criteria);
+		assertThat(Objects.requireNonNull(criteria.getField()).getName()).isEqualTo("age");
+		assertThat(criteria.getQueryCriteriaEntries()).satisfies(it -> {
+			assertThat(it).hasSize(2);
+			List<? extends Criteria.CriteriaEntry> entries = it.stream().collect(Collectors.toList());
+			assertThat(entries.get(0).getKey()).isEqualTo(OperationKey.GREATER_EQUAL);
+			assertThat(entries.get(0).getValue()).isEqualTo(left6.getValue().orElse(null));
+			assertThat(entries.get(1).getKey()).isEqualTo(OperationKey.LESS);
+			assertThat(entries.get(1).getValue()).isEqualTo(right6.getValue().orElse(null));
+		});
 	}
 
 	@Test
@@ -532,8 +645,8 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 	void shouldParseAllFieldQueryCorrectly() throws NoSuchMethodException {
 
 		AllFieldQuery allFieldQuery = new AllFieldQuery();
-		Range.Bound<Date> left = Range.Bound.inclusive(new Date());
-		Range.Bound<Date> right = Range.Bound.exclusive(new Date());
+		Bound<Date> left = Bound.inclusive(new Date());
+		Bound<Date> right = Bound.inclusive(new Date());
 		allFieldQuery.setTimes(Range.of(left, right));
 		allFieldQuery.setPrice1LessThan(10.0);
 		allFieldQuery.setPrice2LessThanEqual(20.0);

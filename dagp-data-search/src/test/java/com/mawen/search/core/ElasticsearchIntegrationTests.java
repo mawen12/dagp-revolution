@@ -697,7 +697,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 		operations.index(indexQuery, IndexCoordinates.of(indexNameProvider.indexName()));
 
-		StringQuery stringQuery = new StringQuery(matchAllQuery().toString());
+		StringQuery stringQuery = new StringQuery(StringQuery.MATCH_ALL);
 
 		// when
 		SearchHits<SampleEntity> searchHits = operations.search(stringQuery, SampleEntity.class,
@@ -719,7 +719,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 		operations.index(indexQuery, IndexCoordinates.of(indexNameProvider.indexName()));
 
-		StringQuery stringQuery = new StringQuery(matchAllQuery().toString(), PageRequest.of(0, 10));
+		StringQuery stringQuery = new StringQuery(StringQuery.MATCH_ALL, PageRequest.of(0, 10));
 
 		// when
 		SearchHits<SampleEntity> searchHits = operations.search(stringQuery, SampleEntity.class,
@@ -745,7 +745,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 		operations.index(indexQuery, IndexCoordinates.of(indexNameProvider.indexName()));
 
-		StringQuery stringQuery = new StringQuery(matchAllQuery().toString(), PageRequest.of(0, 10),
+		StringQuery stringQuery = new StringQuery(StringQuery.MATCH_ALL, PageRequest.of(0, 10),
 				Sort.by(Sort.Order.asc("message.keyword")));
 
 		// when
@@ -768,7 +768,7 @@ public abstract class ElasticsearchIntegrationTests {
 
 		operations.index(indexQuery, IndexCoordinates.of(indexNameProvider.indexName()));
 
-		StringQuery stringQuery = new StringQuery(QueryBuilders.termQuery("id", documentId).toString());
+		StringQuery stringQuery = new StringQuery(" { \"term\":  { \"id\":  " + documentId + "}}");
 
 		// when
 		SearchHit<SampleEntity> sampleEntity1 = operations.searchOne(stringQuery, SampleEntity.class,
@@ -819,7 +819,7 @@ public abstract class ElasticsearchIntegrationTests {
 		operations.delete(criteriaQuery, SampleEntity.class, IndexCoordinates.of(indexNameProvider.indexName()));
 
 		// then
-		StringQuery stringQuery = new StringQuery(matchAllQuery().toString());
+		StringQuery stringQuery = new StringQuery(StringQuery.MATCH_ALL);
 		SearchHits<SampleEntity> sampleEntities = operations.search(stringQuery, SampleEntity.class,
 				IndexCoordinates.of(indexNameProvider.indexName()));
 
@@ -1260,7 +1260,7 @@ public abstract class ElasticsearchIntegrationTests {
 		// when
 		operations.bulkIndex(indexQueries, IndexCoordinates.of(indexNameProvider.indexName()));
 
-		StringQuery stringQuery = new StringQuery(matchAllQuery().toString());
+		StringQuery stringQuery = new StringQuery(StringQuery.MATCH_ALL);
 		SearchHits<SampleEntity> sampleEntities = operations.search(stringQuery, SampleEntity.class,
 				IndexCoordinates.of(indexNameProvider.indexName()));
 

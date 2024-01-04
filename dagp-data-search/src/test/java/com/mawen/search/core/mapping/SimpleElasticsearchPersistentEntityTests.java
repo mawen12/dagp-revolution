@@ -43,7 +43,7 @@ public class SimpleElasticsearchPersistentEntityTests extends MappingContextBase
 	class PropertiesTests {
 
 		@Test
-		public void shouldThrowExceptionGivenVersionPropertyIsNotLong() {
+		void shouldThrowExceptionGivenVersionPropertyIsNotLong() {
 
 			TypeInformation<EntityWithWrongVersionType> typeInformation = ClassTypeInformation.from(EntityWithWrongVersionType.class);
 			SimpleElasticsearchPersistentEntity<EntityWithWrongVersionType> entity = new SimpleElasticsearchPersistentEntity<>(
@@ -53,7 +53,7 @@ public class SimpleElasticsearchPersistentEntityTests extends MappingContextBase
 		}
 
 		@Test
-		public void shouldThrowExceptionGivenMultipleVersionPropertiesArePresent() {
+		void shouldThrowExceptionGivenMultipleVersionPropertiesArePresent() {
 
 			TypeInformation<EntityWithMultipleVersionField> typeInformation = ClassTypeInformation.from(EntityWithMultipleVersionField.class);
 			SimpleElasticsearchPersistentEntity<EntityWithMultipleVersionField> entity = new SimpleElasticsearchPersistentEntity<>(
@@ -139,6 +139,14 @@ public class SimpleElasticsearchPersistentEntityTests extends MappingContextBase
 			elasticsearchConverter.get().getMappingContext().getRequiredPersistentEntity(EntityWithIdNameFields.class);
 		}
 
+		@Test
+		@DisplayName("should read field from read method")
+		void shouldReadFieldFromReadMethod() {
+			ElasticsearchPersistentEntity<?> entity = elasticsearchConverter.get().getMappingContext().getRequiredPersistentEntity(EntityWithReadMethod.class);
+			ElasticsearchPersistentProperty persistentProperty = entity.getPersistentProperty("message");
+
+		}
+
 	}
 
 	// region helper functions
@@ -222,6 +230,32 @@ public class SimpleElasticsearchPersistentEntityTests extends MappingContextBase
 		@Field(type = FieldType.Text, value = "document") private String document;
 		@Nullable
 		@Field(value = "id") private String renamedId;
+	}
+
+	@Document(indexName = "test")
+	private static class EntityWithReadMethod {
+
+		@Id
+		private String id;
+
+		private String message;
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		@Field(value = "message", type = FieldType.Text)
+		public String getMessage() {
+			return message;
+		}
+
+		public void setMessage(String message) {
+			this.message = message;
+		}
 	}
 
 

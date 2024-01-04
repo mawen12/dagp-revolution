@@ -1,6 +1,7 @@
 package com.mawen.search.core.annotation;
 
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,6 +12,7 @@ import java.util.Collection;
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.Criteria.Operator;
 import com.mawen.search.core.domain.Range;
+import com.mawen.search.core.domain.Range.Bound;
 import org.apache.commons.lang3.ArrayUtils;
 
 import org.springframework.lang.Nullable;
@@ -42,87 +44,116 @@ public @interface QueryField {
 
 	enum Type {
 
-		BETWEEN{
+		BETWEEN {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				Range<Object> range = asRange(value);
-				criteria.between(range.getLowerBound().getValue().orElse(null), range.getUpperBound().getValue().orElse(null));
+				boolean lowerBoundInclusive = range.getLowerBound().isInclusive();
+				Object lowerBoundValue = range.getLowerBound().getValue().orElse(null);
+				boolean upperBoundInclusive = range.getUpperBound().isInclusive();
+				Object upperBoundValue = range.getUpperBound().getValue().orElse(null);
+
+				if (lowerBoundInclusive && upperBoundInclusive) {
+					criteria.between(lowerBoundValue, upperBoundValue);
+				}
+				else {
+					if (!lowerBoundInclusive) {
+						if (lowerBoundValue != null) {
+							criteria.greaterThan(lowerBoundValue);
+						}
+					} else {
+						if (lowerBoundValue != null) {
+							criteria.greaterThanEqual(lowerBoundValue);
+						}
+					}
+
+					if (!upperBoundInclusive) {
+						if (upperBoundValue != null) {
+							criteria.lessThan(upperBoundValue);
+						}
+					} else {
+						if (upperBoundValue != null) {
+							criteria.lessThanEqual(upperBoundValue);
+						}
+					}
+				}
 			}
 		},
-		LESS_THAN{
+		LESS_THAN {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.lessThan(value);
 			}
 		},
-		LESS_THAN_EQUAL{
+		LESS_THAN_EQUAL {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.lessThanEqual(value);
 			}
 		},
-		GREATER_THAN{
+		GREATER_THAN {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.greaterThan(value);
 			}
 		},
-		GREATER_THAN_EQUAL{
+		GREATER_THAN_EQUAL {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.greaterThanEqual(value);
 			}
 		},
-		BEFORE{
+		BEFORE {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.lessThanEqual(value);
 			}
 		},
-		AFTER{
+		AFTER {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.greaterThanEqual(value);
 			}
 		},
-		LIKE{
+		LIKE {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.contains(value.toString());
 			}
 		},
-		STARTING_WITH{
+		STARTING_WITH {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.startsWith(value.toString());
 			}
 		},
-		ENDING_WITH{
+		ENDING_WITH {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.endsWith(value.toString());
 			}
 		},
-		EMPTY{
+		EMPTY {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				if (value instanceof Boolean) {
 					boolean val = (boolean) value;
 					if (val) {
 						criteria.empty();
-					} else {
+					}
+					else {
 						criteria.notEmpty();
 					}
 				}
 			}
 		},
-		CONTAINING{
+		CONTAINING {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.contains(value.toString());
 			}
 		},
-		NOT_IN{
+		NOT_IN {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				Object[] array = asArray(value);
@@ -131,7 +162,7 @@ public @interface QueryField {
 				}
 			}
 		},
-		IN{
+		IN {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				Object[] array = asArray(value);
@@ -140,32 +171,33 @@ public @interface QueryField {
 				}
 			}
 		},
-		REGEX{
+		REGEX {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.expression(value.toString());
 			}
 		},
-		EXISTS{
+		EXISTS {
 			@Override
 			public void doFrom(Criteria criteria, @Nullable Object value) {
 				if (value instanceof Boolean) {
 					boolean val = (boolean) value;
 					if (val) {
 						criteria.exists();
-					} else {
+					}
+					else {
 						criteria.exists().not();
 					}
 				}
 			}
 		},
-		NEGATING_SIMPLE_PROPERTY{
+		NEGATING_SIMPLE_PROPERTY {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.is(value).not();
 			}
 		},
-		SIMPLE_PROPERTY{
+		SIMPLE_PROPERTY {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.is(value.toString());
@@ -239,6 +271,5 @@ public @interface QueryField {
 			}
 		}
 	}
-
 
 }

@@ -24,6 +24,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.mawen.search.core.annotation.DateFormat;
+import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.core.annotation.ValueConverter;
@@ -157,6 +158,14 @@ public class SimpleElasticsearchPersistentPropertyUnitTests {
 		ElasticsearchPersistentProperty seqNoProperty = entity.getRequiredPersistentProperty("seqNoPrimaryTerm");
 
 		assertThat(seqNoProperty.isWritable()).isFalse();
+	}
+
+	@Test
+	void shouldReadFieldFromReadMethod() {
+		ElasticsearchPersistentEntity<?> entity = context.getRequiredPersistentEntity(EntityWithReadMethod.class);
+		ElasticsearchPersistentProperty persistentProperty = entity.getPersistentProperty("message");
+
+		assertThat(persistentProperty.getFieldName()).isEqualTo("message1");
 	}
 
 	@Test
@@ -315,6 +324,32 @@ public class SimpleElasticsearchPersistentPropertyUnitTests {
 		@Override
 		public Object read(Object value) {
 			return value;
+		}
+	}
+
+	@Document(indexName = "test")
+	private static class EntityWithReadMethod {
+
+		@Id
+		private String id;
+
+		private String message;
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		@Field(value = "message1", type = FieldType.Text)
+		public String getMessage() {
+			return message;
+		}
+
+		public void setMessage(String message) {
+			this.message = message;
 		}
 	}
 	// endregion
