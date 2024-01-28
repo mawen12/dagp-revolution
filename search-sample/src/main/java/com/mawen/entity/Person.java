@@ -1,5 +1,8 @@
 package com.mawen.entity;
 
+import java.util.function.Function;
+
+import com.mawen.model.PersonDTO;
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
@@ -20,4 +23,7 @@ public class Person {
 
 	@Field(type = FieldType.Text, value = "name")
 	private String name;
+
+	public static final Function<Person, PersonDTO> to = person -> new PersonDTO(person.getId(), person.getName());
+
 }
