@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.mawen.search.core.domain.IdWithRouting;
+import com.mawen.search.core.domain.PointInTime;
 import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.HighlightQuery;
@@ -51,6 +52,7 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 	private Boolean trackTotalHits;
 	@Nullable
 	private Integer trackTotalHitsUpTo;
+	@Nullable private PointInTime pointInTime;
 	@Nullable
 	private Duration scrollTime;
 	@Nullable
@@ -153,6 +155,11 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 
 	public SELF withTrackTotalHitsUpTo(@Nullable Integer trackTotalHitsUpTo) {
 		this.trackTotalHitsUpTo = trackTotalHitsUpTo;
+		return self();
+	}
+
+	public SELF withPointInTime(@Nullable PointInTime pointInTime) {
+		this.pointInTime = pointInTime;
 		return self();
 	}
 

@@ -55,8 +55,11 @@ public interface SearchOperations {
 	<T> SearchHits<T> search(MoreLikeThisQuery query, Class<T> clazz, IndexCoordinates index);
 
 	<T> SearchHitsIterator<T> searchForStream(Query query, Class<T> clazz);
-
 	<T> SearchHitsIterator<T> searchForStream(Query query, Class<T> clazz, IndexCoordinates index);
+
+	<T> SearchHitsIterator<T> searchForStreamByPit(Query query, Class<T> clazz);
+
+	<T> SearchHitsIterator<T> searchForStreamByPit(Query query, Class<T> clazz, IndexCoordinates index);
 
 	Query matchAllQuery();
 

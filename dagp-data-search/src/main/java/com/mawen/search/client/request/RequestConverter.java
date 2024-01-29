@@ -1,5 +1,6 @@
 package com.mawen.search.client.request;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,12 +20,14 @@ import co.elastic.clients.elasticsearch._types.mapping.FieldType;
 import co.elastic.clients.elasticsearch._types.query_dsl.FieldAndFormat;
 import co.elastic.clients.elasticsearch._types.query_dsl.Like;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
+import co.elastic.clients.elasticsearch.core.ClosePointInTimeRequest;
 import co.elastic.clients.elasticsearch.core.DeleteByQueryRequest;
 import co.elastic.clients.elasticsearch.core.DeleteRequest;
 import co.elastic.clients.elasticsearch.core.GetRequest;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.MgetRequest;
 import co.elastic.clients.elasticsearch.core.MsearchRequest;
+import co.elastic.clients.elasticsearch.core.OpenPointInTimeRequest;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.UpdateByQueryRequest;
 import co.elastic.clients.elasticsearch.core.UpdateRequest;
@@ -841,6 +844,24 @@ public class RequestConverter {
 			}
 		}
 
+	}
+
+	public OpenPointInTimeRequest searchOpenPointInTimeRequest(IndexCoordinates index, Duration keepAlive) {
+
+		Assert.notNull(index, "index must not be null");
+		Assert.notNull(keepAlive, "keepAlive must not be null");
+
+		return OpenPointInTimeRequest.of(opit -> opit //
+				.index(Arrays.asList(index.getIndexNames())) //
+				.keepAlive(time(keepAlive)) //
+		);
+	}
+
+	public ClosePointInTimeRequest searchClosePointInTime(String pit) {
+
+		Assert.notNull(pit, "pit must not be null");
+
+		return ClosePointInTimeRequest.of(cpit -> cpit.id(pit));
 	}
 
 	private void addHighlight(Query query, SearchRequest.Builder builder) {

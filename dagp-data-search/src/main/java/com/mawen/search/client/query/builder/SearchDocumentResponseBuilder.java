@@ -38,8 +38,9 @@ public class SearchDocumentResponseBuilder {
 		String scrollId = responseBody.scrollId();
 		Map<String, Aggregate> aggregations = responseBody.aggregations();
 		Map<String, List<Suggestion<EntityAsMap>>> suggest = responseBody.suggest();
+		String pointInTimeId = responseBody.pitId();
 
-		return from(hitsMetadata, scrollId, aggregations, suggest, entityCreator, jsonpMapper);
+		return from(hitsMetadata, scrollId, pointInTimeId, aggregations, suggest, entityCreator, jsonpMapper);
 	}
 
 
@@ -53,12 +54,13 @@ public class SearchDocumentResponseBuilder {
 		String scrollId = response.scrollId();
 		Map<String, Aggregate> aggregations = response.aggregations();
 		Map<String, List<Suggestion<EntityAsMap>>> suggest = response.suggest();
+		String pointInTimeId = response.pitId();
 
-		return from(hitsMetadata, scrollId, aggregations, suggest, entityCreator, jsonpMapper);
+		return from(hitsMetadata, scrollId, pointInTimeId, aggregations, suggest, entityCreator, jsonpMapper);
 	}
 
 
-	public static <T> SearchDocumentResponse from(HitsMetadata<?> hitsMetadata, @Nullable String scrollId,
+	public static <T> SearchDocumentResponse from(HitsMetadata<?> hitsMetadata, @Nullable String scrollId, @Nullable String pointInTimeId,
 			@Nullable Map<String, Aggregate> aggregations, Map<String, List<Suggestion<EntityAsMap>>> suggestES,
 			SearchDocumentResponse.EntityCreator<T> entityCreator, JsonpMapper jsonpMapper) {
 
@@ -97,7 +99,7 @@ public class SearchDocumentResponseBuilder {
 				: null;
 
 
-		return new SearchDocumentResponse(totalHits, totalHitsRelation, maxScore, scrollId, searchDocuments,
+		return new SearchDocumentResponse(totalHits, totalHitsRelation, maxScore, scrollId, pointInTimeId, searchDocuments,
 				aggregationsContainer);
 	}
 }

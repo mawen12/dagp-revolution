@@ -1,6 +1,7 @@
 package com.mawen.search.client;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,6 +14,7 @@ import co.elastic.clients.elasticsearch._types.Time;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
 import co.elastic.clients.elasticsearch.core.ClearScrollRequest;
+import co.elastic.clients.elasticsearch.core.ClosePointInTimeRequest;
 import co.elastic.clients.elasticsearch.core.DeleteByQueryRequest;
 import co.elastic.clients.elasticsearch.core.DeleteByQueryResponse;
 import co.elastic.clients.elasticsearch.core.DeleteRequest;
@@ -25,6 +27,7 @@ import co.elastic.clients.elasticsearch.core.MgetRequest;
 import co.elastic.clients.elasticsearch.core.MgetResponse;
 import co.elastic.clients.elasticsearch.core.MsearchRequest;
 import co.elastic.clients.elasticsearch.core.MsearchResponse;
+import co.elastic.clients.elasticsearch.core.OpenPointInTimeRequest;
 import co.elastic.clients.elasticsearch.core.ScrollRequest;
 import co.elastic.clients.elasticsearch.core.ScrollResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
@@ -47,9 +50,12 @@ import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.document.SearchDocumentResponse;
 import com.mawen.search.core.domain.BulkOptions;
+import com.mawen.search.core.domain.PitSearchAfterHits;
+import com.mawen.search.core.domain.PointInTime;
 import com.mawen.search.core.domain.SearchHits;
 import com.mawen.search.core.domain.SearchScrollHits;
 import com.mawen.search.core.mapping.IndexCoordinates;
+import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.ByQueryResponse;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.MoreLikeThisQuery;
@@ -61,6 +67,7 @@ import com.mawen.search.core.support.IndexedObjectInformation;
 import com.mawen.search.core.support.MultiGetItem;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
@@ -357,6 +364,58 @@ public class ElasticsearchTemplate extends AbstractElasticsearchTemplate {
 			ClearScrollRequest request = ClearScrollRequest.of(csr -> csr.scrollId(scrollIds));
 			execute(client -> client.clearScroll(request));
 		}
+	}
+
+	@Override
+	public String openPointInTime(IndexCoordinates index, Duration keepAlive) {
+
+		Assert.notNull(index, "index must not be null");
+		Assert.notNull(keepAlive,"keepAlive must not be null");
+
+		OpenPointInTimeRequest request = requestConverter.searchOpenPointInTimeRequest(index, keepAlive);
+		return execute(client -> client.openPointInTime(request)).id();
+	}
+
+	@Override
+	public boolean closePointInTime(String pit) {
+
+		Assert.notNull(pit,"pit must not be null");
+
+		ClosePointInTimeRequest request = requestConverter.searchClosePointInTime(pit);
+		return execute(client -> client.closePointInTime(request)).succeeded();
+	}
+
+	@Override
+	public <T> PitSearchAfterHits<T> searchAfterStart(Duration keepAlive, Query query, Class<T> clazz, IndexCoordinates index) {
+
+		Assert.notNull(query, "query must not be null");
+		Assert.notNull(query.getPageable(), "pageable of query must not be null.");
+
+		if (!(query instanceof BaseQuery)) {
+			throw new IllegalArgumentException("Query must be derived from BaseQuery");
+		}
+		String pit = openPointInTime(index, keepAlive);
+		((BaseQuery) query).setPointInTime(new PointInTime(pit, keepAlive));
+		((BaseQuery) query).setSort(Sort.by("_shard_doc"));
+
+		SearchRequest request = requestConverter.searchRequest(query, routingResolver.getRouting(), clazz, index, false);
+		SearchResponse<EntityAsMap> response = execute(client -> client.search(request, EntityAsMap.class));
+
+		return getPitSearchAfterHits(((BaseQuery) query), clazz, index, response);
+	}
+
+	@Override
+	public <T> PitSearchAfterHits<T> searchAfterContinue(Query query, Duration keepAlive, Class<T> clazz, IndexCoordinates index) {
+		return null;
+	}
+
+	private <T> PitSearchAfterHits<T> getPitSearchAfterHits(BaseQuery query, Class<T> clazz, IndexCoordinates index, ResponseBody<EntityAsMap> response) {
+		ReadDocumentCallback<T> documentCallback = new ReadDocumentCallback<>(elasticsearchConverter, clazz, index);
+		SearchDocumentResponseCallback<PitSearchAfterHits<T>> callback = new ReadPitSearchAfterDocumentResponseCallback<>(query, clazz,
+				index);
+
+		return callback
+				.doWith(SearchDocumentResponseBuilder.from(response, getEntityCreator(documentCallback), jsonpMapper));
 	}
 
 	@Override

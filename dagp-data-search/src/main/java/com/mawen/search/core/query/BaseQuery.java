@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.mawen.search.core.domain.IdWithRouting;
+import com.mawen.search.core.domain.PointInTime;
 import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.query.builder.BaseQueryBuilder;
 import lombok.Getter;
@@ -59,6 +60,8 @@ public class BaseQuery implements Query {
 	protected List<IdWithRouting> idsWithRouting = Collections.emptyList();
 	@Nullable
 	private Boolean trackTotalHits;
+	@Nullable protected PointInTime pointInTime;
+
 	@Nullable
 	private Integer reactiveBatchSize = null;
 	@Nullable
@@ -82,6 +85,7 @@ public class BaseQuery implements Query {
 		this.trackScores = builder.getTrackScores();
 		this.maxResults = builder.getMaxResults();
 		this.highlightQuery = builder.getHighlightQuery();
+		this.pointInTime = builder.getPointInTime();
 		this.trackTotalHits = builder.getTrackTotalHits();
 		this.trackTotalHitsUpTo = builder.getTrackTotalHitsUpTo();
 		this.scrollTime = builder.getScrollTime();
@@ -235,6 +239,10 @@ public class BaseQuery implements Query {
 
 	public void setTimeout(@Nullable Duration timeout) {
 		this.timeout = timeout;
+	}
+
+	public void setPointInTime(@Nullable PointInTime pointInTime) {
+		this.pointInTime = pointInTime;
 	}
 
 	@Override

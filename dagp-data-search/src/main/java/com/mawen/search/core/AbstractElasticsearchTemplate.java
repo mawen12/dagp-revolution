@@ -14,6 +14,7 @@ import com.mawen.search.core.convert.MappingElasticsearchConverter;
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.document.SearchDocumentResponse;
 import com.mawen.search.core.domain.BulkOptions;
+import com.mawen.search.core.domain.PitSearchAfterHits;
 import com.mawen.search.core.domain.SearchHitMapping;
 import com.mawen.search.core.domain.SearchHits;
 import com.mawen.search.core.domain.SearchHitsIterator;
@@ -27,6 +28,7 @@ import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.mapping.SimpleElasticsearchMappingContext;
+import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.ByQueryResponse;
 import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.MoreLikeThisQuery;
@@ -312,7 +314,7 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 
 	@Override
 	public final List<IndexedObjectInformation> bulkIndex(List<IndexQuery> queries, BulkOptions bulkOptions,
-			IndexCoordinates index) {
+	                                                      IndexCoordinates index) {
 
 		Assert.notNull(queries, "List of IndexQuery must not be null");
 		Assert.notNull(bulkOptions, "BulkOptions must not be null");
@@ -326,7 +328,7 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 	}
 
 	public List<IndexedObjectInformation> bulkOperation(List<IndexQuery> queries, BulkOptions bulkOptions,
-			IndexCoordinates index) {
+	                                                    IndexCoordinates index) {
 
 		Assert.notNull(queries, "List of IndexQuery must not be null");
 		Assert.notNull(bulkOptions, "BulkOptions must not be null");
@@ -341,7 +343,7 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 	}
 
 	public abstract List<IndexedObjectInformation> doBulkOperation(List<?> queries, BulkOptions bulkOptions,
-			IndexCoordinates index);
+	                                                               IndexCoordinates index);
 
 	@Override
 	public <T> UpdateResponse update(T entity) {
@@ -441,6 +443,27 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 				this::searchScrollClear);
 	}
 
+
+	@Override
+	public <T> SearchHitsIterator<T> searchForStreamByPit(Query query, Class<T> clazz) {
+		return searchForStreamByPit(query, clazz, getIndexCoordinatesFor(clazz));
+	}
+
+	@Override
+	public <T> SearchHitsIterator<T> searchForStreamByPit(Query query, Class<T> clazz, IndexCoordinates index) {
+
+		Duration keepAlive = query.getScrollTime() != null ? query.getScrollTime() : Duration.ofMinutes(1);
+		int maxCount = query.isLimiting() ? query.getMaxResults() : 0;
+
+//		String pit = openPointInTime(index, keepAlive);
+
+		return StreamQueries.streamResults(
+				maxCount,
+				searchAfterStart(keepAlive, query, clazz, index),
+				pit -> searchAfterContinue(query, keepAlive, clazz, index),
+				this::closePointInTime);
+	}
+
 	@Override
 	public <T> SearchHits<T> search(MoreLikeThisQuery query, Class<T> clazz) {
 		return search(query, clazz, getIndexCoordinatesFor(clazz));
@@ -467,14 +490,22 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 	}
 
 	abstract public <T> SearchScrollHits<T> searchScrollStart(long scrollTimeInMillis, Query query, Class<T> clazz,
-			IndexCoordinates index);
+	                                                          IndexCoordinates index);
 
 	abstract public <T> SearchScrollHits<T> searchScrollContinue(String scrollId, long scrollTimeInMillis, Class<T> clazz,
-			IndexCoordinates index);
+	                                                             IndexCoordinates index);
 
 	public void searchScrollClear(String scrollId) {
 		searchScrollClear(Collections.singletonList(scrollId));
 	}
+
+	abstract public String openPointInTime(IndexCoordinates index, Duration keepAlive);
+
+	abstract public boolean closePointInTime(String pit);
+
+	abstract public <T> PitSearchAfterHits<T> searchAfterStart(Duration keepAlive, Query query, Class<T> clazz, IndexCoordinates index);
+
+	abstract public <T> PitSearchAfterHits<T> searchAfterContinue(Query query, Duration keepAlive, Class<T> clazz, IndexCoordinates index);
 
 	// endregion
 
@@ -665,7 +696,7 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 	// endregion
 
 	protected void updateIndexedObjectsWithQueries(List<?> queries,
-			List<IndexedObjectInformation> indexedObjectInformationList) {
+	                                               List<IndexedObjectInformation> indexedObjectInformationList) {
 
 		for (int i = 0; i < queries.size(); i++) {
 			Object query = queries.get(i);
@@ -794,6 +825,29 @@ public abstract class AbstractElasticsearchTemplate implements ElasticsearchOper
 		public SearchScrollHits<T> doWith(SearchDocumentResponse response) {
 			List<T> entities = response.getSearchDocuments().stream().map(delegate::doWith).collect(Collectors.toList());
 			return SearchHitMapping.mappingFor(type, elasticsearchConverter).mapScrollHits(response, entities);
+		}
+	}
+
+	protected class ReadPitSearchAfterDocumentResponseCallback<T>
+		implements SearchDocumentResponseCallback<PitSearchAfterHits<T>> {
+		private final BaseQuery query;
+		private final DocumentCallback<T> delegate;
+		private final Class<T> type;
+
+
+		public ReadPitSearchAfterDocumentResponseCallback(BaseQuery query, Class<T> type, IndexCoordinates index) {
+
+			Assert.notNull(type, "type is null");
+
+			this.query = query;
+			this.delegate = new ReadDocumentCallback<>(elasticsearchConverter, type, index);
+			this.type = type;
+		}
+
+		@Override
+		public PitSearchAfterHits<T> doWith(SearchDocumentResponse response) {
+			List<T> entities = response.getSearchDocuments().stream().map(delegate::doWith).collect(Collectors.toList());
+			return SearchHitMapping.mappingFor(type, elasticsearchConverter).mapAfterHits(query, response, entities);
 		}
 	}
 

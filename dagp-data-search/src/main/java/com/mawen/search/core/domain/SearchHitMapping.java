@@ -14,6 +14,8 @@ import com.mawen.search.core.document.SearchDocument;
 import com.mawen.search.core.document.SearchDocumentResponse;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
+import com.mawen.search.core.query.BaseQuery;
+import com.mawen.search.core.query.Query;
 import com.mawen.search.core.query.TotalHitsRelation;
 
 import org.springframework.data.mapping.MappingException;
@@ -51,6 +53,10 @@ public class SearchHitMapping<T> {
 		return mapHitsFromResponse(searchDocumentResponse, contents);
 	}
 
+	public PitSearchAfterHits<T> mapAfterHits(BaseQuery query, SearchDocumentResponse searchDocumentResponse, List<T> contents) {
+		return mapPitHitsFromResponse(query, searchDocumentResponse, contents);
+	}
+
 	private SearchHitsImpl<T> mapHitsFromResponse(SearchDocumentResponse searchDocumentResponse, List<T> contents) {
 
 		Assert.notNull(searchDocumentResponse, "searchDocumentResponse is null");
@@ -75,6 +81,32 @@ public class SearchHitMapping<T> {
 		TotalHitsRelation totalHitsRelation = TotalHitsRelation.valueOf(searchDocumentResponse.getTotalHitsRelation());
 
 		return new SearchHitsImpl<>(totalHits, totalHitsRelation, maxScore, scrollId, searchHits,
+				aggregations);
+	}
+
+	private PitSearchAfterHitsImpl<T> mapPitHitsFromResponse(BaseQuery query, SearchDocumentResponse searchDocumentResponse, List<T> contents) {
+		Assert.notNull(searchDocumentResponse, "searchDocumentResponse is null");
+		Assert.notNull(contents, "contents is null");
+
+		Assert.isTrue(searchDocumentResponse.getSearchDocuments().size() == contents.size(),
+				"Count of documents must match the count of entities");
+
+		long totalHits = searchDocumentResponse.getTotalHits();
+		float maxScore = searchDocumentResponse.getMaxScore();
+		String pointInTimeId = searchDocumentResponse.getPointInTimeId();
+
+		List<SearchHit<T>> searchHits = new ArrayList<>();
+		List<SearchDocument> searchDocuments = searchDocumentResponse.getSearchDocuments();
+		for (int i = 0; i < searchDocuments.size(); i++) {
+			SearchDocument document = searchDocuments.get(i);
+			T content = contents.get(i);
+			SearchHit<T> hit = mapHit(document, content);
+			searchHits.add(hit);
+		}
+		AggregationsContainer<?> aggregations = searchDocumentResponse.getAggregations();
+		TotalHitsRelation totalHitsRelation = TotalHitsRelation.valueOf(searchDocumentResponse.getTotalHitsRelation());
+
+		return new PitSearchAfterHitsImpl<>(totalHits, totalHitsRelation, maxScore, pointInTimeId, query, searchHits,
 				aggregations);
 	}
 
