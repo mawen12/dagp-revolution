@@ -44,4 +44,23 @@ public class App {
 		SpringApplication.run(App.class, args);
 	}
 
+	@Autowired
+	private PersonRepository personRepository;
+
+	private static final EasyRandom random = new EasyRandom();
+
+//	@Bean
+//	public CommandLineRunner runner() {
+//		return args -> {
+//			for (int i = 0; i < 100; i++) {
+//				List<Person> list = new ArrayList<>(10_000);
+//				for (int j = 0; j < 10_000; j++) {
+//					list.add(random.nextObject(Person.class));
+//				}
+//				list.forEach(it -> it.setId(null));
+//
+//				personRepository.saveAll(list);
+//			}
+//		};
+//	}
 }

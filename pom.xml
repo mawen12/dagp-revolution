@@ -15,6 +15,7 @@
         <module>dagp-data-search</module>
         <module>search-sample</module>
         <module>search-spring-boot-starter</module>
+        <module>dagp-data-search-test</module>
     </modules>
 
     <profiles>
@@ -92,7 +93,7 @@
             <dependency>
                 <groupId>org.jeasy</groupId>
                 <artifactId>easy-random-core</artifactId>
-                <version>5.0.0</version>
+                <version>4.3.0</version>
             </dependency>
 
             <dependency>
