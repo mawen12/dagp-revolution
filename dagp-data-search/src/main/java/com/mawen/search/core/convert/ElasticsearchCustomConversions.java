@@ -1,20 +1,14 @@
 package com.mawen.search.core.convert;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
 import com.mawen.search.core.mapping.ElasticsearchSimpleTypes;
-
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.util.NumberUtils;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

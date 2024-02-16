@@ -2,7 +2,6 @@ package com.mawen.search.core.query.builder;
 
 import com.mawen.search.core.query.StringQuery;
 import lombok.Getter;
-
 import org.springframework.util.Assert;
 
 /**

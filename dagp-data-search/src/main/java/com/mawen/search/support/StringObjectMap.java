@@ -1,8 +1,8 @@
 package com.mawen.search.support;
 
-import java.util.Map;
-
 import org.springframework.util.Assert;
+
+import java.util.Map;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

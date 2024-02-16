@@ -15,7 +15,8 @@
  */
 package com.mawen.search.core.callback;
 
-import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
 import com.mawen.search.utils.IndexNameProvider;
 
 import org.springframework.context.annotation.Bean;
@@ -27,7 +28,7 @@ import org.springframework.test.context.ContextConfiguration;
 class CallbackELCIntegrationTests extends CallbackIntegrationTests {
 
 	@Configuration
-	@Import({ ElasticsearchTemplateConfiguration.class, CallbackIntegrationTests.Config.class })
+	@Import({ CustomElasticsearchTemplateConfiguration.class, CallbackIntegrationTests.Config.class })
 
 	static class Config {
 		@Bean

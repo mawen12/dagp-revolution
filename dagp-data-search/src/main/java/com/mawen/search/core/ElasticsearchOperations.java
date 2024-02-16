@@ -4,7 +4,6 @@ import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.routing.RoutingResolver;
-
 import org.springframework.lang.Nullable;
 
 /**

@@ -1,18 +1,11 @@
 package com.mawen.search.core.domain;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
 import com.mawen.search.InvalidApiUsageException;
 import lombok.Getter;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.*;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

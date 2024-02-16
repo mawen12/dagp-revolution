@@ -43,7 +43,7 @@ import com.mawen.search.core.query.highlight.Highlight;
 import com.mawen.search.core.query.highlight.HighlightField;
 import com.mawen.search.core.support.MultiGetItem;
 import com.mawen.search.core.support.ScriptType;
-import com.mawen.search.junit.jupiter.SpringIntegrationTest;
+import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import org.assertj.core.api.SoftAssertions;
 import org.elasticsearch.index.query.QueryBuilders;

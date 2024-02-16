@@ -1,12 +1,5 @@
 package com.mawen.search.core.domain;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.mawen.search.core.aggregation.AggregationsContainer;
 import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.document.NestedMetaData;
@@ -15,13 +8,14 @@ import com.mawen.search.core.document.SearchDocumentResponse;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.query.BaseQuery;
-import com.mawen.search.core.query.Query;
 import com.mawen.search.core.query.TotalHitsRelation;
-
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

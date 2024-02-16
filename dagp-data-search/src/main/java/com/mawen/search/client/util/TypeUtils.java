@@ -1,27 +1,9 @@
 package com.mawen.search.client.util;
 
-import java.io.StringReader;
-import java.time.Duration;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import co.elastic.clients.elasticsearch._types.FieldValue;
-import co.elastic.clients.elasticsearch._types.OpType;
-import co.elastic.clients.elasticsearch._types.Refresh;
-import co.elastic.clients.elasticsearch._types.Result;
-import co.elastic.clients.elasticsearch._types.SearchType;
-import co.elastic.clients.elasticsearch._types.Slices;
-import co.elastic.clients.elasticsearch._types.SortMode;
-import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch._types.Time;
+import co.elastic.clients.elasticsearch._types.*;
 import co.elastic.clients.elasticsearch._types.mapping.FieldType;
 import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
-import co.elastic.clients.elasticsearch.core.search.BoundaryScanner;
-import co.elastic.clients.elasticsearch.core.search.HighlighterEncoder;
-import co.elastic.clients.elasticsearch.core.search.HighlighterFragmenter;
-import co.elastic.clients.elasticsearch.core.search.HighlighterOrder;
-import co.elastic.clients.elasticsearch.core.search.HighlighterTagsSchema;
-import co.elastic.clients.elasticsearch.core.search.HighlighterType;
+import co.elastic.clients.elasticsearch.core.search.*;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.json.JsonData;
 import com.mawen.search.core.document.Document;
@@ -30,10 +12,14 @@ import com.mawen.search.core.query.IndexQuery;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.core.query.UpdateResponse;
 import com.mawen.search.core.refresh.RefreshPolicy;
-
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.io.StringReader;
+import java.time.Duration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

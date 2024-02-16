@@ -18,7 +18,6 @@ package com.mawen.search.test.client;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.cluster.ElasticsearchClusterClient;
 import co.elastic.clients.transport.ElasticsearchTransport;
-
 import org.springframework.util.Assert;
 
 public class AutoCloseableElasticsearchClient extends ElasticsearchClient implements AutoCloseable {

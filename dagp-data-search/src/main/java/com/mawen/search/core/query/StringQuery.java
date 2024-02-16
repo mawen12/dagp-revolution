@@ -2,7 +2,6 @@ package com.mawen.search.core.query;
 
 import com.mawen.search.core.query.builder.StringQueryBuilder;
 import lombok.Getter;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 

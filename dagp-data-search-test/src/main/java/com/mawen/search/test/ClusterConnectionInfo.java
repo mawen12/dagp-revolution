@@ -15,10 +15,9 @@
  */
 package com.mawen.search.test;
 
-import org.testcontainers.elasticsearch.ElasticsearchContainer;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import org.testcontainers.elasticsearch.ElasticsearchContainer;
 
 public final class ClusterConnectionInfo {
 	private final IntegrationtestEnvironment integrationtestEnvironment;

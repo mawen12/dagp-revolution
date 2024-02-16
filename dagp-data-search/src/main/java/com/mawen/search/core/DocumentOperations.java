@@ -1,18 +1,13 @@
 package com.mawen.search.core;
 
-import java.util.List;
-
 import com.mawen.search.core.domain.BulkOptions;
 import com.mawen.search.core.mapping.IndexCoordinates;
-import com.mawen.search.core.query.ByQueryResponse;
-import com.mawen.search.core.query.IndexQuery;
-import com.mawen.search.core.query.Query;
-import com.mawen.search.core.query.UpdateQuery;
-import com.mawen.search.core.query.UpdateResponse;
+import com.mawen.search.core.query.*;
 import com.mawen.search.core.support.IndexedObjectInformation;
 import com.mawen.search.core.support.MultiGetItem;
-
 import org.springframework.lang.Nullable;
+
+import java.util.List;
 
 /**
  * The operations for the Elasticsearch Document APIs

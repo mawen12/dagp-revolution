@@ -1,10 +1,9 @@
 package com.mawen.search.core.mapping;
 
-import java.util.Arrays;
-
 import lombok.Getter;
-
 import org.springframework.util.Assert;
+
+import java.util.Arrays;
 
 /**
  * Immutable Value object encapsulating index names(s).

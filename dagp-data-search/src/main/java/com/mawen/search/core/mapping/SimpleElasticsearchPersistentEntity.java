@@ -1,13 +1,8 @@
 package com.mawen.search.core.mapping;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Routing;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PropertyHandler;
@@ -23,6 +18,10 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

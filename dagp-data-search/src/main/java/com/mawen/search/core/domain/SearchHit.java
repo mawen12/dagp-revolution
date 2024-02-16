@@ -1,18 +1,12 @@
 package com.mawen.search.core.domain;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.mawen.search.core.document.NestedMetaData;
 import lombok.Getter;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

@@ -16,12 +16,13 @@ import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
 import co.elastic.clients.elasticsearch.indices.ElasticsearchIndicesClient;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
-import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
-import com.mawen.search.junit.jupiter.SpringIntegrationTest;
 import com.mawen.search.repository.config.EnableElasticsearchRepositories;
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
+import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import com.mawen.search.utils.ResourceUtil;
 import lombok.AllArgsConstructor;
@@ -56,7 +57,7 @@ class ElasticsearchRepositorySimpleIntegrationTest {
 	private SampleRepository sampleRepository;
 
 	@Configuration
-	@Import({ElasticsearchTemplateConfiguration.class })
+	@Import({CustomElasticsearchTemplateConfiguration.class })
 	@EnableElasticsearchRepositories(basePackages = {"com.mawen.search.repository" },
 			considerNestedRepositories = true)
 	static class Config {

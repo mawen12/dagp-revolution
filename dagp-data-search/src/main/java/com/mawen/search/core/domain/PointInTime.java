@@ -1,11 +1,9 @@
 package com.mawen.search.core.domain;
 
-import java.time.Duration;
-
 import lombok.Getter;
-
-import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.time.Duration;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

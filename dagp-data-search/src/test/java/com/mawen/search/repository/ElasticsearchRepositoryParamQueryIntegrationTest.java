@@ -19,6 +19,7 @@ import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
 import com.mawen.search.core.annotation.DateFormat;
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Field;
@@ -32,9 +33,9 @@ import com.mawen.search.core.domain.Criteria.Operator;
 import com.mawen.search.core.domain.Range;
 import com.mawen.search.core.domain.Range.Bound;
 import com.mawen.search.core.mapping.PropertyValueConverter;
-import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
-import com.mawen.search.junit.jupiter.SpringIntegrationTest;
 import com.mawen.search.repository.config.EnableElasticsearchRepositories;
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
+import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import com.mawen.search.utils.ResourceUtil;
 import lombok.AllArgsConstructor;
@@ -70,7 +71,7 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 	private ParamQueryRepository paramQueryRepository;
 
 	@Configuration
-	@Import({ElasticsearchTemplateConfiguration.class})
+	@Import({CustomElasticsearchTemplateConfiguration.class})
 	@EnableElasticsearchRepositories(basePackages = {"com.mawen.search.repository"},
 			considerNestedRepositories = true)
 	static class Config {

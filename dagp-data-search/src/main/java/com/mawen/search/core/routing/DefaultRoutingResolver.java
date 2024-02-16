@@ -2,7 +2,6 @@ package com.mawen.search.core.routing;
 
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
-
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.lang.Nullable;
 

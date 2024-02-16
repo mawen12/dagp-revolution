@@ -2,7 +2,6 @@ package com.mawen.search.core.query.builder;
 
 import com.mawen.search.core.domain.FetchSourceFilter;
 import com.mawen.search.core.domain.SourceFilter;
-
 import org.springframework.lang.Nullable;
 
 /**

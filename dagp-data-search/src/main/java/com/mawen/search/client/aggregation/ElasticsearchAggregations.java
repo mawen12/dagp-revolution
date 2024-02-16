@@ -1,15 +1,14 @@
 package com.mawen.search.client.aggregation;
 
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
+import com.mawen.search.core.aggregation.AggregationsContainer;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
-import com.mawen.search.core.aggregation.AggregationsContainer;
-
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

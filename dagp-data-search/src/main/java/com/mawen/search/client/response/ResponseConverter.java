@@ -1,8 +1,5 @@
 package com.mawen.search.client.response;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import co.elastic.clients.elasticsearch._types.BulkIndexByScrollFailure;
 import co.elastic.clients.elasticsearch._types.ErrorCause;
 import co.elastic.clients.elasticsearch._types.Time;
@@ -15,8 +12,10 @@ import com.mawen.search.client.EntityAsMap;
 import com.mawen.search.core.query.ByQueryResponse;
 import com.mawen.search.core.support.MultiGetItem;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.lang.Nullable;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

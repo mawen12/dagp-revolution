@@ -21,15 +21,11 @@ import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.TransportOptions;
 import co.elastic.clients.transport.rest_client.RestClientOptions;
-import com.mawen.search.client.ElasticsearchTemplate;
-import com.mawen.search.core.ElasticsearchOperations;
-import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.test.client.ClientConfiguration;
 import com.mawen.search.test.client.ElasticsearchClients;
 import com.mawen.search.test.client.ElasticsearchConfigurationSupport;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.Assert;
 
@@ -65,15 +61,15 @@ public abstract class ElasticsearchConfiguration extends ElasticsearchConfigurat
 		return ElasticsearchClients.createImperative(transport);
 	}
 
-	@Bean(name = { "elasticsearchOperations", "elasticsearchTemplate" })
-	public ElasticsearchOperations elasticsearchOperations(ElasticsearchConverter elasticsearchConverter,
-			ElasticsearchClient elasticsearchClient) {
-
-		ElasticsearchTemplate template = new ElasticsearchTemplate(elasticsearchClient, elasticsearchConverter);
-		template.setRefreshPolicy(refreshPolicy());
-
-		return template;
-	}
+//	@Bean(name = { "elasticsearchOperations", "elasticsearchTemplate" })
+//	public ElasticsearchOperations elasticsearchOperations(ElasticsearchConverter elasticsearchConverter,
+//			ElasticsearchClient elasticsearchClient) {
+//
+//		ElasticsearchTemplate template = new ElasticsearchTemplate(elasticsearchClient, elasticsearchConverter);
+//		template.setRefreshPolicy(refreshPolicy());
+//
+//		return template;
+//	}
 
 	@Bean
 	public JsonpMapper jsonpMapper() {

@@ -1,16 +1,8 @@
 package com.mawen.search.client.query.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
 import co.elastic.clients.elasticsearch.core.SearchTemplateResponse;
-import co.elastic.clients.elasticsearch.core.search.Hit;
-import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
-import co.elastic.clients.elasticsearch.core.search.ResponseBody;
-import co.elastic.clients.elasticsearch.core.search.Suggestion;
-import co.elastic.clients.elasticsearch.core.search.TotalHits;
+import co.elastic.clients.elasticsearch.core.search.*;
 import co.elastic.clients.json.JsonpMapper;
 import com.mawen.search.client.DocumentAdapters;
 import com.mawen.search.client.EntityAsMap;
@@ -18,9 +10,12 @@ import com.mawen.search.client.aggregation.ElasticsearchAggregations;
 import com.mawen.search.core.document.SearchDocument;
 import com.mawen.search.core.document.SearchDocumentResponse;
 import com.mawen.search.core.query.TotalHitsRelation;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

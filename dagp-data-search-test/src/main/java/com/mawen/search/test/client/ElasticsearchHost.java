@@ -16,10 +16,10 @@
 
 package com.mawen.search.test.client;
 
+import org.springframework.util.Assert;
+
 import java.net.InetSocketAddress;
 import java.time.Instant;
-
-import org.springframework.util.Assert;
 
 public class ElasticsearchHost {
 

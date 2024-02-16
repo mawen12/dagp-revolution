@@ -1,32 +1,16 @@
-/*
- * Copyright 2018-2023 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.mawen.search.junit.jupiter.client;
+package com.mawen.search;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import com.mawen.search.client.ElasticsearchTemplate;
+import com.mawen.search.core.ElasticsearchOperations;
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.convert.ElasticsearchCustomConversions;
 import com.mawen.search.core.convert.MappingElasticsearchConverter;
 import com.mawen.search.core.mapping.SimpleElasticsearchMappingContext;
 import com.mawen.search.core.refresh.RefreshPolicy;
-
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
+import com.mawen.search.test.client.ElasticsearchConfigurationSupport;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -34,16 +18,38 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
-import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
-@Configuration(proxyBeanMethods = false)
-public class ElasticsearchConfigurationSupport {
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+@Configuration
+public class CustomElasticsearchTemplateConfiguration extends ElasticsearchTemplateConfiguration {
+
+    @Bean
+	protected RefreshPolicy refreshPolicy() {
+		return RefreshPolicy.IMMEDIATE;
+	}
+
+
+
+    @Bean(name = { "elasticsearchOperations", "elasticsearchTemplate" })
+	public ElasticsearchOperations elasticsearchOperations(ElasticsearchConverter elasticsearchConverter,
+                                                           ElasticsearchClient elasticsearchClient) {
+
+		ElasticsearchTemplate template = new ElasticsearchTemplate(elasticsearchClient, elasticsearchConverter);
+		template.setRefreshPolicy(refreshPolicy());
+
+		return template;
+	}
+
 
 	@Bean
 	public ElasticsearchConverter elasticsearchEntityMapper(SimpleElasticsearchMappingContext elasticsearchMappingContext,
-			ElasticsearchCustomConversions elasticsearchCustomConversions) {
+                                                            ElasticsearchCustomConversions elasticsearchCustomConversions) {
 
 		MappingElasticsearchConverter elasticsearchConverter = new MappingElasticsearchConverter(
 				elasticsearchMappingContext);
@@ -67,11 +73,11 @@ public class ElasticsearchConfigurationSupport {
 		return new ElasticsearchCustomConversions(Collections.emptyList());
 	}
 
-	protected Collection<String> getMappingBasePackages() {
+    protected Collection<String> getMappingBasePackages() {
 
-		Package mappingBasePackage = getClass().getPackage();
-		return Collections.singleton(mappingBasePackage == null ? null : mappingBasePackage.getName());
-	}
+        Package mappingBasePackage = getClass().getPackage();
+        return Collections.singleton(mappingBasePackage == null ? null : mappingBasePackage.getName());
+    }
 
 	protected Set<Class<?>> getInitialEntitySet() {
 
@@ -111,14 +117,7 @@ public class ElasticsearchConfigurationSupport {
 		return initialEntitySet;
 	}
 
-	@Nullable
-	protected RefreshPolicy refreshPolicy() {
-		return null;
-	}
-
 	protected FieldNamingStrategy fieldNamingStrategy() {
 		return PropertyNameFieldNamingStrategy.INSTANCE;
 	}
-
-
 }

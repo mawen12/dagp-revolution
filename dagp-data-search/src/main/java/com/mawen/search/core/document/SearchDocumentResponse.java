@@ -1,13 +1,12 @@
 package com.mawen.search.core.document;
 
+import com.mawen.search.core.aggregation.AggregationsContainer;
+import lombok.Getter;
+import org.springframework.lang.Nullable;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-
-import com.mawen.search.core.aggregation.AggregationsContainer;
-import lombok.Getter;
-
-import org.springframework.lang.Nullable;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

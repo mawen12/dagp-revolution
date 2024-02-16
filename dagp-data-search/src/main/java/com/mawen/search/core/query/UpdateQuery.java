@@ -1,8 +1,5 @@
 package com.mawen.search.core.query;
 
-import java.util.List;
-import java.util.Map;
-
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.domain.ScriptData;
 import com.mawen.search.core.refresh.RefreshPolicy;
@@ -10,8 +7,10 @@ import com.mawen.search.core.support.ScriptType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import org.springframework.lang.Nullable;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

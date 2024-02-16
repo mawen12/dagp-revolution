@@ -1,5 +1,14 @@
 package com.mawen.search.core.query;
 
+import com.mawen.search.client.util.ScrollState;
+import com.mawen.search.core.aggregation.AggregationsContainer;
+import com.mawen.search.core.domain.*;
+import lombok.Getter;
+import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
 import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
@@ -7,20 +16,6 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import com.mawen.search.client.util.ScrollState;
-import com.mawen.search.core.aggregation.AggregationsContainer;
-import com.mawen.search.core.domain.PitSearchAfterHits;
-import com.mawen.search.core.domain.PointInTime;
-import com.mawen.search.core.domain.SearchHit;
-import com.mawen.search.core.domain.SearchHitsIterator;
-import com.mawen.search.core.domain.SearchScrollHits;
-import lombok.Getter;
-
-import org.springframework.data.domain.Sort;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

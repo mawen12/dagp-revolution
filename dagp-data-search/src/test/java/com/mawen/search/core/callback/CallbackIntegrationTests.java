@@ -26,7 +26,7 @@ import com.mawen.search.core.event.AfterLoadCallback;
 import com.mawen.search.core.event.BeforeConvertCallback;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.IndexQuery;
-import com.mawen.search.junit.jupiter.SpringIntegrationTest;
+import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

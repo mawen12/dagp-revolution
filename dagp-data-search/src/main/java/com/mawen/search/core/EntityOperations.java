@@ -1,13 +1,10 @@
 package com.mawen.search.core;
 
-import java.util.Map;
-
 import com.mawen.search.core.domain.SeqNoPrimaryTerm;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.routing.RoutingResolver;
-
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.mapping.IdentifierAccessor;
 import org.springframework.data.mapping.PersistentPropertyAccessor;
@@ -15,6 +12,8 @@ import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.Map;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

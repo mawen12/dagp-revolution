@@ -1,13 +1,12 @@
 package com.mawen.search.core.domain;
 
-import java.util.function.Function;
-
 import com.mawen.search.core.query.CriteriaQuery;
 import com.mawen.search.core.query.Query;
-
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.function.Function;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

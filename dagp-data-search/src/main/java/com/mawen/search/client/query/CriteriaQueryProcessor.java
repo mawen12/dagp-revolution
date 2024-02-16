@@ -1,9 +1,5 @@
 package com.mawen.search.client.query;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.query_dsl.ChildScoreMode;
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
@@ -13,12 +9,16 @@ import com.mawen.search.InvalidApiUsageException;
 import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.Field;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import static com.mawen.search.client.query.Queries.*;
-import static org.springframework.util.StringUtils.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.mawen.search.client.query.Queries.matchQuery;
+import static com.mawen.search.client.query.Queries.queryStringQuery;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

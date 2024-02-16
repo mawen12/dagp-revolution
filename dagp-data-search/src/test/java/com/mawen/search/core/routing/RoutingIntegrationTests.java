@@ -31,7 +31,7 @@ import com.mawen.search.core.mapping.SimpleElasticsearchMappingContext;
 import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.core.support.MultiGetItem;
-import com.mawen.search.junit.jupiter.SpringIntegrationTest;
+import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;

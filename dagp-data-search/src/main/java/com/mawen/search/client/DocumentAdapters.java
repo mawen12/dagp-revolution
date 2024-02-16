@@ -1,12 +1,5 @@
 package com.mawen.search.client;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import co.elastic.clients.elasticsearch.core.GetResponse;
 import co.elastic.clients.elasticsearch.core.MgetResponse;
 import co.elastic.clients.elasticsearch.core.get.GetResult;
@@ -18,16 +11,18 @@ import co.elastic.clients.json.JsonpMapper;
 import com.mawen.search.client.query.builder.SearchDocumentResponseBuilder;
 import com.mawen.search.client.response.ResponseConverter;
 import com.mawen.search.client.util.TypeUtils;
-import com.mawen.search.core.document.Document;
-import com.mawen.search.core.document.NestedMetaData;
-import com.mawen.search.core.document.SearchDocument;
-import com.mawen.search.core.document.SearchDocumentAdapter;
-import com.mawen.search.core.document.SearchDocumentResponse;
+import com.mawen.search.core.document.*;
 import com.mawen.search.core.support.MultiGetItem;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

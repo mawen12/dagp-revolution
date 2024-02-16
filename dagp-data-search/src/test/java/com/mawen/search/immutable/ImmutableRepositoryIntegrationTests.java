@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import com.mawen.search.core.ElasticsearchOperations;
 import com.mawen.search.core.annotation.Document;
-import com.mawen.search.junit.jupiter.SpringIntegrationTest;
+import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

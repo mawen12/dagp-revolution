@@ -10,7 +10,7 @@ import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.SearchHit;
 import com.mawen.search.core.domain.SearchHits;
 import com.mawen.search.core.mapping.IndexCoordinates;
-import com.mawen.search.junit.jupiter.SpringIntegrationTest;
+import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

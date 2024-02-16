@@ -1,12 +1,11 @@
 package com.mawen.search.core.query;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.mawen.search.ElasticsearchErrorCause;
 import lombok.Getter;
-
 import org.springframework.lang.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

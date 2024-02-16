@@ -21,7 +21,7 @@ import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.core.annotation.IndexName;
 import com.mawen.search.core.mapping.IndexCoordinates;
-import com.mawen.search.junit.jupiter.SpringIntegrationTest;
+import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import com.mawen.search.utils.ResourceUtil;
 import lombok.AllArgsConstructor;

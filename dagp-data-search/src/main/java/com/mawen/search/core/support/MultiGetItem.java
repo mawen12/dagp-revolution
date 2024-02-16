@@ -4,7 +4,6 @@ import com.mawen.search.ElasticsearchErrorCause;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import org.springframework.lang.Nullable;
 
 /**

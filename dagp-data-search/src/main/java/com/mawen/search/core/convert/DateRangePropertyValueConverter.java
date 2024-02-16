@@ -1,15 +1,14 @@
 package com.mawen.search.core.convert;
 
-import java.util.Date;
-import java.util.List;
-
 import com.mawen.search.core.domain.Range;
 import com.mawen.search.core.mapping.PropertyValueConverter;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.util.Assert;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * {@link Range<Date> 日期范围} 与 Elasticsearch 互相转换的 {@link PropertyValueConverter}

@@ -1,15 +1,14 @@
 package com.mawen.search.core.domain;
 
-import java.time.Duration;
-
 import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.support.ActiveShardCount;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import org.springframework.lang.Nullable;
+
+import java.time.Duration;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

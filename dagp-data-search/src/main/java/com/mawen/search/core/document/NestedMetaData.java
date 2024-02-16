@@ -3,7 +3,6 @@ package com.mawen.search.core.document;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import org.springframework.lang.Nullable;
 
 /**

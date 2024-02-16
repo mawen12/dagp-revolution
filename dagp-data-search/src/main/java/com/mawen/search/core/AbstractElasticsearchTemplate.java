@@ -1,25 +1,10 @@
 package com.mawen.search.core;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-
 import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.convert.MappingElasticsearchConverter;
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.document.SearchDocumentResponse;
-import com.mawen.search.core.domain.BulkOptions;
-import com.mawen.search.core.domain.PitSearchAfterHits;
-import com.mawen.search.core.domain.SearchHitMapping;
-import com.mawen.search.core.domain.SearchHits;
-import com.mawen.search.core.domain.SearchHitsIterator;
-import com.mawen.search.core.domain.SearchScrollHits;
-import com.mawen.search.core.domain.SeqNoPrimaryTerm;
+import com.mawen.search.core.domain.*;
 import com.mawen.search.core.event.AfterConvertCallback;
 import com.mawen.search.core.event.AfterLoadCallback;
 import com.mawen.search.core.event.AfterSaveCallback;
@@ -28,21 +13,13 @@ import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.mapping.SimpleElasticsearchMappingContext;
-import com.mawen.search.core.query.BaseQuery;
-import com.mawen.search.core.query.ByQueryResponse;
-import com.mawen.search.core.query.IndexQuery;
-import com.mawen.search.core.query.MoreLikeThisQuery;
-import com.mawen.search.core.query.Query;
-import com.mawen.search.core.query.StreamQueries;
-import com.mawen.search.core.query.UpdateQuery;
-import com.mawen.search.core.query.UpdateResponse;
+import com.mawen.search.core.query.*;
 import com.mawen.search.core.query.builder.IndexQueryBuilder;
 import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.routing.DefaultRoutingResolver;
 import com.mawen.search.core.routing.RoutingResolver;
 import com.mawen.search.core.support.IndexedObjectInformation;
 import com.mawen.search.core.support.MultiGetItem;
-
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -55,6 +32,11 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

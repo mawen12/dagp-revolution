@@ -1,7 +1,6 @@
 package com.mawen.search.core.query.highlight;
 
 import lombok.Getter;
-
 import org.springframework.util.Assert;
 
 /**

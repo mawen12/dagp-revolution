@@ -15,7 +15,8 @@
  */
 package com.mawen.search.core.query;
 
-import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
 import com.mawen.search.utils.IndexNameProvider;
 
 import org.springframework.context.annotation.Bean;
@@ -26,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = { NativeQueryELCIntegrationTests.Config.class })
 public class NativeQueryELCIntegrationTests extends NativeQueryIntegrationTests {
 	@Configuration
-	@Import({ ElasticsearchTemplateConfiguration.class })
+	@Import({ CustomElasticsearchTemplateConfiguration.class })
 	static class Config {
 		@Bean
 		IndexNameProvider indexNameProvider() {

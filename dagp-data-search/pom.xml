@@ -108,6 +108,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.mawen</groupId>
+            <artifactId>dagp-data-search-test</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <properties>

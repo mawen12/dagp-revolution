@@ -1,18 +1,17 @@
 package com.mawen.search.client.query.builder;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.query.highlight.Highlight;
 import com.mawen.search.core.query.highlight.HighlightField;
 import com.mawen.search.core.query.highlight.HighlightFieldParameters;
 import com.mawen.search.core.query.highlight.HighlightParameters;
-
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static com.mawen.search.client.util.TypeUtils.*;
 

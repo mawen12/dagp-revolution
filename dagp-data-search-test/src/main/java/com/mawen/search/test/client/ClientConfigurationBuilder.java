@@ -15,6 +15,15 @@
  */
 package com.mawen.search.test.client;
 
+import com.mawen.search.test.client.ClientConfiguration.ClientConfigurationBuilderWithRequiredEndpoint;
+import com.mawen.search.test.client.ClientConfiguration.MaybeSecureClientConfigurationBuilder;
+import com.mawen.search.test.client.ClientConfiguration.TerminalClientConfigurationBuilder;
+import com.mawen.search.test.client.support.HttpHeaders;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -22,17 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-
-import com.mawen.search.junit.jupiter.client.ClientConfiguration.ClientConfigurationBuilderWithRequiredEndpoint;
-import com.mawen.search.junit.jupiter.client.ClientConfiguration.MaybeSecureClientConfigurationBuilder;
-import com.mawen.search.junit.jupiter.client.ClientConfiguration.TerminalClientConfigurationBuilder;
-import com.mawen.search.junit.jupiter.client.support.HttpHeaders;
-
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
 
 
 class ClientConfigurationBuilder

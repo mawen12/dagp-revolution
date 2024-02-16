@@ -1,17 +1,16 @@
 package com.mawen.search.core.query;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import static com.mawen.search.core.query.Query.*;
-import static java.util.Collections.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.mawen.search.core.query.Query.DEFAULT_PAGE;
+import static java.util.Collections.addAll;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

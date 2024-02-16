@@ -1,10 +1,5 @@
 package com.mawen.search.client.query;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import co.elastic.clients.elasticsearch._types.KnnQuery;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
@@ -15,9 +10,13 @@ import co.elastic.clients.json.JsonData;
 import com.mawen.search.client.query.builder.NativeQueryBuilder;
 import com.mawen.search.core.query.BaseQuery;
 import lombok.Getter;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 使用新的 Elasticsearch 客户端库构建的查询

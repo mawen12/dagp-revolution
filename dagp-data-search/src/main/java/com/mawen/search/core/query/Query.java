@@ -1,18 +1,17 @@
 package com.mawen.search.core.query;
 
-import java.time.Duration;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
 import com.mawen.search.core.domain.IdWithRouting;
 import com.mawen.search.core.domain.SourceFilter;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

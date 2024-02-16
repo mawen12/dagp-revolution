@@ -1,40 +1,8 @@
 package com.mawen.search.client;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.Time;
-import co.elastic.clients.elasticsearch.core.BulkRequest;
-import co.elastic.clients.elasticsearch.core.BulkResponse;
-import co.elastic.clients.elasticsearch.core.ClearScrollRequest;
-import co.elastic.clients.elasticsearch.core.ClosePointInTimeRequest;
-import co.elastic.clients.elasticsearch.core.DeleteByQueryRequest;
-import co.elastic.clients.elasticsearch.core.DeleteByQueryResponse;
-import co.elastic.clients.elasticsearch.core.DeleteRequest;
-import co.elastic.clients.elasticsearch.core.ExistsRequest;
-import co.elastic.clients.elasticsearch.core.GetRequest;
-import co.elastic.clients.elasticsearch.core.GetResponse;
-import co.elastic.clients.elasticsearch.core.IndexRequest;
-import co.elastic.clients.elasticsearch.core.IndexResponse;
-import co.elastic.clients.elasticsearch.core.MgetRequest;
-import co.elastic.clients.elasticsearch.core.MgetResponse;
-import co.elastic.clients.elasticsearch.core.MsearchRequest;
-import co.elastic.clients.elasticsearch.core.MsearchResponse;
-import co.elastic.clients.elasticsearch.core.OpenPointInTimeRequest;
-import co.elastic.clients.elasticsearch.core.ScrollRequest;
-import co.elastic.clients.elasticsearch.core.ScrollResponse;
-import co.elastic.clients.elasticsearch.core.SearchRequest;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
-import co.elastic.clients.elasticsearch.core.UpdateByQueryRequest;
-import co.elastic.clients.elasticsearch.core.UpdateByQueryResponse;
-import co.elastic.clients.elasticsearch.core.UpdateRequest;
+import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
 import co.elastic.clients.elasticsearch.core.msearch.MultiSearchResponseItem;
 import co.elastic.clients.elasticsearch.core.search.ResponseBody;
@@ -49,29 +17,24 @@ import com.mawen.search.core.IndexOperations;
 import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.document.Document;
 import com.mawen.search.core.document.SearchDocumentResponse;
-import com.mawen.search.core.domain.BulkOptions;
-import com.mawen.search.core.domain.PitSearchAfterHits;
-import com.mawen.search.core.domain.PointInTime;
-import com.mawen.search.core.domain.SearchHits;
-import com.mawen.search.core.domain.SearchScrollHits;
+import com.mawen.search.core.domain.*;
 import com.mawen.search.core.mapping.IndexCoordinates;
-import com.mawen.search.core.query.BaseQuery;
-import com.mawen.search.core.query.ByQueryResponse;
-import com.mawen.search.core.query.IndexQuery;
-import com.mawen.search.core.query.MoreLikeThisQuery;
-import com.mawen.search.core.query.Query;
-import com.mawen.search.core.query.UpdateQuery;
 import com.mawen.search.core.query.UpdateResponse;
+import com.mawen.search.core.query.*;
 import com.mawen.search.core.query.builder.BaseQueryBuilder;
 import com.mawen.search.core.support.IndexedObjectInformation;
 import com.mawen.search.core.support.MultiGetItem;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import static com.mawen.search.client.util.TypeUtils.*;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.mawen.search.client.util.TypeUtils.result;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

@@ -1,26 +1,21 @@
 package com.mawen.search.core.query;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.mawen.search.core.domain.IdWithRouting;
 import com.mawen.search.core.domain.PointInTime;
 import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.query.builder.BaseQueryBuilder;
 import lombok.Getter;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import static java.util.Collections.*;
-import static org.springframework.util.CollectionUtils.*;
+import java.time.Duration;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.addAll;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

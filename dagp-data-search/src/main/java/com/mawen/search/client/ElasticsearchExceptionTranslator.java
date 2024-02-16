@@ -1,20 +1,14 @@
 package com.mawen.search.client;
 
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch._types.ErrorResponse;
+import com.mawen.search.*;
+import org.elasticsearch.client.ResponseException;
+import org.springframework.dao.OptimisticLockingFailureException;
+
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import co.elastic.clients.elasticsearch._types.ElasticsearchException;
-import co.elastic.clients.elasticsearch._types.ErrorResponse;
-import com.mawen.search.InvalidApiUsageException;
-import com.mawen.search.NoSuchIndexException;
-import com.mawen.search.ResourceNotFoundException;
-import com.mawen.search.SearchException;
-import com.mawen.search.UncategorizedElasticsearchException;
-import com.mawen.search.VersionConflictException;
-import org.elasticsearch.client.ResponseException;
-
-import org.springframework.dao.OptimisticLockingFailureException;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

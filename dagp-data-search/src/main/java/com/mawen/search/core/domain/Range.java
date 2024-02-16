@@ -1,13 +1,12 @@
 package com.mawen.search.core.domain;
 
+import lombok.Getter;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
+
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
-
-import lombok.Getter;
-
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

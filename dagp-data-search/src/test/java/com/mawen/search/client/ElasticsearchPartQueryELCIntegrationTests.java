@@ -17,11 +17,12 @@ package com.mawen.search.client;
 
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
 import com.mawen.search.client.request.RequestConverter;
 import com.mawen.search.core.mapping.IndexCoordinates;
 import com.mawen.search.core.query.Query;
-import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
 import com.mawen.search.repository.query.ElasticsearchPartQueryIntegrationTests;
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
 import com.mawen.search.utils.JsonUtils;
 
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +31,7 @@ import org.springframework.context.annotation.Import;
 public class ElasticsearchPartQueryELCIntegrationTests extends ElasticsearchPartQueryIntegrationTests {
 
 	@Configuration
-	@Import({ ElasticsearchTemplateConfiguration.class })
+	@Import({ CustomElasticsearchTemplateConfiguration.class })
 	static class Config {}
 
 	@Override

@@ -17,9 +17,10 @@ package com.mawen.search.core.mapping;
 
 import java.util.Arrays;
 
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
 import com.mawen.search.core.convert.ElasticsearchCustomConversions;
-import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
 import com.mawen.search.repository.config.EnableElasticsearchRepositories;
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
 import com.mawen.search.utils.IndexNameProvider;
 
 import org.springframework.context.annotation.Bean;
@@ -34,7 +35,7 @@ public class EntityCustomConversionELCIntegrationTests extends EntityCustomConve
 	@Import({ EntityCustomConversionIntegrationTests.Config.class })
 	@EnableElasticsearchRepositories(basePackages = { "org.springframework.data.elasticsearch.core.mapping" },
 			considerNestedRepositories = true)
-	static class Config extends ElasticsearchTemplateConfiguration {
+	static class Config extends CustomElasticsearchTemplateConfiguration {
 		@Bean
 		IndexNameProvider indexNameProvider() {
 			return new IndexNameProvider("entity-customconversions-operations");

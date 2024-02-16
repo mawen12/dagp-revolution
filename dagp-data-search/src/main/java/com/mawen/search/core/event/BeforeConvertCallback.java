@@ -1,7 +1,6 @@
 package com.mawen.search.core.event;
 
 import com.mawen.search.core.mapping.IndexCoordinates;
-
 import org.springframework.data.mapping.callback.EntityCallback;
 
 /**

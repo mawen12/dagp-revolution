@@ -1,42 +1,26 @@
 package com.mawen.search.core.mapping;
 
-import java.time.temporal.TemporalAccessor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import com.mawen.search.core.annotation.DateFormat;
-import com.mawen.search.core.annotation.Field;
-import com.mawen.search.core.annotation.FieldType;
-import com.mawen.search.core.annotation.IndexName;
-import com.mawen.search.core.annotation.ValueConverter;
-import com.mawen.search.core.annotation.WriteOnlyProperty;
-import com.mawen.search.core.convert.AbstractPropertyValueConverter;
-import com.mawen.search.core.convert.DatePropertyValueConverter;
-import com.mawen.search.core.convert.DateRangePropertyValueConverter;
-import com.mawen.search.core.convert.ElasticsearchDateConverter;
-import com.mawen.search.core.convert.NumberRangePropertyValueConverter;
-import com.mawen.search.core.convert.TemporalPropertyValueConverter;
-import com.mawen.search.core.convert.TemporalRangePropertyValueConverter;
+import com.mawen.search.core.annotation.*;
+import com.mawen.search.core.convert.*;
 import com.mawen.search.core.domain.Range;
 import com.mawen.search.core.domain.SeqNoPrimaryTerm;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mapping.Association;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentEntity;
-import org.springframework.data.mapping.model.AnnotationBasedPersistentProperty;
-import org.springframework.data.mapping.model.FieldNamingStrategy;
-import org.springframework.data.mapping.model.Property;
-import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
-import org.springframework.data.mapping.model.SimpleTypeHolder;
+import org.springframework.data.mapping.model.*;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
+
+import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

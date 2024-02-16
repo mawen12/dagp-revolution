@@ -1,14 +1,13 @@
 package com.mawen.search.core.convert;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.mawen.search.core.domain.Range;
 import com.mawen.search.core.mapping.PropertyValueConverter;
-
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.util.Assert;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * {@link PropertyValueConverter} 的抽象实现，支持 {@link Range 范围} 类型的转换

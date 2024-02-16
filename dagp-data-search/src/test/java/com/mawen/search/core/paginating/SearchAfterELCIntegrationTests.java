@@ -15,8 +15,9 @@
  */
 package com.mawen.search.core.paginating;
 
-import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
 import com.mawen.search.repository.config.EnableElasticsearchRepositories;
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
 import com.mawen.search.utils.IndexNameProvider;
 
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class SearchAfterELCIntegrationTests extends SearchAfterIntegrationTests {
 
 	@Configuration
-	@Import({ ElasticsearchTemplateConfiguration.class })
+	@Import({ CustomElasticsearchTemplateConfiguration.class })
 	@EnableElasticsearchRepositories(considerNestedRepositories = true)
 	static class Config {
 		@Bean

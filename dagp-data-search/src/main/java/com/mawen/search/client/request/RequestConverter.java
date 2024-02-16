@@ -1,36 +1,10 @@
 package com.mawen.search.client.request;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import co.elastic.clients.elasticsearch._types.Conflicts;
-import co.elastic.clients.elasticsearch._types.NestedSortValue;
-import co.elastic.clients.elasticsearch._types.OpType;
-import co.elastic.clients.elasticsearch._types.SearchType;
-import co.elastic.clients.elasticsearch._types.SortOptions;
-import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch._types.VersionType;
-import co.elastic.clients.elasticsearch._types.WaitForActiveShardOptions;
+import co.elastic.clients.elasticsearch._types.*;
 import co.elastic.clients.elasticsearch._types.mapping.FieldType;
 import co.elastic.clients.elasticsearch._types.query_dsl.FieldAndFormat;
 import co.elastic.clients.elasticsearch._types.query_dsl.Like;
-import co.elastic.clients.elasticsearch.core.BulkRequest;
-import co.elastic.clients.elasticsearch.core.ClosePointInTimeRequest;
-import co.elastic.clients.elasticsearch.core.DeleteByQueryRequest;
-import co.elastic.clients.elasticsearch.core.DeleteRequest;
-import co.elastic.clients.elasticsearch.core.GetRequest;
-import co.elastic.clients.elasticsearch.core.IndexRequest;
-import co.elastic.clients.elasticsearch.core.MgetRequest;
-import co.elastic.clients.elasticsearch.core.MsearchRequest;
-import co.elastic.clients.elasticsearch.core.OpenPointInTimeRequest;
-import co.elastic.clients.elasticsearch.core.SearchRequest;
-import co.elastic.clients.elasticsearch.core.UpdateByQueryRequest;
-import co.elastic.clients.elasticsearch.core.UpdateRequest;
+import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.core.bulk.CreateOperation;
 import co.elastic.clients.elasticsearch.core.bulk.IndexOperation;
@@ -61,25 +35,22 @@ import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.mapping.IndexCoordinates;
-import com.mawen.search.core.query.BaseQuery;
-import com.mawen.search.core.query.CriteriaQuery;
-import com.mawen.search.core.query.IndexQuery;
-import com.mawen.search.core.query.MoreLikeThisQuery;
-import com.mawen.search.core.query.Query;
-import com.mawen.search.core.query.StringQuery;
-import com.mawen.search.core.query.UpdateQuery;
+import com.mawen.search.core.query.*;
 import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.core.support.ScriptType;
 import com.mawen.search.support.DefaultStringObjectMap;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import static com.mawen.search.client.util.TypeUtils.*;
-import static org.springframework.util.CollectionUtils.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

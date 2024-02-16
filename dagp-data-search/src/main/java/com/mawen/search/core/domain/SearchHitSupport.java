@@ -1,13 +1,13 @@
 package com.mawen.search.core.domain;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.CloseableIterator;
 import org.springframework.lang.Nullable;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

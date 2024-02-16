@@ -18,9 +18,10 @@ package com.mawen.search.core;
 import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.NestedQuery;
 import co.elastic.clients.elasticsearch.core.search.InnerHits;
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
 import com.mawen.search.client.query.NativeQuery;
 import com.mawen.search.core.query.Query;
-import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
 import com.mawen.search.utils.IndexNameProvider;
 
 import org.springframework.context.annotation.Bean;
@@ -32,7 +33,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class InnerHitsELCIntegrationTests extends InnerHitsIntegrationTests {
 
 	@Configuration
-	@Import({ ElasticsearchTemplateConfiguration.class })
+	@Import({ CustomElasticsearchTemplateConfiguration.class })
 	static class Config {
 		@Bean
 		IndexNameProvider indexNameProvider() {

@@ -1,12 +1,11 @@
 package com.mawen.search.core.query.highlight;
 
+import lombok.Getter;
+import org.springframework.util.Assert;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import lombok.Getter;
-
-import org.springframework.util.Assert;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

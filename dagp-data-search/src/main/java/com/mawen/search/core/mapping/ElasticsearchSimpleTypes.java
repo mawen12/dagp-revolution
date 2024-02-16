@@ -1,12 +1,11 @@
 package com.mawen.search.core.mapping;
 
+import com.mawen.search.core.document.Document;
+import org.springframework.data.mapping.model.SimpleTypeHolder;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.mawen.search.core.document.Document;
-
-import org.springframework.data.mapping.model.SimpleTypeHolder;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

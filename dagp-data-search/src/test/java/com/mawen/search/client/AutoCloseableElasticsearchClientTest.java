@@ -18,7 +18,7 @@ package com.mawen.search.client;
 import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
-import com.mawen.search.junit.jupiter.client.AutoCloseableElasticsearchClient;
+import com.mawen.search.test.client.AutoCloseableElasticsearchClient;
 import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -15,11 +15,10 @@
 
 package com.mawen.search.core;
 
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
 import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.convert.MappingElasticsearchConverter;
 import com.mawen.search.core.mapping.SimpleElasticsearchMappingContext;
-import com.mawen.search.junit.jupiter.client.ElasticsearchConfigurationSupport;
-
 import org.springframework.data.util.Lazy;
 
 public abstract class MappingContextBaseTests {
@@ -32,7 +31,7 @@ public abstract class MappingContextBaseTests {
 
 	private SimpleElasticsearchMappingContext setupMappingContext() {
 
-		ElasticsearchConfigurationSupport configurationSupport = new ElasticsearchConfigurationSupport();
+		CustomElasticsearchTemplateConfiguration configurationSupport = new CustomElasticsearchTemplateConfiguration();
 		SimpleElasticsearchMappingContext mappingContext = configurationSupport
 				.elasticsearchMappingContext(configurationSupport.elasticsearchCustomConversions());
 		mappingContext.initialize();

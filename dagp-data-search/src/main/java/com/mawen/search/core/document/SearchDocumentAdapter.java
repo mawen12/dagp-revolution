@@ -1,15 +1,10 @@
 package com.mawen.search.core.document;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiConsumer;
-
 import lombok.Getter;
-
 import org.springframework.lang.Nullable;
+
+import java.util.*;
+import java.util.function.BiConsumer;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

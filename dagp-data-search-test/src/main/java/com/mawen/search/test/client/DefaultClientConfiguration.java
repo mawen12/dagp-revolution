@@ -15,18 +15,16 @@
  */
 package com.mawen.search.test.client;
 
+import com.mawen.search.test.client.support.HttpHeaders;
+import org.springframework.lang.Nullable;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-
-import com.mawen.search.junit.jupiter.client.support.HttpHeaders;
-
-import org.springframework.lang.Nullable;
 
 
 class DefaultClientConfiguration implements ClientConfiguration {

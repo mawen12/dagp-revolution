@@ -15,15 +15,6 @@
  */
 package com.mawen.search.test.client;
 
-import java.net.InetSocketAddress;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
@@ -33,7 +24,7 @@ import co.elastic.clients.transport.TransportUtils;
 import co.elastic.clients.transport.Version;
 import co.elastic.clients.transport.rest_client.RestClientOptions;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
-import com.mawen.search.junit.jupiter.client.support.HttpHeaders;
+import com.mawen.search.test.client.support.HttpHeaders;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.http.HttpHost;
@@ -48,9 +39,17 @@ import org.apache.http.protocol.HttpContext;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.net.InetSocketAddress;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 
 @SuppressWarnings("unused")

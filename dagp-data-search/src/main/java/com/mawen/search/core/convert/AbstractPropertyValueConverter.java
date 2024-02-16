@@ -1,7 +1,6 @@
 package com.mawen.search.core.convert;
 
 import com.mawen.search.core.mapping.PropertyValueConverter;
-
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.util.Assert;
 

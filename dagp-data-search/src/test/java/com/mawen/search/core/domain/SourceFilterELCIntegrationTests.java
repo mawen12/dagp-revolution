@@ -1,7 +1,7 @@
 package com.mawen.search.core.domain;
 
-import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
-
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class SourceFilterELCIntegrationTests extends SourceFilterIntegrationTests {
 
 	@Configuration
-	@Import({ ElasticsearchTemplateConfiguration.class })
+	@Import({ CustomElasticsearchTemplateConfiguration.class })
 	static class Config {
 
 	}

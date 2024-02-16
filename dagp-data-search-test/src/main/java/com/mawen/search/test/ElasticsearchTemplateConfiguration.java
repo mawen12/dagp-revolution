@@ -15,14 +15,12 @@
  */
 package com.mawen.search.test;
 
-import java.time.Duration;
-
-import com.mawen.search.core.refresh.RefreshPolicy;
 import com.mawen.search.test.client.ClientConfiguration;
-
 import org.springframework.context.annotation.Configuration;
 
-import static org.springframework.util.StringUtils.*;
+import java.time.Duration;
+
+import static org.springframework.util.StringUtils.hasText;
 
 @Configuration
 public class ElasticsearchTemplateConfiguration extends ElasticsearchConfiguration {
@@ -62,10 +60,10 @@ public class ElasticsearchTemplateConfiguration extends ElasticsearchConfigurati
 		return clientConfiguration;
 	}
 
-	@Override
-	protected RefreshPolicy refreshPolicy() {
-		return RefreshPolicy.IMMEDIATE;
-	}
-
+//	@Override
+//	protected RefreshPolicy refreshPolicy() {
+//		return RefreshPolicy.IMMEDIATE;
+//	}
+//
 
 }

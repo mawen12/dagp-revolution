@@ -3,7 +3,6 @@ package com.mawen.search.core.query;
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.query.builder.CriteriaQueryBuilder;
 import lombok.Getter;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 

@@ -1,14 +1,13 @@
 package com.mawen.search.core.document;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mawen.search.support.StringObjectMap;
+import org.springframework.data.mapping.MappingException;
+import org.springframework.util.Assert;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mawen.search.support.StringObjectMap;
-
-import org.springframework.data.mapping.MappingException;
-import org.springframework.util.Assert;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

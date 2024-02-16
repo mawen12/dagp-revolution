@@ -1,7 +1,6 @@
 package com.mawen.search.core.mapping;
 
 import com.mawen.search.core.annotation.Document;
-
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;

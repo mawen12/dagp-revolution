@@ -1,27 +1,8 @@
 package com.mawen.search.core.convert;
 
-import java.time.temporal.TemporalAccessor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.core.document.Document;
-import com.mawen.search.core.domain.Criteria;
-import com.mawen.search.core.domain.FetchSourceFilter;
-import com.mawen.search.core.domain.Field;
-import com.mawen.search.core.domain.SeqNoPrimaryTerm;
-import com.mawen.search.core.domain.SourceFilter;
+import com.mawen.search.core.domain.*;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.mapping.PropertyValueConverter;
@@ -29,7 +10,6 @@ import com.mawen.search.core.query.BaseQuery;
 import com.mawen.search.core.query.CriteriaQuery;
 import com.mawen.search.core.query.Query;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -45,16 +25,7 @@ import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentPropertyAccessor;
 import org.springframework.data.mapping.PreferredConstructor.Parameter;
 import org.springframework.data.mapping.context.MappingContext;
-import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
-import org.springframework.data.mapping.model.DefaultSpELExpressionEvaluator;
-import org.springframework.data.mapping.model.EntityInstantiator;
-import org.springframework.data.mapping.model.EntityInstantiators;
-import org.springframework.data.mapping.model.ParameterValueProvider;
-import org.springframework.data.mapping.model.PersistentEntityParameterValueProvider;
-import org.springframework.data.mapping.model.PropertyValueProvider;
-import org.springframework.data.mapping.model.SpELContext;
-import org.springframework.data.mapping.model.SpELExpressionEvaluator;
-import org.springframework.data.mapping.model.SpELExpressionParameterValueProvider;
+import org.springframework.data.mapping.model.*;
 import org.springframework.data.util.ClassTypeInformation;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.format.datetime.DateFormatterRegistrar;
@@ -63,6 +34,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+
+import java.time.temporal.TemporalAccessor;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * 基于域类型的 {@link ElasticsearchPersistentEntity}，特定 Elasticsearch 的 {@link org.springframework.data.convert.EntityConverter} 实现。

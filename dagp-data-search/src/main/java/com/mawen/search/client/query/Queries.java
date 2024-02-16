@@ -1,27 +1,18 @@
 package com.mawen.search.client.query;
 
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.LatLonGeoLocation;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import co.elastic.clients.util.ObjectBuilder;
+import com.mawen.search.core.query.builder.BaseQueryBuilder;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.function.Function;
-
-import co.elastic.clients.elasticsearch._types.FieldValue;
-import co.elastic.clients.elasticsearch._types.LatLonGeoLocation;
-import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
-import co.elastic.clients.elasticsearch._types.query_dsl.IdsQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.MatchAllQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch._types.query_dsl.QueryStringQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.WildcardQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.WrapperQuery;
-import co.elastic.clients.util.ObjectBuilder;
-import com.mawen.search.core.query.builder.BaseQueryBuilder;
-
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>

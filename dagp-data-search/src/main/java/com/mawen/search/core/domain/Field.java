@@ -1,7 +1,6 @@
 package com.mawen.search.core.domain;
 
 import com.mawen.search.core.annotation.FieldType;
-
 import org.springframework.lang.Nullable;
 
 /**

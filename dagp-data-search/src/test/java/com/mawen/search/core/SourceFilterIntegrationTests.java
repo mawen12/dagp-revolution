@@ -26,7 +26,7 @@ import com.mawen.search.core.domain.SourceFilter;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.core.query.builder.FetchSourceFilterBuilder;
 import com.mawen.search.core.support.MultiGetItem;
-import com.mawen.search.junit.jupiter.SpringIntegrationTest;
+import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

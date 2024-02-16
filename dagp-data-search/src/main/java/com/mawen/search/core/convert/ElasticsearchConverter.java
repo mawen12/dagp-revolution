@@ -4,7 +4,6 @@ import com.mawen.search.core.document.Document;
 import com.mawen.search.core.mapping.ElasticsearchPersistentEntity;
 import com.mawen.search.core.mapping.ElasticsearchPersistentProperty;
 import com.mawen.search.core.query.Query;
-
 import org.springframework.data.convert.EntityConverter;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;

@@ -15,10 +15,10 @@
  */
 package com.mawen.search.test.client;
 
-import java.net.InetSocketAddress;
-
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.net.InetSocketAddress;
 
 public class InetSocketAddressParser {
 

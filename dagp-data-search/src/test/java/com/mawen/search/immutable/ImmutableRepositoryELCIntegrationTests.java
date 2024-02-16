@@ -1,7 +1,8 @@
 package com.mawen.search.immutable;
 
-import com.mawen.search.junit.jupiter.ElasticsearchTemplateConfiguration;
+import com.mawen.search.CustomElasticsearchTemplateConfiguration;
 import com.mawen.search.repository.config.EnableElasticsearchRepositories;
+import com.mawen.search.test.ElasticsearchTemplateConfiguration;
 import com.mawen.search.utils.IndexNameProvider;
 
 import org.springframework.context.annotation.Bean;
@@ -13,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class ImmutableRepositoryELCIntegrationTests extends ImmutableRepositoryIntegrationTests {
 
 	@Configuration
-	@Import({ ElasticsearchTemplateConfiguration.class })
+	@Import({ CustomElasticsearchTemplateConfiguration.class })
 	@EnableElasticsearchRepositories(basePackages = { "com.mawen.search.immutable" },
 			considerNestedRepositories = true)
 	static class Config {

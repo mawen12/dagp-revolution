@@ -1,7 +1,6 @@
 package com.mawen.search.core.domain;
 
 import lombok.Getter;
-
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
