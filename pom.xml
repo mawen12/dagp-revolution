@@ -13,7 +13,7 @@
 
     <modules>
         <module>dagp-data-search</module>
-        <module>search-sample</module>
+        <module>dagp-data-search-sample</module>
         <module>search-spring-boot-starter</module>
         <module>dagp-data-search-test</module>
     </modules>

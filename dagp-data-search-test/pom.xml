@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>dagp-data-search-test</artifactId>
+    <description>For dagp-data-search test</description>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

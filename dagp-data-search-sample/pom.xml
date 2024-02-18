@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>search-sample</artifactId>
+    <artifactId>dagp-data-search-sample</artifactId>
 
     <properties>
 
