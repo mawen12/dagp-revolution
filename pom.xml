@@ -16,6 +16,7 @@
         <module>dagp-data-search-sample</module>
         <module>dagp-data-search-spring-boot-starter</module>
         <module>dagp-data-search-test</module>
+        <module>dagp-data-search-benchmark</module>
     </modules>
 
     <profiles>
@@ -174,6 +175,36 @@
                 <artifactId>micrometer-registry-elastic</artifactId>
                 <version>1.9.5</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.github.mp911de.microbenchmark-runner</groupId>
+                <artifactId>microbenchmark-runner-junit4</artifactId>
+                <version>${microbenchmark-runner.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.mp911de.microbenchmark-runner</groupId>
+                <artifactId>microbenchmark-runner-extras</artifactId>
+                <version>${microbenchmark-runner.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -206,6 +237,10 @@
 
         <!-- JMH 依赖版本 -->
         <jmh.version>1.37</jmh.version>
+        <microbenchmark-runner.version>0.2.0.RELEASE</microbenchmark-runner.version>
+
+        <!-- Log4j 依赖版本 -->
+        <log4j.version>2.22.1</log4j.version>
     </properties>
 
     <scm>
@@ -307,6 +342,11 @@
             <url>https://s3.amazonaws.com/download.elasticsearch.org/lucenesnapshots/00142c9</url>
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
