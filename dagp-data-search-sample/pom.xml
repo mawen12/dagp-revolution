@@ -23,7 +23,7 @@
 
         <dependency>
             <groupId>com.mawen</groupId>
-            <artifactId>search-spring-boot-starter</artifactId>
+            <artifactId>dagp-data-search-spring-boot-starter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
