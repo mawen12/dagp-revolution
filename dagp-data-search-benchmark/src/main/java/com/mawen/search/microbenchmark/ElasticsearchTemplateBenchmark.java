@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.Refresh;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
@@ -77,6 +76,16 @@ public class ElasticsearchTemplateBenchmark extends AbstractMicrobenchmark {
 	@Benchmark
 	public void clientBatchSeq() throws IOException {
 		List<BulkOperation> ops = IntStream.of(0, 1000).mapToObj(i -> bulkOptions(getPerson(i))).collect(Collectors.toList());
+		elasticsearchClient.bulk(BulkRequest.of(b -> b.operations(ops)));
+	}
+
+	@Benchmark
+	public void clientBatchSeqWithoutId() throws IOException {
+		List<BulkOperation> ops = IntStream.of(0, 1000).mapToObj(i -> {
+			Person person = getPerson(i);
+			person.setId(null);
+			return bulkOptions(person);
+		}).collect(Collectors.toList());
 		elasticsearchClient.bulk(BulkRequest.of(b -> b.operations(ops)));
 	}
 

@@ -2,6 +2,7 @@ package com.mawen.search.microbenchmark.support;
 
 import jmh.mbr.junit4.Microbenchmark;
 import org.junit.runner.RunWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Scope;

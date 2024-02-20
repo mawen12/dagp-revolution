@@ -1,4 +1,4 @@
-package com.mawen.search.microbenchmark;
+package com.mawen.search.microbenchmark.support;
 
 import jmh.mbr.core.ResultsWriter;
 import jmh.mbr.core.ResultsWriterFactory;
