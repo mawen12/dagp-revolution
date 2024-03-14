@@ -61,6 +61,11 @@ public class BaseQuery implements Query {
 	private Integer reactiveBatchSize = null;
 	@Nullable
 	private Boolean allowNoIndices = null;
+	/**
+	 * @since 0.0.2-SNAPSHOT
+	 */
+	@Nullable
+	private Boolean ignoreUnavailable = null;
 
 	private boolean queryIsUpdatedByConverter = false;
 
@@ -89,6 +94,7 @@ public class BaseQuery implements Query {
 		this.idsWithRouting = builder.getIdsWithRouting();
 		this.reactiveBatchSize = builder.getReactiveBatchSize();
 		this.allowNoIndices = builder.getAllowNoIndices();
+		this.ignoreUnavailable = builder.getIgnoreUnavailable();
 	}
 
 	public void setSort(@Nullable Sort sort) {
@@ -260,5 +266,13 @@ public class BaseQuery implements Query {
 
 	public void setQueryIsUpdatedByConverter(boolean queryIsUpdatedByConverter) {
 		this.queryIsUpdatedByConverter = queryIsUpdatedByConverter;
+	}
+
+	/**
+	 * @since 0.0.2-SNAPSHOT
+	 */
+	@Override
+	public void setIgnoreUnavailable(boolean ignoreUnavailable) {
+		this.ignoreUnavailable = ignoreUnavailable;
 	}
 }

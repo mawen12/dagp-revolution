@@ -56,6 +56,11 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 	private List<Object> searchAfter;
 	@Nullable
 	private Boolean allowNoIndices;
+	/**
+	 * @since 0.0.2-SNAPSHOT
+	 */
+	@Nullable
+	private Boolean ignoreUnavailable;
 
 	public boolean getTrackScores() {
 		return trackScores;
@@ -189,6 +194,11 @@ public abstract class BaseQueryBuilder<Q extends BaseQuery, SELF extends BaseQue
 
 	public SELF withAllowNoIndices(@Nullable Boolean allowNoIndices) {
 		this.allowNoIndices = allowNoIndices;
+		return self();
+	}
+
+	public SELF withIgnoreUnavailable(Boolean ignoreAvailable) {
+		this.ignoreUnavailable = ignoreAvailable;
 		return self();
 	}
 

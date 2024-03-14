@@ -13,6 +13,7 @@ import com.mawen.search.InvalidApiUsageException;
 import com.mawen.search.core.annotation.Highlight;
 import com.mawen.search.core.annotation.ParamQuery;
 import com.mawen.search.core.annotation.Query;
+import com.mawen.search.core.annotation.SearchConfig;
 import com.mawen.search.core.annotation.SourceFilters;
 import com.mawen.search.core.convert.ElasticsearchConverter;
 import com.mawen.search.core.domain.SearchHit;
@@ -61,6 +62,11 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 	private final Lazy<HighlightQuery> highlightQueryLazy = Lazy.of(this::createAnnotatedHighlightQuery);
 	@Nullable
 	private final SourceFilters sourceFilters;
+	/**
+	 * @since 0.0.2-SNAPSHOT
+	 */
+	@Nullable
+	private final SearchConfig searchConfigAnnotation;
 	@Nullable
 	private Boolean unwrappedReturnTypeFromSearchHit;
 	@Nullable
@@ -80,6 +86,7 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		this.highlightAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, Highlight.class);
 		this.sourceFilters = AnnotatedElementUtils.findMergedAnnotation(method, SourceFilters.class);
 		this.unwrappedReturnType = potentiallyUnwrapReturnTypeFor(repositoryMetadata, method);
+		this.searchConfigAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, SearchConfig.class);
 
 		verifyCountQueryTypes();
 	}
@@ -115,6 +122,10 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 
 	public boolean hasAnnotatedHighlight() {
 		return highlightAnnotation != null;
+	}
+
+	public boolean hasAnnotatedQueryConfig() {
+		return searchConfigAnnotation != null;
 	}
 
 	public HighlightQuery getAnnotatedHighlightQuery() {
@@ -326,6 +337,10 @@ public class ElasticsearchQueryMethod extends QueryMethod {
 		SourceFilter sourceFilter = getSourceFilter(parameterAccessor, elasticsearchConverter);
 		if (sourceFilter != null) {
 			query.addSourceFilter(sourceFilter);
+		}
+
+		if (hasAnnotatedQueryConfig()) {
+			query.setIgnoreUnavailable(searchConfigAnnotation.ignoreUnavailable());
 		}
 	}
 	// endregion

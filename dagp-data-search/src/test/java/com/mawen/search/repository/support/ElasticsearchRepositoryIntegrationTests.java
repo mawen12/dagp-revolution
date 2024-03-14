@@ -21,11 +21,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mawen.search.NoSuchIndexException;
 import com.mawen.search.UncategorizedElasticsearchException;
 import com.mawen.search.core.annotation.DateFormat;
 import com.mawen.search.core.annotation.Document;
 import com.mawen.search.core.annotation.Field;
 import com.mawen.search.core.annotation.FieldType;
+import com.mawen.search.core.annotation.SearchConfig;
 import com.mawen.search.core.annotation.ValueConverter;
 import com.mawen.search.core.mapping.PropertyValueConverter;
 import com.mawen.search.repository.ElasticsearchRepository;
@@ -679,6 +681,17 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		});
 	}
 
+	@Test
+	void whenIndexNonExists_shouldThrowException() {
+		assertThatThrownBy(() -> repository.searchByMessage("abc")).isInstanceOf(NoSuchIndexException.class);
+	}
+
+	@Test
+	void whenIndexNonExistsAndIgnoreUnavailable_shouldThrowException() {
+		repository.searchByType("abc");
+	}
+
+
 	private static List<SampleEntity> createSampleEntitiesWithMessage(String message, int numberOfEntities) {
 
 		List<SampleEntity> sampleEntities = new ArrayList<>();
@@ -765,6 +778,12 @@ abstract class ElasticsearchRepositoryIntegrationTests {
 		void deleteByType(String type);
 
 		Iterable<SampleEntity> searchById(String id);
+
+		@SearchConfig(ignoreUnavailable = false)
+		Iterable<SampleEntity> searchByMessage(String message);
+
+		@SearchConfig(ignoreUnavailable = true)
+		Iterable<SampleEntity> searchByType(String type);
 	}
 
 	@Document(indexName = "test-complex-1")

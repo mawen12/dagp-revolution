@@ -735,6 +735,7 @@ public class RequestConverter {
 				.source(getSourceConfig(query)) //
 				.searchType(searchType) //
 				.timeout(timeStringMs(query.getTimeout())) //
+				.ignoreUnavailable(query.getIgnoreUnavailable())
 		;
 
 
