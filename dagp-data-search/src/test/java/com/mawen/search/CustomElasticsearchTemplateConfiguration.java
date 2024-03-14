@@ -34,8 +34,6 @@ public class CustomElasticsearchTemplateConfiguration extends ElasticsearchTempl
 		return RefreshPolicy.IMMEDIATE;
 	}
 
-
-
     @Bean(name = { "elasticsearchOperations", "elasticsearchTemplate" })
 	public ElasticsearchOperations elasticsearchOperations(ElasticsearchConverter elasticsearchConverter,
                                                            ElasticsearchClient elasticsearchClient) {

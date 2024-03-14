@@ -79,6 +79,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
@@ -112,6 +118,12 @@
             <groupId>com.mawen</groupId>
             <artifactId>dagp-data-search-test</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.rice.pcdp</groupId>
+            <artifactId>pcdp-core</artifactId>
         </dependency>
 
     </dependencies>

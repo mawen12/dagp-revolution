@@ -35,6 +35,7 @@ public abstract class ElasticsearchConfiguration extends ElasticsearchConfigurat
 	@Bean(name = "elasticsearchClientConfiguration")
 	public abstract ClientConfiguration clientConfiguration();
 
+
 	@Bean
 	public RestClient elasticsearchRestClient(ClientConfiguration clientConfiguration) {
 

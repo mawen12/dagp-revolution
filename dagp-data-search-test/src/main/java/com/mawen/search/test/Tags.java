@@ -15,6 +15,9 @@
  */
 package com.mawen.search.test;
 
+/**
+ * 标签
+ */
 public interface Tags {
 	String INTEGRATION_TEST = "integration-test";
 }

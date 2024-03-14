@@ -1,6 +1,7 @@
 package com.mawen.controller;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,13 +39,14 @@ public class PerformancePersonController {
 	@GetMapping("/stream/guava")
 	public void streamGuava() {// success
 		PersonQuery query = new PersonQuery();
-		Stream<Person> stream = personRepository.searchForStream(query);
-		Iterators.partition(stream.iterator(), 500).forEachRemaining(its -> {
-			System.out.println("===> it size : " + its.size());
-			its.forEach(it -> System.out.println(it.getId()));
-		});
+		try (Stream<Person> stream = personRepository.searchForStream(query)) {
+			AtomicLong count = new AtomicLong(0L);
+			Iterators.partition(stream.iterator(), 500).forEachRemaining(its -> {
+				System.out.println("===> it size : " + its.size() + " : " + count.incrementAndGet());
+				its.forEach(it -> System.out.println(it.getId()));
+			});
+		}
 	}
-
 
 
 	@GetMapping("/stream/apache")

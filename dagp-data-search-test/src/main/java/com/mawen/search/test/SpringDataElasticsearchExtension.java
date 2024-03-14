@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Spring Data Elasticsearch 扩展
+ */
 public class SpringDataElasticsearchExtension
 		implements BeforeAllCallback, ParameterResolver, ContextCustomizerFactory {
 

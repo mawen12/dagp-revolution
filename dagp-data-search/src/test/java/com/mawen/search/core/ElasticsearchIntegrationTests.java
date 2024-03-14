@@ -46,7 +46,6 @@ import com.mawen.search.core.support.ScriptType;
 import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import org.assertj.core.api.SoftAssertions;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,7 +66,6 @@ import static com.mawen.search.utils.IdGenerator.*;
 import static com.mawen.search.utils.IndexBuilder.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 
 @SpringIntegrationTest

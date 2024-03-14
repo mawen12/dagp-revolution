@@ -148,8 +148,16 @@
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
-                <version>7.17.16</version>
+<!--                <version>7.17.16</version>-->
+                <version>${elasticsearch.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-client</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+
 
 
             <dependency>
@@ -205,6 +213,12 @@
                 <artifactId>log4j-slf4j-impl</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>edu.rice.pcdp</groupId>
+                <artifactId>pcdp-core</artifactId>
+                <version>${pcdp.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -233,7 +247,7 @@
         <assertj-bom.version>3.24.2</assertj-bom.version>
 
         <!-- Elasticsearch 依赖版本 -->
-        <elasticsearch.version>8.5.2</elasticsearch.version>
+        <elasticsearch.version>8.12.2</elasticsearch.version>
 
         <!-- JMH 依赖版本 -->
         <jmh.version>1.37</jmh.version>
@@ -241,6 +255,8 @@
 
         <!-- Log4j 依赖版本 -->
         <log4j.version>2.22.1</log4j.version>
+
+        <pcdp.version>0.0.4-SNAPSHOT</pcdp.version>
     </properties>
 
     <scm>
@@ -347,6 +363,15 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+
+        <repository>
+            <id>pcdp-repo</id>
+            <url>https://raw.github.com/habanero-maven/hjlib-maven-repo/mvn-repo-pcdp-0.0.4-SNAPSHOT/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
 
