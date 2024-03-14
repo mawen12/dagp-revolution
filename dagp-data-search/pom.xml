@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.mawen</groupId>
         <artifactId>dagp-revolution</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>dagp-data-search</artifactId>
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>com.mawen</groupId>
             <artifactId>dagp-data-search-test</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
