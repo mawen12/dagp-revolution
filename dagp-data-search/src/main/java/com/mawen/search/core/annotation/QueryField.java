@@ -1,15 +1,21 @@
 package com.mawen.search.core.annotation;
 
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Collection;
+
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.Criteria.Operator;
 import com.mawen.search.core.domain.Range;
 import org.apache.commons.lang3.ArrayUtils;
+
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
-
-import java.beans.PropertyDescriptor;
-import java.lang.annotation.*;
-import java.util.Collection;
+import org.springframework.util.StringUtils;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
@@ -54,7 +60,8 @@ public @interface QueryField {
 						if (lowerBoundValue != null) {
 							criteria.greaterThan(lowerBoundValue);
 						}
-					} else {
+					}
+					else {
 						if (lowerBoundValue != null) {
 							criteria.greaterThanEqual(lowerBoundValue);
 						}
@@ -64,7 +71,8 @@ public @interface QueryField {
 						if (upperBoundValue != null) {
 							criteria.lessThan(upperBoundValue);
 						}
-					} else {
+					}
+					else {
 						if (upperBoundValue != null) {
 							criteria.lessThanEqual(upperBoundValue);
 						}
@@ -111,7 +119,14 @@ public @interface QueryField {
 		LIKE {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
-				criteria.contains(value.toString());
+				// when value contains whitespace, need to use expression
+				String param = value.toString();
+				if (StringUtils.containsWhitespace(param)) {
+					criteria.expression(param);
+				}
+				else {
+					criteria.contains(param);
+				}
 			}
 		},
 		STARTING_WITH {
@@ -143,7 +158,14 @@ public @interface QueryField {
 		CONTAINING {
 			@Override
 			public void doFrom(Criteria criteria, Object value) {
-				criteria.contains(value.toString());
+				// when value contains whitespace, need to use expression
+				String param = value.toString();
+				if (StringUtils.containsWhitespace(param)) {
+					criteria.expression(param);
+				}
+				else {
+					criteria.contains(param);
+				}
 			}
 		},
 		NOT_IN {

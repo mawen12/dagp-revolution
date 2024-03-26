@@ -121,11 +121,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>edu.rice.pcdp</groupId>
-            <artifactId>pcdp-core</artifactId>
-        </dependency>
-
     </dependencies>
 
     <properties>

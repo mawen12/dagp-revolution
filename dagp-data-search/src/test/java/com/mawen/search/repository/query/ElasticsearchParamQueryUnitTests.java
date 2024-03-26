@@ -396,6 +396,27 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 	}
 
 	@Test
+	void WhenParamContainsWhitespaceShouldParseLikeFieldQueryCorrectly() throws NoSuchMethodException {
+
+		LikeFieldQuery likeFieldQuery = new LikeFieldQuery();
+		likeFieldQuery.setName("ma wen");
+		Query query = createQuery("listByQuery", likeFieldQuery);
+
+		checkQueryThenUnSortAndUnpagedAndHighlightQueryIsNullAndSourceFilterIsNull(query);
+
+		CriteriaQuery criteriaQuery = (CriteriaQuery) query;
+		Criteria criteria = criteriaQuery.getCriteria();
+		checkCriteriaThenQueryCriteriaEntriesIsNotEmptyAndFilterCriteriaEntriesIsEmptyAndSubCriteriaIsEmpty(criteria);
+		assertThat(Objects.requireNonNull(criteria.getField()).getName()).isEqualTo("name");
+		assertThat(criteria.getQueryCriteriaEntries()).satisfies(it -> {
+			assertThat(it).hasSize(1);
+			Criteria.CriteriaEntry entry = it.iterator().next();
+			assertThat(entry.getKey()).isEqualTo(OperationKey.EXPRESSION);
+			assertThat(entry.getValue()).isEqualTo(likeFieldQuery.name);
+		});
+	}
+
+	@Test
 	void shouldParseStartingFieldQueryCorrectly() throws NoSuchMethodException {
 
 		StartingWithFieldQuery startingWithFieldQuery = new StartingWithFieldQuery();

@@ -19,6 +19,7 @@ import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import com.mawen.search.client.query.CriteriaQueryProcessor;
 import com.mawen.search.core.domain.Criteria;
+import org.intellij.lang.annotations.Language;
 import org.json.JSONException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -459,6 +460,34 @@ class CriteriaQueryProcessorUnitTests {
 
 		String queryString = queryToJson(CriteriaQueryProcessor.createQuery(criteria), mapper);
 
+		assertEquals(expected, queryString, false);
+	}
+
+	@Test
+	void shouldBuildExpressionQuery() throws JSONException {
+
+		// given
+		Criteria expression = new Criteria("name").expression("姓 名");
+
+		// when
+		String queryString = queryToJson(CriteriaQueryProcessor.createQuery(expression), mapper);
+		System.out.println(queryString);
+
+		// then
+		@Language("JSON") String expected = "{\n" +
+				"  \"bool\": {\n" +
+				"    \"must\": [\n" +
+				"      {\n" +
+				"        \"query_string\": {\n" +
+				"          \"fields\": [\n" +
+				"            \"name\"\n" +
+				"          ],\n" +
+				"          \"query\": \"姓 名\"\n" +
+				"        }\n" +
+				"      }\n" +
+				"    ]\n" +
+				"  }\n" +
+				"}";
 		assertEquals(expected, queryString, false);
 	}
 

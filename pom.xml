@@ -213,12 +213,6 @@
                 <artifactId>log4j-slf4j-impl</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>edu.rice.pcdp</groupId>
-                <artifactId>pcdp-core</artifactId>
-                <version>${pcdp.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

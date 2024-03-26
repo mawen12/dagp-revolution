@@ -16,6 +16,7 @@ import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
 /**
  * 特定于 Elasticsearch 的查询构造器，支持从 {@link PartTree} 构造 {@link CriteriaQuery}
@@ -103,13 +104,15 @@ public class ElasticsearchQueryCreator extends AbstractQueryCreator<CriteriaQuer
 				return criteria.is(parameters.next()).not();
 			case REGEX:
 				return criteria.expression(parameters.next().toString());
-			case LIKE:
 			case STARTING_WITH:
 				return criteria.startsWith(parameters.next().toString());
 			case ENDING_WITH:
 				return criteria.endsWith(parameters.next().toString());
-			case CONTAINING:
-				return criteria.contains(parameters.next().toString());
+			case LIKE:
+			case CONTAINING:{
+				String param = parameters.next().toString();
+				return StringUtils.containsWhitespace(param) ? criteria.expression(param) : criteria.contains(param);
+			}
 			case GREATER_THAN:
 				return criteria.greaterThan(parameters.next());
 			case AFTER:
