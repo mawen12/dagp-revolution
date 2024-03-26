@@ -17,6 +17,7 @@
         <module>dagp-data-search-spring-boot-starter</module>
         <module>dagp-data-search-test</module>
         <module>dagp-data-search-benchmark</module>
+        <module>dagp-bit-operation</module>
     </modules>
 
     <profiles>
@@ -184,17 +185,17 @@
                 <version>1.9.5</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.github.mp911de.microbenchmark-runner</groupId>
-                <artifactId>microbenchmark-runner-junit4</artifactId>
-                <version>${microbenchmark-runner.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.github.mp911de.microbenchmark-runner</groupId>-->
+<!--                <artifactId>microbenchmark-runner-junit4</artifactId>-->
+<!--                <version>${microbenchmark-runner.version}</version>-->
+<!--            </dependency>-->
 
-            <dependency>
-                <groupId>com.github.mp911de.microbenchmark-runner</groupId>
-                <artifactId>microbenchmark-runner-extras</artifactId>
-                <version>${microbenchmark-runner.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.github.mp911de.microbenchmark-runner</groupId>-->
+<!--                <artifactId>microbenchmark-runner-extras</artifactId>-->
+<!--                <version>${microbenchmark-runner.version}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
