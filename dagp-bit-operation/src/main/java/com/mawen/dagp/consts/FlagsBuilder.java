@@ -17,8 +17,8 @@ public class FlagsBuilder {
 		Integer mask = maskGetter.apply(assetAttr);
 
 		if (mask != null) {
-			Predicate<Integer> predicate = getter.get();
-			consumer.accept(assetAttr, predicate);
+//			Predicate<Integer> predicate = getter.get();
+//			consumer.accept(assetAttr, predicate);
 		}
 	}
 

@@ -18,6 +18,7 @@
         <module>dagp-data-search-test</module>
         <module>dagp-data-search-benchmark</module>
         <module>dagp-bit-operation</module>
+        <module>fluent-check</module>
     </modules>
 
     <profiles>
