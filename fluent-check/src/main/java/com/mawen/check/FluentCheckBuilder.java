@@ -9,9 +9,9 @@ import java.util.function.Supplier;
  */
 public class FluentCheckBuilder<T> implements Check<T> {
 
-	private Check<T> check = t -> true;
+	protected Check<T> check = t -> true;
 
-	private FluentCheckBuilder() {}
+	protected FluentCheckBuilder() {}
 
 	public static <T> FluentCheckBuilder<T> register(Class<T> clazz) {
 		return new FluentCheckBuilder<>();
@@ -20,11 +20,6 @@ public class FluentCheckBuilder<T> implements Check<T> {
 	@Override
 	public boolean check(T t) throws RuntimeException {
 		return check.check(t);
-	}
-
-	public FluentCheckBuilder<T> customCheck(Check<? super T> other) {
-		check = this.check.and(other);
-		return this;
 	}
 
 	@Override
@@ -51,9 +46,8 @@ public class FluentCheckBuilder<T> implements Check<T> {
 		return this;
 	}
 
-	// region helper functions
-
-
-
-	// endregion
+	public FluentCheckBuilder<T> customCheck(Check<? super T> other) {
+		check = this.check.and(other);
+		return this;
+	}
 }
