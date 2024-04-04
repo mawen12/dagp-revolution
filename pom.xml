@@ -19,6 +19,7 @@
         <module>dagp-data-search-benchmark</module>
         <module>dagp-bit-operation</module>
         <module>fluent-check</module>
+        <module>dagp-data-cache</module>
     </modules>
 
     <profiles>
