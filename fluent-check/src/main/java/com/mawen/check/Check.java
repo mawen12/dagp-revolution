@@ -1,7 +1,11 @@
 package com.mawen.check;
 
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
+
+import com.enhe.core.api.exception.BusinessException;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
@@ -30,6 +34,16 @@ public interface Check<T> {
 		};
 	}
 
+	default Check<T> orThrow(Function<T, String> errorMessage) {
+		return t -> {
+			boolean check = check(t);
+			if (!check) {
+				throw new RuntimeException(errorMessage.apply(t));
+			}
+			return check;
+		};
+	}
+
 	default Check<T> peek(Consumer<? super T> action) {
 		return t -> {
 			boolean ret = check(t);
@@ -42,5 +56,13 @@ public interface Check<T> {
 
 	default Check<T> negate() {
 		return t -> !check(t);
+	}
+
+	default boolean checkAll(List<T> list) throws BusinessException {
+		return list.stream().allMatch(this::check);
+	}
+
+	static <T> Check<T> build() {
+		return t -> true;
 	}
 }
