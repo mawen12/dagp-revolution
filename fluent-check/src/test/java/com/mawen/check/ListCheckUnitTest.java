@@ -81,6 +81,58 @@ public class ListCheckUnitTest {
 				.check(persons);
 	}
 
+	@Test
+	void test4() {
+
+		List<Person> persons = new ArrayList<>();
+		persons.add(new Person(1L, "mawen", 2L, null));
+
+		Check<Person> nullCheck = Check.<Person>build()
+				.and(Objects::nonNull);
+
+		Check<Person> addressCheck = Check.<Person>build()
+				.and(Objects::nonNull)
+				.and(person -> person.getAddress() == null).orThrow(() -> "地址不能为空");
+
+		Check<Address> addressCheck2 = Check.<Address>build()
+				.and(Objects::nonNull);
+
+		Function<List<Person>, List<Address>> map = ps -> ps.stream().map(Person::getAddress).collect(Collectors.toList());
+
+		ListCheck.<Person>of()
+				.tag("空指针校验").and(nullCheck::checkAll).orThrow(() -> "校验失败")
+				.tag("用户信息填充").peek(list -> FillUtil.fillByKeyWithListLoader(persons, Person::getAddressId, ListCheckUnitTest::listByIds, Address::getId, Person::setAddress))
+				.tag("用户地址校验").and(addressCheck::checkAll).orThrow(() -> "地址校验失败")
+				.tag("地址校验2").and(list -> addressCheck2.checkAll(map.apply(list)))
+				.check(persons);
+	}
+
+	@Test
+	void test5() {
+
+		List<Person> persons = new ArrayList<>();
+		persons.add(new Person(1L, "mawen", 2L, null));
+
+		Check<Person> nullCheck = Check.<Person>build()
+				.and(Objects::nonNull);
+
+		Check<Person> addressCheck = Check.<Person>build()
+				.and(Objects::nonNull)
+				.and(person -> person.getAddress() == null).orThrow(() -> "地址不能为空");
+
+		Check<Address> addressCheck2 = Check.<Address>build()
+				.and(Objects::nonNull);
+
+		Function<List<Person>, List<Address>> map = ps -> ps.stream().map(Person::getAddress).collect(Collectors.toList());
+
+		ListCheck.<Person>of()
+				.and(nullCheck::checkAll).orThrow(() -> "校验失败").tag("空指针校验")
+				.peek(list -> FillUtil.fillByKeyWithListLoader(persons, Person::getAddressId, ListCheckUnitTest::listByIds, Address::getId, Person::setAddress)).tag("用户信息填充")
+				.and(addressCheck::checkAll).orThrow(() -> "地址校验失败").tag("用户地址校验")
+				.and(list -> addressCheck2.checkAll(map.apply(list))).tag("地址校验2")
+				.check(persons);
+	}
+
 	public static List<Address> listByIds(List<Long> ids) {
 		return ADDRESS;
 	}

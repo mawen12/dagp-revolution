@@ -5,6 +5,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.util.Assert;
 
 /**
@@ -13,6 +17,8 @@ import org.springframework.util.Assert;
  */
 @FunctionalInterface
 public interface ListCheck<T> {
+
+	Logger log = LoggerFactory.getLogger(ListCheck.class);
 
 	boolean check(List<T> list) throws RuntimeException;
 
@@ -71,6 +77,28 @@ public interface ListCheck<T> {
 				action.accept(t);
 			}
 			return ret;
+		};
+	}
+
+	default ListCheck<T> tag(String tagName) {
+		return t -> {
+			try {
+				boolean ret = check(t);
+				if (ret) {
+					if (log.isTraceEnabled()) {
+						log.trace("Check {} Pass.", tagName);
+					}
+				} else {
+					if (log.isTraceEnabled()) {
+						log.trace("Check {} Failed.", tagName);
+					}
+				}
+				return ret;
+			}
+			catch (Throwable e) {
+				log.warn("Check {} Failed.", tagName, e);
+				throw e;
+			}
 		};
 	}
 
