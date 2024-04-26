@@ -34,16 +34,18 @@ import com.mawen.search.core.domain.Range;
 import com.mawen.search.core.domain.Range.Bound;
 import com.mawen.search.core.mapping.PropertyValueConverter;
 import com.mawen.search.repository.config.EnableElasticsearchRepositories;
-import com.mawen.search.test.ElasticsearchTemplateConfiguration;
 import com.mawen.search.test.SpringIntegrationTest;
 import com.mawen.search.utils.IndexNameProvider;
 import com.mawen.search.utils.ResourceUtil;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -486,7 +488,6 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		assertThat(entities).hasSize(1);
 		assertThat(entities).containsExactly(entity1);
 	}
-
 
 
 	@Test
@@ -1030,6 +1031,187 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		});
 	}
 
+	/**
+	 * Actual:
+	 * <pre>{@code
+	 * {
+	 *     "query": {
+	 *         "bool": {
+	 *             "must": [
+	 *                 {
+	 *                     "nested": {
+	 *                         "path": "extendedAttrs",
+	 *                         "query": {
+	 *                             "query_string": {
+	 *                                 "default_operator": "and",
+	 *                                 "fields": [
+	 *                                     "extendedAttrs.keyCode"
+	 *                                 ],
+	 *                                 "query": "1"
+	 *                             }
+	 *                         },
+	 *                         "score_mode": "avg"
+	 *                     }
+	 *                 },
+	 *                 {
+	 *                     "nested": {
+	 *                         "path": "extendedAttrs",
+	 *                         "query": {
+	 *                             "query_string": {
+	 *                                 "default_operator": "and",
+	 *                                 "fields": [
+	 *                                     "extendedAttrs.valueId"
+	 *                                 ],
+	 *                                 "query": "3"
+	 *                             }
+	 *                         },
+	 *                         "score_mode": "avg"
+	 *                     }
+	 *                 }
+	 *             ]
+	 *         }
+	 *     }
+	 * }
+	 * }</pre>
+	 * <p>
+	 * Expected:
+	 * <pre>{@code
+	 * {
+	 *     "query": {
+	 *         "bool": {
+	 *             "must": [
+	 *                 {
+	 *                     "nested": {
+	 *                         "path": "extendedAttrs",
+	 *                         "query": {
+	 *                             "bool": {
+	 *                                 "must": [
+	 *                                     {
+	 *                                         "query_string": {
+	 *                                             "default_operator": "and",
+	 *                                             "fields": [
+	 *                                                 "extendedAttrs.keyCode"
+	 *                                             ],
+	 *                                             "query": "1"
+	 *                                         }
+	 *                                     },
+	 *                                     {
+	 *                                         "query_string": {
+	 *                                             "default_operator": "and",
+	 *                                             "fields": [
+	 *                                                 "extendedAttrs.valueId"
+	 *                                             ],
+	 *                                             "query": "3"
+	 *                                         }
+	 *                                     }
+	 *                                 ]
+	 *                             }
+	 *                         },
+	 *                         "score_mode": "avg"
+	 *                     }
+	 *                 }
+	 *             ]
+	 *         }
+	 *     }
+	 * }
+	 * }</pre>
+	 */
+	@Test
+	@DisplayName("当存在扩展属性[{k=1,v=2},{k=2,v=3}]时，使用条件[k=1,v=3]应该无法查询对应记录")
+	void shouldQueryExAttrCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null,
+				new ParamQueryEntity.AssetType(1L, "数据标准"),
+				Arrays.asList(
+						ParamQueryEntity.ExtendedAttr.builder().keyCode("1").valueId("2").build(),
+						ParamQueryEntity.ExtendedAttr.builder().keyCode("2").valueId("3").build()
+				),
+				null,
+				true,
+				null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+
+		paramQueryRepository.saveAll(Arrays.asList(entity1));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setAttrQuery(EntityAttrQuery.builder()
+				.extendedAttrsKeyCode("1")
+				.extendedAttrsValueId("3")
+				.build());
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities.isEmpty()).isTrue();
+	}
+
+	@Test
+	@DisplayName("当存在扩展属性[{k=1,v=2},{k=2,v=3}]时，使用条件[k=1,v=2]能够查询到对应记录")
+	void shouldQueryExAttrWhenOneExtAttrMatchCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null,
+				new ParamQueryEntity.AssetType(1L, "数据标准"),
+				Arrays.asList(
+						ParamQueryEntity.ExtendedAttr.builder().keyCode("1").valueId("2").build(),
+						ParamQueryEntity.ExtendedAttr.builder().keyCode("2").valueId("3").build()
+				),
+				null,
+				true,
+				null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+
+		paramQueryRepository.saveAll(Arrays.asList(entity1));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setAttrQuery(EntityAttrQuery.builder()
+				.extendedAttrsKeyCode("1")
+				.extendedAttrsValueId("2")
+				.build());
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities.size()).isEqualTo(1);
+	}
+
+	@Test
+	@DisplayName("当存在扩展属性[{k=1,v=2},{k=2,v=3}]时，使用条件[{k=1,v=2},{k=2,v=3}]能够查询到对应记录")
+	void shouldQueryExAttrWhenMultiExtAttrMatchCorrectly() {
+
+		// given
+		ParamQueryEntity entity1 = new ParamQueryEntity("1", "发证机关国家或地区", "Licence-issuing Countries or Area", "TEC_00000000000448",
+				null,
+				new ParamQueryEntity.AssetType(1L, "数据标准"),
+				Arrays.asList(
+						ParamQueryEntity.ExtendedAttr.builder().keyCode("1").valueId("2").build(),
+						ParamQueryEntity.ExtendedAttr.builder().keyCode("2").valueId("3").build()
+				),
+				null,
+				true,
+				null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+
+		paramQueryRepository.saveAll(Arrays.asList(entity1));
+
+		// when
+		EntityQuery entityQuery = new EntityQuery();
+		entityQuery.setAttrQuerys(Lists.newArrayList(
+				EntityAttrQuery.builder().extendedAttrsKeyCode("1").extendedAttrsValueId("2").build(),
+				EntityAttrQuery.builder().extendedAttrsKeyCode("2").extendedAttrsValueId("3").build()
+		));
+		List<ParamQueryEntity> entities = paramQueryRepository.listByQuery(entityQuery);
+
+		// then
+		assertThat(entities).isNotNull();
+		assertThat(entities.size()).isEqualTo(1);
+	}
+
 	interface ParamQueryRepository extends ElasticsearchRepository<ParamQueryEntity, String> {
 
 		List<ParamQueryEntity> listByQuery(@ParamQuery EntityQuery query);
@@ -1115,6 +1297,7 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		@Data
 		@NoArgsConstructor
 		@AllArgsConstructor
+		@Builder
 		static class ExtendedAttr {
 			@Field(value = "keyCode", type = FieldType.Keyword)
 			private String keyCode;
@@ -1248,6 +1431,12 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		@QueryField(value = "extendedAttrs.valueId")
 		private String extendedAttrsValueId;
 
+		@QueryField(value = "extendedAttrs", type = Type.NESTED)
+		private EntityAttrQuery attrQuery;
+
+		@QueryField(value = "extendedAttrs", type = Type.NESTED)
+		private List<EntityAttrQuery> attrQuerys;
+
 		@QueryField(value = "recommendExtendedAttrs.extendedAttrs.keyLabel")
 		private String recommendExtendedAttrsKeyLabel;
 
@@ -1282,5 +1471,18 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 		private Integer viewCountGreaterThanEqual;
 
 		private Sort sort;
+	}
+
+	@Data
+	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
+	static class EntityAttrQuery {
+
+		@QueryField(value = "extendedAttrs.keyCode")
+		private String extendedAttrsKeyCode;
+
+		@QueryField(value = "extendedAttrs.valueId")
+		private String extendedAttrsValueId;
 	}
 }

@@ -18,6 +18,45 @@ public class Criteria {
 	private final Set<CriteriaEntry> queryCriteriaEntries = new LinkedHashSet<>();
 	private final Set<CriteriaEntry> filterCriteriaEntries = new LinkedHashSet<>();
 	private final Set<Criteria> subCriteria = new LinkedHashSet<>();
+	/**
+	 * Nested Criteria Query is special query.
+	 * It only parses current criteria field's path and queryCriteriaEntries in nested criteria.
+	 *
+	 * <pre>{@code
+	 * {
+	 *     "nested": {
+	 *         "path": "driver.vehicle",
+	 *         "query": {
+	 *             "bool": {
+	 *                 "must": [
+	 *                     {
+	 *                         "query_string": {
+	 *                             "default_operator": "and",
+	 *                             "fields": [
+	 *                                 "driver.vehicle.make"
+	 *                             ],
+	 *                             "query": "Powell Motors"
+	 *                         }
+	 *                     },
+	 *                     {
+	 *                         "query_string": {
+	 *                             "default_operator": "and",
+	 *                             "fields": [
+	 *                                 "driver.vehicle.model"
+	 *                             ],
+	 *                             "query": "Canyonero"
+	 *                         }
+	 *                     }
+	 *                 ]
+	 *             }
+	 *         }
+	 *     }
+	 * }
+	 * }</pre>
+	 *
+	 * @since 0.0.2
+	 */
+	private final Set<Criteria> nestedCriteria = new LinkedHashSet<>();
 	private @Nullable Field field;
 	private float boost = Float.NaN;
 	private boolean negating = false;
@@ -85,6 +124,10 @@ public class Criteria {
 
 	public Set<CriteriaEntry> getFilterCriteriaEntries() {
 		return Collections.unmodifiableSet(this.filterCriteriaEntries);
+	}
+
+	public Set<Criteria> getNestedCriteria() {
+		return Collections.unmodifiableSet(this.nestedCriteria);
 	}
 
 	public Operator getOperator() {
@@ -160,6 +203,7 @@ public class Criteria {
 		Criteria orCriteria = new OrCriteria(this.criteriaChain, criteria.getField());
 		orCriteria.queryCriteriaEntries.addAll(criteria.queryCriteriaEntries);
 		orCriteria.filterCriteriaEntries.addAll(criteria.filterCriteriaEntries);
+		orCriteria.nestedCriteria.addAll(criteria.nestedCriteria);
 		return orCriteria;
 	}
 
@@ -331,6 +375,21 @@ public class Criteria {
 		return this;
 	}
 
+	public Criteria nested(Criteria criteria) {
+		Assert.notNull(criteria, "nestedCriteria must not be null");
+
+		nestedCriteria.add(criteria);
+		return this;
+	}
+
+	public Criteria nested(Criteria... criteria) {
+
+		Assert.notNull(criteria, "nestedCriteria must not be null");
+
+		nestedCriteria.addAll(Arrays.asList(criteria));
+		return this;
+	}
+
 	// endregion
 
 	// region helper functions
@@ -367,6 +426,8 @@ public class Criteria {
 			return false;
 		if (!filterCriteriaEntries.equals(criteria.filterCriteriaEntries))
 			return false;
+		if (!nestedCriteria.equals(criteria.nestedCriteria))
+			return false;
 		return subCriteria.equals(criteria.subCriteria);
 	}
 
@@ -378,6 +439,7 @@ public class Criteria {
 		result = 31 * result + queryCriteriaEntries.hashCode();
 		result = 31 * result + filterCriteriaEntries.hashCode();
 		result = 31 * result + subCriteria.hashCode();
+		result = 31 * result + nestedCriteria.hashCode();
 		return result;
 	}
 
@@ -390,6 +452,7 @@ public class Criteria {
 				", queryCriteriaEntries=" + queryCriteriaEntries + //
 				", filterCriteriaEntries=" + filterCriteriaEntries + //
 				", subCriteria=" + subCriteria + //
+				", nestedCriteria=" + nestedCriteria + //
 				'}'; //
 	}
 

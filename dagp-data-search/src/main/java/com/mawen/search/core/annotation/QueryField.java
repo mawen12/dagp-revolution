@@ -217,6 +217,15 @@ public @interface QueryField {
 			public void doFrom(Criteria criteria, Object value) {
 				criteria.is(value.toString());
 			}
+		},
+		/**
+		 * @since 0.0.2
+		 */
+		NESTED {
+			@Override
+			public void doFrom(Criteria criteria, Object value) {
+				// nothing
+			}
 		};
 
 		public static Type from(PropertyDescriptor property) {

@@ -1,29 +1,36 @@
 package com.mawen.search.client.query;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.ChildScoreMode;
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.json.JsonData;
+import co.elastic.clients.util.ObjectBuilder;
 import com.mawen.search.InvalidApiUsageException;
 import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.domain.Field;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import static com.mawen.search.client.query.Queries.matchQuery;
-import static com.mawen.search.client.query.Queries.queryStringQuery;
-import static org.springframework.util.StringUtils.hasText;
+import static com.mawen.search.client.query.Queries.*;
+import static org.springframework.util.StringUtils.*;
 
 /**
  * @author <a href="1181963012mw@gmail.com">mawen12</a>
  * @since 0.0.1
  */
+@Slf4j
 public class CriteriaQueryProcessor {
 
 	@Nullable
@@ -72,6 +79,22 @@ public class CriteriaQueryProcessor {
 				}
 				else {
 					mustQueries.add(subQuery);
+				}
+			}
+		}
+
+		// add nested query
+		if (!CollectionUtils.isEmpty(criteria.getNestedCriteria())) {
+			Query nestedQuery = createNestedQuery(criteria);
+			if (nestedQuery != null) {
+				if (criteria.isOr()) {
+					shouldQueries.add(nestedQuery);
+				}
+				else if (criteria.isNegating()) {
+					mustNotQueries.add(nestedQuery);
+				}
+				else {
+					mustQueries.add(nestedQuery);
 				}
 			}
 		}
@@ -357,6 +380,67 @@ public class CriteriaQueryProcessor {
 		}
 
 		return sb.toString();
+	}
+
+	@Nullable
+	private static Query createNestedQuery(Criteria criteria) {
+
+		boolean containsNestedCriteria = !CollectionUtils.isEmpty(criteria.getNestedCriteria());
+		String name = Optional.ofNullable(criteria.getField()).map(Field::getName).orElse(null);
+
+		if (!containsNestedCriteria || !hasText(name)) {
+			if (log.isTraceEnabled()) {
+				log.trace("Cannot create nested query for {}, maybe criteria has no name [{}] or nested criteria [{}]", criteria, name, criteria.getNestedCriteria());
+			}
+			return null;
+		}
+
+		List<Criteria> validNestedCriterias = criteria.getNestedCriteria().stream()
+				.filter(it -> it.getField() != null && !CollectionUtils.isEmpty(it.getQueryCriteriaEntries()))
+				.collect(Collectors.toList());
+
+		if (CollectionUtils.isEmpty(validNestedCriterias)) {
+			if (log.isTraceEnabled()) {
+				log.trace("Cannot create nested query for {}, maybe nested criteria has no field or query criteria entry", criteria);
+			}
+			return null;
+		}
+
+		BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder();
+		for (Criteria validNestedCriteria : validNestedCriterias) {
+			nestedQueryForEntries(validNestedCriteria, boolQueryBuilder);
+		}
+
+		Query.Builder queryBuilder = new Query.Builder();
+		queryBuilder.nested(nqb -> nqb //
+				.path(name) //
+				.query(new Query.Builder().bool(boolQueryBuilder.build()).build()) //
+				.scoreMode(ChildScoreMode.Avg));
+
+		return queryBuilder.build();
+	}
+
+	@Nullable
+	private static void nestedQueryForEntries(Criteria nestedCriteria, BoolQuery.Builder boolQueryBuilder) {
+
+		Field field = nestedCriteria.getField();
+
+		if (field == null || nestedCriteria.getQueryCriteriaEntries().isEmpty())
+			return;
+
+		String fieldName = field.getName();
+		Assert.notNull(fieldName, "Unknown field");
+
+		Iterator<Criteria.CriteriaEntry> it = nestedCriteria.getQueryCriteriaEntries().iterator();
+
+		Float boost = Float.isNaN(nestedCriteria.getBoost()) ? null : nestedCriteria.getBoost();
+
+
+		while (it.hasNext()) {
+			Criteria.CriteriaEntry entry = it.next();
+			boolQueryBuilder.must(queryFor(entry, field, null).build());
+		}
+		boolQueryBuilder.boost(boost);
 	}
 
 	/**

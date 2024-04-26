@@ -26,6 +26,7 @@ import com.mawen.search.core.annotation.FieldType;
 import com.mawen.search.core.query.Query;
 import com.mawen.search.repository.ElasticsearchRepository;
 import com.mawen.search.test.SpringIntegrationTest;
+import org.intellij.lang.annotations.Language;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -96,10 +97,13 @@ public abstract class ElasticsearchPartQueryIntegrationTests {
 
 		String query = getQueryString(methodName, parameterClasses, parameters);
 
-		String expected = "{\"query\": {" + //
+		@Language("JSON")
+		String expected = "{\"from\": 0, \"size\": 10000,\n" +
+				"  \"track_scores\": false,\n" +
+				"  \"version\": true,\"query\": {" + //
 				"  \"bool\" : {" + //
 				"    \"must\" : [" + //
-				"      {\"query_string\" : {\"query\" : \"" + BOOK_TITLE
+				"      {\"query_string\" : {\"query\" : \"*" + BOOK_TITLE
 				+ "*\", \"fields\" : [\"name\"], \"analyze_wildcard\": true }}" + //
 				"    ]" + //
 				"  }" + //

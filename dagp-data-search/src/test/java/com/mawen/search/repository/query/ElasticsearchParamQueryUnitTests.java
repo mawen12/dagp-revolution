@@ -1,12 +1,12 @@
 package com.mawen.search.repository.query;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.mawen.search.core.ElasticsearchOperations;
@@ -21,6 +21,7 @@ import com.mawen.search.core.domain.Range;
 import com.mawen.search.core.domain.Range.Bound;
 import com.mawen.search.core.query.CriteriaQuery;
 import com.mawen.search.core.query.Query;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -775,6 +776,39 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 		assertThat(criteriaQuery.getSourceFilter().getExcludes()).containsExactly("d", "e", "f");
 	}
 
+	@Test
+	void shouldParseNestedQueryCorrectly() throws NoSuchMethodException {
+
+		NestedQuery nestedQuery = new NestedQuery();
+		nestedQuery.setAttrQuery(new NestedQuery.AttrQuery("1", "3"));
+		Query query = createQuery("listByQuery", nestedQuery);
+
+		assertThat(query).isInstanceOf(CriteriaQuery.class);
+		assertThat(Objects.requireNonNull(query.getSort()).isUnsorted()).isTrue();
+		assertThat(query.getPageable().isUnpaged()).isTrue();
+		assertThat(query.getHighlightQuery()).isEmpty();
+		assertThat(query.getSourceFilter()).isNull();
+		CriteriaQuery criteriaQuery = (CriteriaQuery) query;
+		Criteria criteria = criteriaQuery.getCriteria();
+		checkCriteriaThenQueryCriteriaEntriesIsEmptyAndFilterCriteriaEntriesIsEmptyAndSubCriteriaIsEmpty(criteria);
+
+		assertThat(criteria.getField().getName()).isEqualTo("extendedAttrs");
+		assertThat(criteria.getNestedCriteria().size()).isEqualTo(2);
+		criteria.getNestedCriteria().stream().forEach(it -> {
+			assertThat(it.getQueryCriteriaEntries().size()).isEqualTo(1);
+			assertThat(it.getField().getName()).isNotNull();
+
+			Criteria.CriteriaEntry entry = it.getQueryCriteriaEntries().stream().findFirst().get();
+			assertThat(entry.getKey()).isEqualTo(OperationKey.EQUALS);
+			if (it.getField().getName().equals("extendedAttrs.keyCode")) {
+				assertThat(entry.getValue()).isEqualTo("1");
+			}
+			else if (it.getField().getName().equals("extendedAttrs.valueId")) {
+				assertThat(entry.getValue()).isEqualTo("3");
+			}
+		});
+	}
+
 	private void checkQueryThenUnSortAndUnpagedAndHighlightQueryIsNullAndSourceFilterIsNull(Query query) {
 		assertThat(query).isInstanceOf(CriteriaQuery.class);
 		assertThat(Objects.requireNonNull(query.getSort()).isUnsorted()).isTrue();
@@ -853,6 +887,8 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 				excludes = {"d", "e", "f"}
 		)
 		List<Person> listWithFilter(@ParamQuery NullQuery query);
+
+		List<Person> listByQuery(@ParamQuery NestedQuery query);
 	}
 
 	@Data
@@ -972,6 +1008,24 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 	static class NegatingSimplePropertyFieldQuery {
 		@QueryField(value = "name", type = Type.NEGATING_SIMPLE_PROPERTY)
 		private String name;
+	}
+
+	@Data
+	static class NestedQuery {
+
+		@QueryField(value = "extendedAttrs", type = Type.NESTED)
+		private AttrQuery attrQuery;
+
+		@Data
+		@AllArgsConstructor
+		static class AttrQuery {
+
+			@QueryField(value = "extendedAttrs.keyCode")
+			private String extendedAttrsKeyCode;
+
+			@QueryField(value = "extendedAttrs.valueId")
+			private String extendedAttrsValueId;
+		}
 	}
 
 	@Data

@@ -1,11 +1,17 @@
 package com.mawen.search.repository.query.parser;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import com.mawen.search.core.annotation.QueryField;
 import com.mawen.search.core.domain.Criteria;
 import com.mawen.search.core.query.CriteriaQuery;
 import com.mawen.search.repository.query.ParamQuery;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.Nullable;
 
 /**
@@ -46,27 +52,49 @@ public class ElasticsearchParamQueryCreator extends AbstractParamQueryCreator<Cr
 
 	private Criteria from(Object value, QueryField annotation) {
 
-		Criteria current = new Criteria();
-		Criteria.Operator relation = annotation.relation();
-		if (relation == Criteria.Operator.OR) {
-			Criteria temp = new Criteria();
-			for (String field : annotation.value()) {
+		Criteria current;
+		if (annotation.type() == QueryField.Type.NESTED) { // handle nested
+			current = new Criteria(annotation.value()[0]);
 
-				temp = temp.or(field);
-
-				annotation.type().from(current, value);
+			if (value != null && value.getClass().isArray()) {
+				Object[] values = (Object[]) value;
+				List<ParamQuery> paramQueries = Arrays.asList(values).stream().filter(Objects::nonNull).map(ParamQuery::new).collect(Collectors.toList());
+				for (ParamQuery query : paramQueries) {
+					for (ParamQuery.ParamQueryField field : query) {
+						current.nested(from(field.getValue(), field.getQueryField()));
+					}
+				}
+			} else {
+				ParamQuery paramQuery = new ParamQuery(value);
+				for (ParamQuery.ParamQueryField field : paramQuery) {
+					current.nested(from(field.getValue(), field.getQueryField()));
+				}
 			}
-			current.subCriteria(temp);
 		}
-		else {
-			for (String field : annotation.value()) {
+		else { // handle non-nested
+			current = new Criteria();
+			Criteria.Operator relation = annotation.relation();
+			if (relation == Criteria.Operator.OR) {
+				Criteria temp = new Criteria();
+				for (String fieldName : annotation.value()) {
 
-				current = current.and(field);
+					temp = temp.or(fieldName);
 
-				annotation.type().from(current, value);
+					annotation.type().from(temp, value);
+				}
+				current.subCriteria(temp);
+			}
+			else {
+				for (String fieldName : annotation.value()) {
+
+					current = current.and(fieldName);
+
+					annotation.type().from(current, value);
+				}
 			}
 		}
 
 		return current;
 	}
+
 }

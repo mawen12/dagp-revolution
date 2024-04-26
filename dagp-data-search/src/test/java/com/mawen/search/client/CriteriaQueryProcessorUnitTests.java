@@ -490,5 +490,134 @@ class CriteriaQueryProcessorUnitTests {
 				"}";
 		assertEquals(expected, queryString, false);
 	}
+	
+	@Test
+	void shouldBuildSingleNestedCriteriaQuery() throws JSONException {
 
+		// given
+		Criteria criteria = new Criteria("extAttr").nested(
+				Criteria.where("extAttr.keyCode").is("1"),
+				Criteria.where("extAttr.valueId").is("3")
+		);
+		criteria.getField().setPath("extAttr");
+
+		// when
+		String queryString = queryToJson(CriteriaQueryProcessor.createQuery(criteria), mapper);
+		System.out.println(queryString);
+
+		// then
+		@Language("JSON")
+		String expected = "{\n" +
+				"  \"bool\": {\n" +
+				"    \"must\": [\n" +
+				"      {\n" +
+				"        \"nested\": {\n" +
+				"          \"path\": \"extAttr\",\n" +
+				"          \"query\": {\n" +
+				"            \"bool\": {\n" +
+				"              \"must\": [\n" +
+				"                {\n" +
+				"                  \"query_string\": {\n" +
+				"                    \"default_operator\": \"and\",\n" +
+				"                    \"fields\": [\n" +
+				"                      \"extAttr.keyCode\"\n" +
+				"                    ],\n" +
+				"                    \"query\": \"1\"\n" +
+				"                  }\n" +
+				"                },\n" +
+				"                {\n" +
+				"                  \"query_string\": {\n" +
+				"                    \"default_operator\": \"and\",\n" +
+				"                    \"fields\": [\n" +
+				"                      \"extAttr.valueId\"\n" +
+				"                    ],\n" +
+				"                    \"query\": \"3\"\n" +
+				"                  }\n" +
+				"                }\n" +
+				"              ]\n" +
+				"            }\n" +
+				"          },\n" +
+				"          \"score_mode\": \"avg\"\n" +
+				"        }\n" +
+				"      }\n" +
+				"    ]\n" +
+				"  }\n" +
+				"}";
+		assertEquals(expected, queryString, false);
+	}
+
+	@Test
+	void shouldBuildMultiNestedCriteriaQuery() throws JSONException {
+
+		// given
+		Criteria criteria = new Criteria("extAttr").nested(
+				Criteria.where("extAttr.keyCode").is("1"),
+				Criteria.where("extAttr.valueId").is("3"),
+				Criteria.where("extAttr.keyCode").is("2"),
+				Criteria.where("extAttr.valueId").is("4")
+		);
+		criteria.getField().setPath("extAttr");
+
+		// when
+		String queryString = queryToJson(CriteriaQueryProcessor.createQuery(criteria), mapper);
+		System.out.println(queryString);
+
+		// then
+		@Language("JSON")
+		String expected = "{\n" +
+				"  \"bool\": {\n" +
+				"    \"must\": [\n" +
+				"      {\n" +
+				"        \"nested\": {\n" +
+				"          \"path\": \"extAttr\",\n" +
+				"          \"query\": {\n" +
+				"            \"bool\": {\n" +
+				"              \"must\": [\n" +
+				"                {\n" +
+				"                  \"query_string\": {\n" +
+				"                    \"default_operator\": \"and\",\n" +
+				"                    \"fields\": [\n" +
+				"                      \"extAttr.keyCode\"\n" +
+				"                    ],\n" +
+				"                    \"query\": \"1\"\n" +
+				"                  }\n" +
+				"                },\n" +
+				"                {\n" +
+				"                  \"query_string\": {\n" +
+				"                    \"default_operator\": \"and\",\n" +
+				"                    \"fields\": [\n" +
+				"                      \"extAttr.valueId\"\n" +
+				"                    ],\n" +
+				"                    \"query\": \"3\"\n" +
+				"                  }\n" +
+				"                },\n" +
+				"                {\n" +
+				"                  \"query_string\": {\n" +
+				"                    \"default_operator\": \"and\",\n" +
+				"                    \"fields\": [\n" +
+				"                      \"extAttr.keyCode\"\n" +
+				"                    ],\n" +
+				"                    \"query\": \"2\"\n" +
+				"                  }\n" +
+				"                },\n" +
+				"                {\n" +
+				"                  \"query_string\": {\n" +
+				"                    \"default_operator\": \"and\",\n" +
+				"                    \"fields\": [\n" +
+				"                      \"extAttr.valueId\"\n" +
+				"                    ],\n" +
+				"                    \"query\": \"4\"\n" +
+				"                  }\n" +
+				"                }\n" +
+				"              ]\n" +
+				"            }\n" +
+				"          },\n" +
+				"          \"score_mode\": \"avg\"\n" +
+				"        }\n" +
+				"      }\n" +
+				"    ]\n" +
+				"  }\n" +
+				"}";
+		assertEquals(expected, queryString, false);
+	}
 }
