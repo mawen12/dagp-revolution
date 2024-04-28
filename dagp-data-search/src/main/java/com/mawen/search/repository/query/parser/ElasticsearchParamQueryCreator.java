@@ -1,6 +1,7 @@
 package com.mawen.search.repository.query.parser;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -11,7 +12,6 @@ import com.mawen.search.core.query.CriteriaQuery;
 import com.mawen.search.repository.query.ParamQuery;
 
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
 import org.springframework.lang.Nullable;
 
 /**
@@ -56,18 +56,17 @@ public class ElasticsearchParamQueryCreator extends AbstractParamQueryCreator<Cr
 		if (annotation.type() == QueryField.Type.NESTED) { // handle nested
 			current = new Criteria(annotation.value()[0]);
 
-			if (value != null && value.getClass().isArray()) {
-				Object[] values = (Object[]) value;
-				List<ParamQuery> paramQueries = Arrays.asList(values).stream().filter(Objects::nonNull).map(ParamQuery::new).collect(Collectors.toList());
-				for (ParamQuery query : paramQueries) {
-					for (ParamQuery.ParamQueryField field : query) {
-						current.nested(from(field.getValue(), field.getQueryField()));
-					}
+			if (value != null) {
+				if (value.getClass().isArray()) { // array
+					Object[] values = (Object[]) value;
+					fromNestedArray(current, values);
 				}
-			} else {
-				ParamQuery paramQuery = new ParamQuery(value);
-				for (ParamQuery.ParamQueryField field : paramQuery) {
-					current.nested(from(field.getValue(), field.getQueryField()));
+				else if (Collection.class.isAssignableFrom(value.getClass())) { // collection
+					Collection<?> values = (Collection<?>) value;
+					fromNestedCollection(current, values);
+				}
+				else {
+					fromNestedQuery(current, new ParamQuery(value)); // single
 				}
 			}
 		}
@@ -95,6 +94,35 @@ public class ElasticsearchParamQueryCreator extends AbstractParamQueryCreator<Cr
 		}
 
 		return current;
+	}
+
+	private void fromNestedArray(Criteria criteria, Object[] values) {
+		List<ParamQuery> paramQueries = Arrays.stream(values)
+				.filter(Objects::nonNull)
+				.map(ParamQuery::new)
+				.collect(Collectors.toList());
+		for (ParamQuery query : paramQueries) {
+			fromNestedQuery(criteria, query);
+		}
+	}
+
+	private void fromNestedCollection(Criteria criteria, Collection<?> values) {
+		List<ParamQuery> paramQueries = values.stream().filter(Objects::nonNull)
+				.map(ParamQuery::new)
+				.collect(Collectors.toList());
+		for (ParamQuery query : paramQueries) {
+			fromNestedQuery(criteria, query);
+		}
+	}
+
+	private void fromNestedQuery(Criteria criteria, ParamQuery paramQuery) {
+		for (ParamQuery.ParamQueryField field : paramQuery) {
+			fromNestedField(criteria, field);
+		}
+	}
+
+	private void fromNestedField(Criteria criteria, ParamQuery.ParamQueryField field) {
+		criteria.nested(from(field.getValue(), field.getQueryField()));
 	}
 
 }
