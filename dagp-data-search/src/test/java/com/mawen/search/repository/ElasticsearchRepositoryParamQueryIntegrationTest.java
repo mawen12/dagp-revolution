@@ -1197,7 +1197,25 @@ class ElasticsearchRepositoryParamQueryIntegrationTest {
 				null,
 				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
 
-		paramQueryRepository.saveAll(Arrays.asList(entity1));
+		ParamQueryEntity entity2 = new ParamQueryEntity("2", "国家", "Countries", "TEC_00000000000449",
+				null,
+				new ParamQueryEntity.AssetType(1L, "数据标准"),
+				Arrays.asList(ParamQueryEntity.ExtendedAttr.builder().keyCode("1").valueId("2").build()),
+				null,
+				true,
+				null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+
+		ParamQueryEntity entity3 = new ParamQueryEntity("3", "地区", "Area", "TEC_00000000000450",
+				null,
+				new ParamQueryEntity.AssetType(1L, "数据标准"),
+				Arrays.asList(ParamQueryEntity.ExtendedAttr.builder().keyCode("2").valueId("3").build()),
+				null,
+				true,
+				null,
+				ParamQueryEntity.PublishState.UNPUBLISHED, new Date(), 10);
+
+		paramQueryRepository.saveAll(Arrays.asList(entity1, entity2, entity3));
 
 		// when
 		EntityQuery entityQuery = new EntityQuery();

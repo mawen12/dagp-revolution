@@ -66,6 +66,22 @@ public class CriteriaQueryProcessor {
 					mustQueries.add(queryFragment);
 				}
 			}
+
+			// add nested query
+			if (!CollectionUtils.isEmpty(chainedCriteria.getNestedCriteria())) {
+				Query nestedQuery = createNestedQuery(chainedCriteria);
+				if (nestedQuery != null) {
+					if (chainedCriteria.isOr()) {
+						shouldQueries.add(nestedQuery);
+					}
+					else if (chainedCriteria.isNegating()) {
+						mustNotQueries.add(nestedQuery);
+					}
+					else {
+						mustQueries.add(nestedQuery);
+					}
+				}
+			}
 		}
 
 		for (Criteria subCriteria : criteria.getSubCriteria()) {
@@ -79,22 +95,6 @@ public class CriteriaQueryProcessor {
 				}
 				else {
 					mustQueries.add(subQuery);
-				}
-			}
-		}
-
-		// add nested query
-		if (!CollectionUtils.isEmpty(criteria.getNestedCriteria())) {
-			Query nestedQuery = createNestedQuery(criteria);
-			if (nestedQuery != null) {
-				if (criteria.isOr()) {
-					shouldQueries.add(nestedQuery);
-				}
-				else if (criteria.isNegating()) {
-					mustNotQueries.add(nestedQuery);
-				}
-				else {
-					mustQueries.add(nestedQuery);
 				}
 			}
 		}

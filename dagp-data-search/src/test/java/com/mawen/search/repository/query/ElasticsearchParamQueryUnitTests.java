@@ -829,20 +829,25 @@ class ElasticsearchParamQueryUnitTests extends ElasticsearchQueryUnitTestBase {
 		checkCriteriaThenQueryCriteriaEntriesIsEmptyAndFilterCriteriaEntriesIsEmptyAndSubCriteriaIsEmpty(criteria);
 
 		assertThat(criteria.getField().getName()).isEqualTo("extendedAttrs");
-		assertThat(criteria.getNestedCriteria().size()).isEqualTo(4);
-		criteria.getNestedCriteria().stream().forEach(it -> {
-			assertThat(it.getQueryCriteriaEntries().size()).isEqualTo(1);
-			assertThat(it.getField().getName()).isNotNull();
+		assertThat(criteria.getCriteriaChain().size()).isEqualTo(2);
 
-			Criteria.CriteriaEntry entry = it.getQueryCriteriaEntries().stream().findFirst().get();
-			assertThat(entry.getKey()).isEqualTo(OperationKey.EQUALS);
+		criteria.getCriteriaChain().forEach(it -> {
+			assertThat(it.getNestedCriteria().size()).isEqualTo(2);
 
-			if (it.getField().getName().equals("extendedAttrs.keyCode")) {
-				assertThat(entry.getValue()).isIn("1", "2");
-			}
-			else if (it.getField().getName().equals("extendedAttrs.valueId")) {
-				assertThat(entry.getValue()).isIn("3", "4");
-			}
+			it.getNestedCriteria().forEach(itt -> {
+				assertThat(itt.getQueryCriteriaEntries().size()).isEqualTo(1);
+				assertThat(itt.getField().getName()).isNotNull();
+
+				Criteria.CriteriaEntry entry = itt.getQueryCriteriaEntries().stream().findFirst().get();
+				assertThat(entry.getKey()).isEqualTo(OperationKey.EQUALS);
+
+				if (itt.getField().getName().equals("extendedAttrs.keyCode")) {
+					assertThat(entry.getValue()).isIn("1", "2");
+				}
+				else if (itt.getField().getName().equals("extendedAttrs.valueId")) {
+					assertThat(entry.getValue()).isIn("3", "4");
+				}
+			});
 		});
 	}
 

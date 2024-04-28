@@ -52,20 +52,21 @@ public class ElasticsearchParamQueryCreator extends AbstractParamQueryCreator<Cr
 
 	private Criteria from(Object value, QueryField annotation) {
 
-		Criteria current;
+		Criteria current = null;
 		if (annotation.type() == QueryField.Type.NESTED) { // handle nested
-			current = new Criteria(annotation.value()[0]);
+			String nestedField = annotation.value()[0];
 
 			if (value != null) {
 				if (value.getClass().isArray()) { // array
 					Object[] values = (Object[]) value;
-					fromNestedArray(current, values);
+					fromNestedArray(current, nestedField, values);
 				}
 				else if (Collection.class.isAssignableFrom(value.getClass())) { // collection
 					Collection<?> values = (Collection<?>) value;
-					fromNestedCollection(current, values);
+					current = fromNestedCollection(nestedField, values);
 				}
 				else {
+					current = new Criteria(nestedField);
 					fromNestedQuery(current, new ParamQuery(value)); // single
 				}
 			}
@@ -96,23 +97,34 @@ public class ElasticsearchParamQueryCreator extends AbstractParamQueryCreator<Cr
 		return current;
 	}
 
-	private void fromNestedArray(Criteria criteria, Object[] values) {
+	private void fromNestedArray(Criteria criteria, String fieldName, Object[] values) {
 		List<ParamQuery> paramQueries = Arrays.stream(values)
 				.filter(Objects::nonNull)
 				.map(ParamQuery::new)
 				.collect(Collectors.toList());
+		Criteria prev = null;
 		for (ParamQuery query : paramQueries) {
+			if (criteria == null) {
+				criteria = new Criteria(fieldName);
+			}
+
 			fromNestedQuery(criteria, query);
+
+			prev = prev == null ? criteria : prev.and(criteria);
 		}
 	}
 
-	private void fromNestedCollection(Criteria criteria, Collection<?> values) {
+	private Criteria fromNestedCollection(String fieldName, Collection<?> values) {
 		List<ParamQuery> paramQueries = values.stream().filter(Objects::nonNull)
 				.map(ParamQuery::new)
 				.collect(Collectors.toList());
+		Criteria prev = null;
 		for (ParamQuery query : paramQueries) {
+			Criteria criteria = new Criteria(fieldName);
 			fromNestedQuery(criteria, query);
+			prev = prev == null ? criteria : prev.and(criteria);
 		}
+		return prev;
 	}
 
 	private void fromNestedQuery(Criteria criteria, ParamQuery paramQuery) {

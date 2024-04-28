@@ -17,6 +17,7 @@ package com.mawen.search.client;
 
 import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import com.google.common.collect.Lists;
 import com.mawen.search.client.query.CriteriaQueryProcessor;
 import com.mawen.search.core.domain.Criteria;
 import org.intellij.lang.annotations.Language;
@@ -550,16 +551,20 @@ class CriteriaQueryProcessorUnitTests {
 	void shouldBuildMultiNestedCriteriaQuery() throws JSONException {
 
 		// given
-		Criteria criteria = new Criteria("extAttr").nested(
+		Criteria first = new Criteria("extAttr").nested(
 				Criteria.where("extAttr.keyCode").is("1"),
-				Criteria.where("extAttr.valueId").is("3"),
+				Criteria.where("extAttr.valueId").is("3")
+		);
+		Criteria second = new Criteria("extAttr").nested(
 				Criteria.where("extAttr.keyCode").is("2"),
 				Criteria.where("extAttr.valueId").is("4")
 		);
-		criteria.getField().setPath("extAttr");
+
+		first.getField().setPath("extAttr");
+		second.getField().setPath("extAttr");
 
 		// when
-		String queryString = queryToJson(CriteriaQueryProcessor.createQuery(criteria), mapper);
+		String queryString = queryToJson(CriteriaQueryProcessor.createQuery(first.and(second)), mapper);
 		System.out.println(queryString);
 
 		// then
@@ -590,7 +595,19 @@ class CriteriaQueryProcessorUnitTests {
 				"                    ],\n" +
 				"                    \"query\": \"3\"\n" +
 				"                  }\n" +
-				"                },\n" +
+				"                }" +
+				"              ]\n" +
+				"            }\n" +
+				"          },\n" +
+				"          \"score_mode\": \"avg\"\n" +
+				"        }\n" +
+				"      },\n" +
+				"      {\n" +
+				"        \"nested\": {\n" +
+				"          \"path\": \"extAttr\",\n" +
+				"          \"query\": {\n" +
+				"            \"bool\": {\n" +
+				"              \"must\": [\n" +
 				"                {\n" +
 				"                  \"query_string\": {\n" +
 				"                    \"default_operator\": \"and\",\n" +
