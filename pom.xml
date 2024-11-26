@@ -20,6 +20,8 @@
         <module>dagp-bit-operation</module>
         <module>fluent-check</module>
         <module>dagp-data-cache</module>
+        <module>dagp-data-stream-processor</module>
+        <module>dagp-data-stream-processor/dagp-data-stream-processor-rocketmq</module>
     </modules>
 
     <profiles>
